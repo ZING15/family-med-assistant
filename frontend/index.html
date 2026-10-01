@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="新手家醫看診助手 - 圖像學習庫、用藥推薦與衛教單（練習專案）" />
+    <title>新手家醫看診助手</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="主要導覽">
+        <a class="brand" href="#library" aria-label="新手家醫看診助手首頁">
+          <span class="brand-mark">✚</span>
+          <span>新手家醫<br /><strong>看診助手</strong></span>
+        </a>
+
+        <nav class="nav-list">
+          <a class="nav-item" data-view="library" href="#library"><span>▧</span>圖像學習庫</a>
+          <a class="nav-item" data-view="records" href="#records"><span>◫</span>病歷與開藥</a>
+          <a class="nav-item" data-view="education" href="#education"><span>▤</span>衛教單</a>
+        </nav>
+
+        <div class="privacy-note">
+          <span class="shield">◈</span>
+          <div><strong>練習資料，非臨床建議</strong><br />請勿輸入姓名、病歷號或可辨識影像。</div>
+        </div>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div class="crumb">新手家醫看診助手 <span>/</span> <b id="crumbTitle">圖像學習庫</b></div>
+          <div class="top-actions">
+            <span class="ai-status" id="aiStatus" title="AI 服務狀態">AI 檢查中…</span>
+          </div>
+        </header>
+
+        <div class="content">
+          <!-- F-01 / F-02 圖像學習庫 -->
+          <section class="view" id="view-library" data-title="圖像學習庫">
+            <div class="view-head">
+              <div>
+                <p class="eyebrow">圖像學習庫</p>
+                <h1>需要時，馬上找回那張圖</h1>
+                <p class="view-sub">收藏期刊圖表、藥品卡與衛教單；用關鍵字或一句話搜尋。</p>
+              </div>
+              <button class="primary-button" id="addLibraryButton" type="button">＋ 新增圖表</button>
+            </div>
+
+            <form class="library-search" id="librarySearchForm" role="search">
+              <label class="sr-only" for="libraryQuery">搜尋學習庫</label>
+              <input id="libraryQuery" type="search" placeholder="例：胃出血嚴重度評估、COPD 分級、asthma step therapy" autocomplete="off" />
+              <select id="librarySearchMode" aria-label="搜尋方式">
+                <option value="auto">智慧搜尋</option>
+                <option value="keyword">只比對關鍵字</option>
+              </select>
+              <button class="primary-button" type="submit">搜尋</button>
+            </form>
+
+            <div class="filter-row">
+              <div class="kind-tabs" role="tablist" aria-label="類型">
+                <button type="button" class="chip active" data-kind="">全部</button>
+                <button type="button" class="chip" data-kind="figure">期刊圖表</button>
+                <button type="button" class="chip" data-kind="drug">藥品卡</button>
+                <button type="button" class="chip" data-kind="education">衛教單</button>
+              </div>
+              <div class="tag-cloud" id="tagCloud" aria-label="標籤"></div>
+            </div>
+
+            <p class="search-meta" id="searchMeta"></p>
+            <div class="library-grid" id="libraryGrid"></div>
+            <div class="empty-state" id="libraryEmpty" hidden>
+              <span>▧</span>
+              <h3>還沒有收藏</h3>
+              <p>把常用的期刊圖表截圖上傳，AI 會幫你辨識文字並建議標籤。</p>
+            </div>
+          </section>
+
+          <!-- F-03～F-07 病歷與開藥（開發中） -->
+          <section class="view" id="view-records" data-title="病歷與開藥" hidden>
+            <div class="view-head"><div><p class="eyebrow">病歷與開藥</p><h1>開發中</h1><p class="view-sub">寫病歷時偵測病灶並推薦藥品，預計 10/6 完成。</p></div></div>
+          </section>
+
+          <!-- F-08／F-09 衛教單（開發中） -->
+          <section class="view" id="view-education" data-title="衛教單" hidden>
+            <div class="view-head"><div><p class="eyebrow">衛教單</p><h1>開發中</h1><p class="view-sub">中文衛教單與 AI 衛教圖，預計 10/7 完成。</p></div></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- 新增／編輯學習筆記 -->
+    <dialog id="libraryDialog" class="app-dialog wide-dialog">
+      <form id="libraryForm" novalidate>
+        <div class="dialog-head">
+          <div><p class="eyebrow">圖像學習庫</p><h2 id="libraryDialogTitle">新增圖表</h2></div>
+          <button class="close-button" type="button" data-close aria-label="關閉">×</button>
+        </div>
+
+        <div class="library-form-grid">
+          <div class="upload-column">
+            <label class="dropzone" id="dropzone">
+              <input id="libraryImage" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
+              <img id="libraryPreview" alt="" hidden />
+              <span id="dropzoneHint">點擊或拖曳圖片到這裡<br /><small>JPG／PNG／WebP，10MB 以內</small></span>
+            </label>
+            <button class="secondary-button ai-button" id="analyzeButton" type="button" disabled>✦ AI 辨識並建議</button>
+            <p class="ai-note" id="analyzeNote">AI 只整理圖中文字與標籤，不做判讀。</p>
+          </div>
+
+          <div class="field-column">
+            <label>標題<input id="fTitle" required maxlength="120" /></label>
+            <label>主題<input id="fTopic" placeholder="例：腸胃科／出血評估" /></label>
+            <label>標籤（以逗號分隔）<input id="fTags" placeholder="例：GI bleeding, Glasgow-Blatchford" /></label>
+            <fieldset class="source-fields">
+              <legend>來源 <em>必填一項</em></legend>
+              <label>期刊／文章名稱<input id="fSourceTitle" placeholder="例：NEJM 2024; Upper GI bleeding review" /></label>
+              <div class="two-col">
+                <label>連結<input id="fSourceUrl" type="url" placeholder="https://" /></label>
+                <label>年份<input id="fSourceYear" inputmode="numeric" maxlength="4" /></label>
+              </div>
+            </fieldset>
+            <label>AI 摘要<textarea id="fSummary" rows="2" placeholder="可由 AI 建議，醫師可修改"></textarea></label>
+            <label>我的註記<textarea id="fNote" rows="3" placeholder="臨床上怎麼用、注意什麼"></textarea></label>
+            <details class="extracted">
+              <summary>圖中文字（供搜尋用）</summary>
+              <textarea id="fExtracted" rows="4"></textarea>
+            </details>
+          </div>
+        </div>
+
+        <p class="form-error" id="libraryFormError" role="alert"></p>
+        <div class="dialog-actions">
+          <button class="secondary-button" type="button" data-close>取消</button>
+          <button class="primary-button" id="librarySaveButton" type="submit">儲存</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- 檢視學習筆記 -->
+    <dialog id="libraryViewer" class="app-dialog wide-dialog">
+      <div class="viewer" id="viewerBody"></div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>

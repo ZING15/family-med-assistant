@@ -1,0 +1,22 @@
+# Local practice data downloaded from third-party sources.
+# Keep out of any public repository until the source license is verified.
+data/raw/
+data/medical-practice-cases.js
+
+# TFDA drug reference build output (large; regenerate with scripts/build_drug_reference.py)
+data/drug_reference/
+
+# Secrets and local runtime data
+.env
+backend/.venv/
+__pycache__/
+data/app.sqlite
+data/uploads/
+
+# Not published: interview transcripts (real people) and archive data / Kaggle X-rays
+參考資料/
+archive/*
+!archive/產品規格_v0.1.md
+
+# OS / editor
+.DS_Store
