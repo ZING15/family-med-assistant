@@ -35,4 +35,3 @@ scripts/    資料處理腳本（藥品參考表、Kaggle 練習資料）
 data/       藥品參考表、上傳檔、app.sqlite（皆不進版控）
 archive/    合成資料、規格 v0.1
 ```
-# family-med-assistant
