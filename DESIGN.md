@@ -7,13 +7,14 @@ colors:
   prescription-ink-wash: "#e6eef5"
   notebook-ink: "#16232c"
   graphite: "#3a4a55"
-  pencil-grey: "#6e7a83"
-  faded-pencil: "#9aa4ab"
+  pencil-grey: "#5f6b74"
+  faded-pencil: "#66717a"
+  pencil-mark: "#a3acb2"
   notebook-paper: "#f5f3ee"
   sheet-white: "#ffffff"
   margin-rule: "#e4dfd5"
   faint-rule: "#eeeae2"
-  sage-confirm: "#2f7d6b"
+  sage-confirm: "#2a7262"
   sage-wash: "#e5f2ee"
   amber-caution: "#93600f"
   amber-wash: "#fbf0dc"
@@ -36,17 +37,17 @@ typography:
     fontWeight: 700
     lineHeight: 1.35
   body:
-    fontFamily: "Inter, Noto Sans TC, PingFang TC, system-ui, sans-serif"
+    fontFamily: "Source Sans 3, Noto Sans TC, PingFang TC, system-ui, sans-serif"
     fontSize: "15px"
     fontWeight: 400
     lineHeight: 1.55
   body-small:
-    fontFamily: "Inter, Noto Sans TC, PingFang TC, system-ui, sans-serif"
+    fontFamily: "Source Sans 3, Noto Sans TC, PingFang TC, system-ui, sans-serif"
     fontSize: "13px"
     fontWeight: 400
     lineHeight: 1.6
   label:
-    fontFamily: "Inter, Noto Sans TC, PingFang TC, system-ui, sans-serif"
+    fontFamily: "Source Sans 3, Noto Sans TC, PingFang TC, system-ui, sans-serif"
     fontSize: "12px"
     fontWeight: 600
     letterSpacing: "0.14em"
@@ -134,15 +135,16 @@ components:
 ### Neutral
 - **Notebook Ink 手札墨**（#16232c）：主要文字、主要按鈕底色、選中的主題標籤底色、品牌方塊。帶一點藍綠的墨色，比純黑溫和。
 - **Graphite 石墨**（#3a4a55）：次要文字、表單標籤、標籤文字。
-- **Pencil Grey 鉛筆灰**（#6e7a83）：說明文字、計數、摘要、eyebrow。
-- **Faded Pencil 淡鉛筆**（#9aa4ab）：最弱的輔助資訊：日期、圖示、placeholder、計數徽章。
+- **Pencil Grey 鉛筆灰**（#5f6b74）：說明文字、計數、摘要、標題下方的資訊列。在手札紙上 4.9:1。
+- **Faded Pencil 淡鉛筆**（#66717a）：最弱的「文字」層級：日期、placeholder、計數。在手札紙上剛好 4.5:1，不可再淡。
+- **Pencil Mark 鉛筆記號**（#a3acb2）：只給非文字的裝飾：導覽圖示、空狀態圖示、縮圖占位圖示。
 - **Notebook Paper 手札紙**（#f5f3ee）：頁面底色、對話框內的次層底色、分段控制底。
 - **Sheet White 紙頁白**（#ffffff）：卡片、對話框、輸入框聚焦時的底色。
 - **Margin Rule 頁緣線**（#e4dfd5）：卡片邊框、輸入框邊框、區塊分隔線。
 - **Faint Rule 淡格線**（#eeeae2）：卡片內部的分隔線、表格列線。
 
 ### Status
-- **Sage Confirm 鼠尾草綠**（#2f7d6b）＋ **Sage Wash**（#e5f2ee）：AI 已連線、AI 整理完成、已採用、沿用現有主題。
+- **Sage Confirm 鼠尾草綠**（#2a7262，在淡綠底上 5.0:1）＋ **Sage Wash**（#e5f2ee）：AI 已連線、AI 整理完成、已採用、沿用現有主題。
 - **Amber Caution 琥珀**（#93600f）＋ **Amber Wash**（#fbf0dc）：示範模式、「AI 產生，待醫師確認」、需要醫師補選的頻率、同類藥警示。
 - **Iodine Red 優碘紅**（#b4432f）：錄音鍵、刪除、過敏標籤、「此病灶不再推薦」。過敏標籤底色為 #fbe9e5。
 
@@ -159,9 +161,9 @@ components:
 ## Typography
 
 **Display Font:** Noto Serif TC（備援 Songti TC, serif）
-**Body Font:** Inter 搭配 Noto Sans TC（備援 PingFang TC, system-ui）
+**Body Font:** Source Sans 3 搭配 Noto Sans TC（備援 PingFang TC, system-ui）
 
-**Character:** 襯線標題帶來手寫筆記與醫學書籍的份量；Inter 與思源黑體負責所有要快速掃讀的資訊，英文藥名、數字與中文並排時都清楚。
+**Character:** 襯線標題帶來手寫筆記與醫學書籍的份量；Source Sans 3 與 Noto Sans TC（即思源黑體）是同一家族設計，英文藥名、數字與中文並排時筆畫粗細一致。
 
 ### Hierarchy
 - **Display**（700，clamp(30px, 3.4vw, 44px)，1.22）：每頁開頭的大標，例如「把學到的，整理成自己的臨床知識」。一頁只有一個。
@@ -169,9 +171,11 @@ components:
 - **Title**（700，19–22px，1.35）：書架與推薦列的標題（「因為 咳嗽」）、主題卡名稱、病歷卡片標題（18px）。
 - **Body**（400，15px，1.55）：預設內文、表單輸入、卡片標題（以 600 字重呈現）。
 - **Body Small**（400，13px，1.6）：卡片摘要、說明、提示、表格。全站最常見的字級。
-- **Label**（600，12px，letter-spacing 0.14em）：eyebrow（「學習庫」「主題」）與區塊小標；計數與日期用 12px、400 字重、等寬數字。
+- **Label**（600，12px，letter-spacing 0.14em）：側欄區塊名稱（例如主題索引的「主題」）與彈出框的分組標題；計數與日期用 12px、400 字重、等寬數字。
 
 ### Named Rules
+**The No-Kicker Rule.** 標題上方不放小標（eyebrow／kicker）。標題自己說明自己；需要的脈絡（主題、類型、ATC 碼）放在標題「下方」的資訊列。
+
 **The Serif-Is-For-Names Rule.** 襯線體只給「名字」：頁面標題、主題名稱、書架標題、引文封面。按鈕、表單、數字、藥名一律用無襯線體。
 
 **The Tabular-Numbers Rule.** 計數、日期、計時器與 ICD-10 碼使用 `font-variant-numeric: tabular-nums`，讓數字對齊不跳動。
@@ -188,12 +192,11 @@ components:
 
 ## Elevation & Depth
 
-**目前實作**：紙張平放。卡片與面板靜止時只有 1px 的極淡陰影，懸停時上浮 3–4px 並出現柔和的環境陰影；對話框、彈出選單與 toast 使用最明顯的陰影。深度主要靠「紙頁白疊在手札紙上」的明度差，加上頁緣線。
-
-**確立的方向**：**有層次的立體感**。紙頁疊在紙頁上，每一層靜止時就看得出前後，而不是等懸停才浮現：頁面底（手札紙）→ 區塊卡片（略浮起）→ 卡片內的元素（貼平）→ 彈出層（明顯浮起）。下一次打磨應把卡片的靜止陰影從 `shadow-sm` 提升到一個介於現有兩者之間的層級，並保留懸停時再上浮一層的回饋。
+**有層次的立體感**：紙頁疊在紙頁上，每一層靜止時就看得出前後。頁面底（手札紙）→ 卡片與面板（Resting Sheet，靜止就浮起）→ 卡片內的元素（貼平，以分隔線區隔）→ 懸停（Lifted Sheet）→ 彈出層與對話框（Floating Page）。卡片以浮起表達邊界，不再同時加髮絲邊框。
 
 ### Shadow Vocabulary
-- **Resting Sheet**（`box-shadow: 0 1px 2px rgba(22, 35, 44, .05)`）：卡片、病歷面板、搜尋列的靜止狀態。
+- **Resting Sheet**（`box-shadow: 0 1px 1px rgba(22, 35, 44, .04), 0 2px 4px -1px rgba(22, 35, 44, .05), 0 8px 18px -10px rgba(22, 35, 44, .16)`）：筆記卡、主題卡、推薦藥卡、病歷面板、搜尋列的靜止狀態。
+- **Hairline Sheet**（`box-shadow: 0 1px 2px rgba(22, 35, 44, .05)`）：側邊欄目前頁、分段控制選中項這類貼平的小元件。
 - **Lifted Sheet**（`box-shadow: 0 1px 2px rgba(22, 35, 44, .04), 0 12px 32px -12px rgba(22, 35, 44, .18)`）：卡片懸停、主要「新增」按鈕、彈出選單、toast。
 - **Floating Page**（`box-shadow: 0 40px 100px -20px rgba(22, 35, 44, .45)`）：對話框；背後加 3px 模糊的墨色遮罩。
 - **Focus Halo**（`box-shadow: 0 0 0 4px #e6eef5`）：輸入框與搜尋列聚焦。
@@ -231,8 +234,8 @@ components:
 ### Cards / Containers
 - **Corner Style：** 16px。
 - **Background：** 紙頁白，放在手札紙上。
-- **Shadow Strategy：** Resting Sheet，懸停上浮 3–4px 並轉為 Lifted Sheet（見 Elevation 的方向說明）。
-- **Border：** 1px 頁緣線，懸停時加深為 #d9d2c5。
+- **Shadow Strategy：** Resting Sheet，懸停上浮 3–4px 並轉為 Lifted Sheet。
+- **Border：** 無；邊界由 Resting Sheet 陰影與紙頁白／手札紙的明度差構成。表單、上傳區、空狀態才使用頁緣線或虛線。
 - **Internal Padding：** 16–22px。
 
 ### Inputs / Fields
@@ -259,11 +262,13 @@ components:
 - **Do** 讓手札紙（#f5f3ee）當頁面底、紙頁白（#ffffff）當卡片，用明度差而不是大量邊框區分層級。
 - **Do** 把處方簽藍（#1f5e8c）留給連結、焦點與目前位置。
 - **Do** 用名稱雜湊出的 `--hue` 為主題上色，並在索引、卡片、主題頁、病灶標籤保持一致。
-- **Do** 標題與主題名稱用 Noto Serif TC；資料、按鈕、藥名用 Inter／Noto Sans TC。
+- **Do** 標題與主題名稱用 Noto Serif TC；資料、按鈕、藥名用 Source Sans 3／Noto Sans TC。
 - **Do** 所有動作與標籤使用膠囊形，卡片 16px、輸入框 10px、對話框 22px。
 - **Do** 用同一條緩出曲線 `cubic-bezier(.2, .7, .2, 1)` 做浮起與淡入，並遵守 `prefers-reduced-motion`。
 - **Do** 在 AI 產生的內容旁放上琥珀色「AI 產生，待醫師確認」標籤。
 - **Do** 外部圖片（TFDA 外觀圖）載入完成後再淡入。
+- **Do** 圖示一律使用 Lucide（線寬 1.9、圓角端點），以 `<use href="#i-…">` 引用 index.html 的 SVG sprite。
+- **Do** 卡片裡的條目（例如開藥區的藥品）用分隔線排成清單列，不再包一層框。
 
 ### Don't:
 - **Don't** 使用純黑 #000 或冷灰；文字最深就是手札墨 #16232c。
@@ -272,3 +277,6 @@ components:
 - **Don't** 用直角或小於 8px 的圓角。
 - **Don't** 在內文、按鈕、表單或數字上使用襯線體。
 - **Don't** 讓含橫向捲動的格線欄位使用 `1fr`（請用 `minmax(0, 1fr)`）。
+- **Don't** 用 Unicode 符號或 emoji 當圖示（✦ ✎ ℞ ⋯ × 等），也不要用瀏覽器原生的 `prompt()`／`confirm()`。
+- **Don't** 在標題上方放小標（eyebrow）。
+- **Don't** 同時給卡片髮絲邊框與大範圍陰影；二擇一，本系統選擇陰影。例外：浮在面板上的彈出框（例如過敏選單）本來就是上一層。

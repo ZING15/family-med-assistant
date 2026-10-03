@@ -14,10 +14,6 @@ const SOURCE_LABEL = { keyword: '關鍵字', ai: 'AI', manual: '手動' };
 
 // ATC 有些名稱是全大寫（例：OTHER COLD PREPARATIONS），轉成一般大小寫
 const drugLabel = (name) => (name && name === name.toUpperCase() ? name.charAt(0) + name.slice(1).toLowerCase() : name);
-// TFDA 外觀圖較大、載入較慢：載入完成再淡入
-document.addEventListener('load', (event) => {
-  if (event.target.tagName === 'IMG') event.target.classList.add('loaded');
-}, true);
 
 const rx = {
   catalog: { conditions: [], allergens: [] },
@@ -39,7 +35,7 @@ async function loadRecordsView() {
     const [catalog, list] = await Promise.all([api('/api/catalog'), api('/api/records')]);
     rx.catalog = catalog;
     rx.records = list.records;
-    $('#conditionAdd').innerHTML = '<option value="">＋ 手動新增病灶</option>'
+    $('#conditionAdd').innerHTML = '<option value="">手動新增病灶…</option>'
       + catalog.conditions.map((c) => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}（${c.icd10}）</option>`).join('');
     $('#allergenOptions').innerHTML = catalog.allergens
       .map((a) => `<button type="button" class="chip-button" data-allergen="${a.id}">${escapeHtml(a.name)}</button>`).join('');
@@ -107,7 +103,7 @@ async function saveRecord() {
     const index = rx.records.findIndex((x) => x.id === r.id);
     if (index >= 0) rx.records[index] = saved;
     renderRecordSelect();
-    $('#saveState').textContent = '✓ 已自動儲存';
+    $('#saveState').innerHTML = `${icon('check')}已自動儲存`;
   } catch (error) {
     $('#saveState').textContent = `儲存失敗：${error.message}`;
   }
@@ -143,7 +139,7 @@ async function resolveAllergyNames() {
 function renderAllergies() {
   const list = rx.record.allergies;
   $('#allergyChips').innerHTML = list.length
-    ? list.map((a) => `<span class="allergy-chip">${escapeHtml(allergyLabel(a))}<button type="button" data-remove-allergy="${escapeHtml(a)}" aria-label="移除 ${escapeHtml(allergyLabel(a))}">×</button></span>`).join('')
+    ? list.map((a) => `<span class="allergy-chip">${escapeHtml(allergyLabel(a))}<button type="button" data-remove-allergy="${escapeHtml(a)}" aria-label="移除 ${escapeHtml(allergyLabel(a))}">${icon('x')}</button></span>`).join('')
     : '<span class="muted-text">無已知過敏</span>';
   $$('#allergenOptions [data-allergen]').forEach((b) => b.classList.toggle('selected', list.includes(b.dataset.allergen)));
 }
@@ -161,10 +157,25 @@ $('#allergyToggle').addEventListener('click', () => {
   $('#allergyToggle').setAttribute('aria-expanded', String(!pop.hidden));
   if (!pop.hidden) $('#allergyDrugSearch').focus();
 });
+function closeMenus(except = null) {
+  $$('.rec-menu').forEach((m) => {
+    if (m === except) return;
+    m.hidden = true;
+    m.closest('.rec-card')?.querySelector('[data-more]')?.setAttribute('aria-expanded', 'false');
+  });
+}
+
+// Esc 關閉選單與過敏彈出框
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape') return;
+  closeMenus();
+  if (!$('#allergyPop').hidden) { $('#allergyPop').hidden = true; $('#allergyToggle').setAttribute('aria-expanded', 'false'); $('#allergyToggle').focus(); }
+});
+
 document.addEventListener('click', (event) => {
   if (!event.target.closest('.allergy-add')) { $('#allergyPop').hidden = true; $('#allergyToggle').setAttribute('aria-expanded', 'false'); }
   if (!event.target.closest('.rx-search')) $('#rxDrugResults').innerHTML = '';
-  if (!event.target.closest('.rec-menu, .rec-more')) $$('.rec-menu').forEach((m) => { m.hidden = true; });
+  if (!event.target.closest('.rec-menu, .rec-more')) closeMenus();
 });
 $('#allergenOptions').addEventListener('click', (event) => {
   const id = event.target.closest('[data-allergen]')?.dataset.allergen;
@@ -235,7 +246,7 @@ function renderConditions() {
     ? list.map((c) => `
       <span class="condition-chip" style="${hueStyle(c.name)}" title="${c.matched ? `依據：${escapeHtml(c.matched)}` : ''}">
         <b>${escapeHtml(c.name)}</b><small>${escapeHtml(c.icd10 || '')}</small><em>${SOURCE_LABEL[c.source] || ''}</em>
-        <button type="button" data-remove-condition="${escapeHtml(c.name)}" aria-label="移除 ${escapeHtml(c.name)}">×</button>
+        <button type="button" data-remove-condition="${escapeHtml(c.name)}" aria-label="移除 ${escapeHtml(c.name)}">${icon('x')}</button>
       </span>`).join('')
     : '<span class="muted-text">尚未偵測到病灶，請輸入主訴與病史，或手動新增</span>';
 }
@@ -268,7 +279,7 @@ $('#aiDetectButton').addEventListener('click', async () => {
   const text = [$('#rChief').value, $('#rHistory').value, $('#rAssessment').value].join('\n');
   if (!text.trim()) return showToast('請先輸入主訴或病史');
   button.disabled = true;
-  button.textContent = '✦ AI 偵測中…';
+  button.innerHTML = `${icon('sparkles')}<span>AI 偵測中…</span>`;
   try {
     const result = await api('/api/detect/ai', jsonBody({ text }));
     const before = rx.record.conditions.length;
@@ -284,7 +295,7 @@ $('#aiDetectButton').addEventListener('click', async () => {
     showToast(error.message);
   } finally {
     button.disabled = false;
-    button.textContent = '✦ AI 偵測';
+    button.innerHTML = `${icon('sparkles')}<span>AI 偵測</span>`;
   }
 });
 
@@ -295,7 +306,7 @@ async function refreshRecommendations() {
   if (!r) return;
   const box = $('#recRows');
   if (!r.conditions.length) {
-    box.innerHTML = `<div class="recs-empty"><div class="empty-mark" aria-hidden="true">℞</div>
+    box.innerHTML = `<div class="recs-empty"><div class="empty-mark">${icon('pill')}</div>
       <p>寫下主訴與病史後，這裡會依每個病灶列出推薦藥品。</p></div>`;
     $('#excludedBox').hidden = true;
     return;
@@ -327,12 +338,12 @@ function recCardHtml(item, condition, index) {
           <b>${escapeHtml(drugLabel(item.name_en))}</b>
           <span class="rec-class">${escapeHtml(item.class_zh || item.atc_code)}</span>
           <span class="rec-reason">${escapeHtml(item.reasons[0] || '')}</span>
-          ${item.warning ? `<span class="rec-warning">⚠ ${escapeHtml(item.warning)}</span>` : ''}
+          ${item.warning ? `<span class="rec-warning">${icon('triangle-alert')}${escapeHtml(item.warning)}</span>` : ''}
         </div>
       </button>
       <div class="rec-actions">
-        <button type="button" class="adopt-button" data-adopt="${item.atc_code}" ${adopted ? 'disabled' : ''}>${adopted ? '✓ 已採用' : '採用'}</button>
-        <button type="button" class="rec-more" data-more aria-label="更多動作" aria-haspopup="menu">⋯</button>
+        <button type="button" class="adopt-button" data-adopt="${item.atc_code}" ${adopted ? 'disabled' : ''}>${adopted ? `${icon('check')}已採用` : '採用'}</button>
+        <button type="button" class="rec-more" data-more aria-label="更多動作" aria-haspopup="menu" aria-expanded="false">${icon('ellipsis')}</button>
         <div class="rec-menu" role="menu" hidden>
           <button type="button" role="menuitem" data-dismiss>這次不用</button>
           <button type="button" role="menuitem" data-never>此病灶不再推薦</button>
@@ -389,8 +400,10 @@ $('#recRows').addEventListener('click', async (event) => {
   if (event.target.closest('[data-adopt]')) return adoptDrug(item, condition);
   if (event.target.closest('[data-more]')) {
     const menu = card.querySelector('.rec-menu');
-    $$('.rec-menu').forEach((m) => { if (m !== menu) m.hidden = true; });
+    closeMenus(menu);
     menu.hidden = !menu.hidden;
+    card.querySelector('[data-more]').setAttribute('aria-expanded', String(!menu.hidden));
+    if (!menu.hidden) menu.querySelector('button').focus();
     return;
   }
   if (event.target.closest('[data-dismiss]')) {
@@ -461,10 +474,10 @@ function renderPrescriptions() {
   $('#rxCount').textContent = list.length ? `${list.length} 項` : '';
   $('#rxList').innerHTML = list.length ? list.map((p, i) => `
     <div class="rx-item" data-index="${i}">
-      <div class="rx-thumb">${p.image_url ? `<img src="${escapeHtml(p.image_url)}" alt="" referrerpolicy="no-referrer" />` : '<span>℞</span>'}</div>
+      <div class="rx-thumb">${p.image_url ? `<img src="${escapeHtml(p.image_url)}" alt="" referrerpolicy="no-referrer" />` : icon('pill')}</div>
       <div class="rx-main">
         <b>${escapeHtml(p.name_en)}${p.name_zh ? `<small>${escapeHtml(p.name_zh)}</small>` : ''}</b>
-        <button type="button" class="rx-product" data-pick-product="${i}">${escapeHtml(p.product_name || '選擇品項')} ▾</button>
+        <button type="button" class="rx-product" data-pick-product="${i}"><span>${escapeHtml(p.product_name || '選擇品項')}</span>${icon('chevron-down')}</button>
         <div class="rx-dose">
           <select data-field="frequency" aria-label="頻率">
             <option value="">頻率</option>
@@ -477,7 +490,7 @@ function renderPrescriptions() {
         </div>
         ${p.condition ? `<span class="rx-for" style="${hueStyle(p.condition)}">${escapeHtml(p.condition)}</span>` : ''}
       </div>
-      <button type="button" class="rx-remove" data-remove-rx="${i}" aria-label="移除 ${escapeHtml(p.name_en)}">×</button>
+      <button type="button" class="rx-remove" data-remove-rx="${i}" aria-label="移除 ${escapeHtml(p.name_en)}">${icon('x')}</button>
       <div class="product-picker" hidden></div>
     </div>`).join('')
     : '<p class="rx-empty">從右側推薦按「採用」，或用下方搜尋加入藥品。劑量與頻率由醫師決定。</p>';
@@ -547,9 +560,9 @@ async function openDrug(atc, condition = '') {
   const adopted = inPrescription(atc);
   body.innerHTML = `
     <div class="dialog-head">
-      <div><p class="eyebrow">${escapeHtml(d.ahfs_main_name_zh || '藥品資訊')}・ATC ${escapeHtml(atc)}</p>
-        <h2>${escapeHtml(d.name_en)} <span class="drug-zh" id="drugZh">${escapeHtml(d.summary?.name_zh || '')}</span></h2></div>
-      <button class="close-button" type="button" data-close aria-label="關閉">×</button>
+      <div><h2>${escapeHtml(drugLabel(d.name_en))} <span class="drug-zh" id="drugZh">${escapeHtml(d.summary?.name_zh || '')}</span></h2>
+        <p class="dialog-meta"><span>${icon('pill')}${escapeHtml(d.ahfs_main_name_zh || '藥品資訊')}</span><span>ATC ${escapeHtml(atc)}</span></p></div>
+      <button class="close-button" type="button" data-close aria-label="關閉">${icon('x')}</button>
     </div>
     ${pictured.length ? `<div class="drug-gallery">${pictured.map((p) => `<figure><img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name_zh)}" referrerpolicy="no-referrer" /><figcaption>${escapeHtml(p.name_zh)}</figcaption></figure>`).join('')}</div>` : ''}
     <section class="drug-summary" id="drugSummary">${summaryHtml(d.summary, d.summary_meta)}</section>
@@ -567,21 +580,21 @@ async function openDrug(atc, condition = '') {
     </details>
     <div class="drug-links">
       <span>延伸閱讀</span>
-      <a href="https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=${q}" target="_blank" rel="noopener noreferrer">DailyMed 仿單 ↗</a>
-      <a href="https://clinicaltrials.gov/search?intr=${q}" target="_blank" rel="noopener noreferrer">ClinicalTrials.gov 臨床試驗 ↗</a>
-      <a href="https://pubmed.ncbi.nlm.nih.gov/?term=${q}" target="_blank" rel="noopener noreferrer">PubMed 文獻 ↗</a>
+      <a href="https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=${q}" target="_blank" rel="noopener noreferrer">DailyMed 仿單${icon('external-link')}</a>
+      <a href="https://clinicaltrials.gov/search?intr=${q}" target="_blank" rel="noopener noreferrer">ClinicalTrials.gov 臨床試驗${icon('external-link')}</a>
+      <a href="https://pubmed.ncbi.nlm.nih.gov/?term=${q}" target="_blank" rel="noopener noreferrer">PubMed 文獻${icon('external-link')}</a>
     </div>
     <p class="drug-source">藥品資料：TFDA 開放資料（許可證、ATC、AHFS/DI、藥品外觀）。練習用途，非臨床建議。</p>
     <div class="dialog-actions">
       <button class="secondary-button" type="button" data-save-drug="${atc}" data-condition="${escapeHtml(condition)}">存到學習庫</button>
-      ${condition || rx.record ? `<button class="primary-button" type="button" data-adopt-drug="${atc}" data-condition="${escapeHtml(condition)}" ${adopted ? 'disabled' : ''}>${adopted ? '✓ 已在開藥區' : '採用到開藥區'}</button>` : ''}
+      ${condition || rx.record ? `<button class="primary-button" type="button" data-adopt-drug="${atc}" data-condition="${escapeHtml(condition)}" ${adopted ? 'disabled' : ''}>${adopted ? `${icon('check')}已在開藥區` : '採用到開藥區'}</button>` : ''}
     </div>`;
 }
 
 function summaryHtml(summary, meta) {
   if (!summary) {
     return `<div class="summary-empty"><p>還沒有白話簡介。AI 會整理用途、機轉、常見用法與注意事項，每個成分只產生一次。</p>
-      <button class="secondary-button" type="button" data-generate-summary>✦ 產生 AI 簡介</button></div>`;
+      <button class="secondary-button" type="button" data-generate-summary>${icon('sparkles')}產生 AI 簡介</button></div>`;
   }
   const list = (items) => (items || []).map((t) => `<li>${escapeHtml(t)}</li>`).join('');
   return `
@@ -601,7 +614,7 @@ drugDialog.addEventListener('click', async (event) => {
   if (generate) {
     const atc = $('#drugBody [data-save-drug]').dataset.saveDrug;
     generate.disabled = true;
-    generate.textContent = '✦ AI 整理中…';
+    generate.innerHTML = `${icon('sparkles')}AI 整理中…`;
     try {
       const result = await api(`/api/drugs/${atc}/summary`, { method: 'POST' });
       drugCache[atc] = { ...drugCache[atc], summary: result.summary, summary_meta: result.summary_meta };
@@ -615,7 +628,7 @@ drugDialog.addEventListener('click', async (event) => {
       renderPrescriptions();
     } catch (error) {
       generate.disabled = false;
-      generate.textContent = '✦ 產生 AI 簡介';
+      generate.innerHTML = `${icon('sparkles')}產生 AI 簡介`;
       showToast(error.message);
     }
     return;
@@ -626,7 +639,7 @@ drugDialog.addEventListener('click', async (event) => {
     const d = await drugDetail(atc);
     await adoptDrug({ atc_code: atc, name_en: d.name_en, class_zh: d.ahfs_main_name_zh || '' }, adopt.dataset.condition);
     adopt.disabled = true;
-    adopt.textContent = '✓ 已在開藥區';
+    adopt.innerHTML = `${icon('check')}已在開藥區`;
   }
   const save = event.target.closest('[data-save-drug]');
   if (save) saveDrugToLibrary(save.dataset.saveDrug, save.dataset.condition);

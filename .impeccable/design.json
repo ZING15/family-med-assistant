@@ -82,7 +82,7 @@
       "pencil-grey": {
         "role": "neutral",
         "displayName": "Pencil Grey 鉛筆灰",
-        "canonical": "#6e7a83",
+        "canonical": "#5f6b74",
         "tonalRamp": [
           "#23272a",
           "#3d4348",
@@ -97,7 +97,7 @@
       "faded-pencil": {
         "role": "neutral",
         "displayName": "Faded Pencil 淡鉛筆",
-        "canonical": "#9aa4ab",
+        "canonical": "#66717a",
         "tonalRamp": [
           "#23272a",
           "#3c4348",
@@ -172,7 +172,7 @@
       "sage-confirm": {
         "role": "status",
         "displayName": "Sage Confirm 鼠尾草綠",
-        "canonical": "#2f7d6b",
+        "canonical": "#2a7262",
         "tonalRamp": [
           "#153830",
           "#246052",
@@ -243,6 +243,21 @@
           "#eec5be",
           "#faedeb"
         ]
+      },
+      "pencil-mark": {
+        "role": "neutral",
+        "displayName": "Pencil Mark 鉛筆記號",
+        "canonical": "#a3acb2",
+        "tonalRamp": [
+          "#23272a",
+          "#3c4348",
+          "#566067",
+          "#6f7c86",
+          "#909ba2",
+          "#b1b9be",
+          "#d2d7da",
+          "#f1f2f3"
+        ]
       }
     },
     "typographyMeta": {
@@ -274,8 +289,13 @@
     "shadows": [
       {
         "name": "resting-sheet",
+        "value": "0 1px 1px rgba(22, 35, 44, .04), 0 2px 4px -1px rgba(22, 35, 44, .05), 0 8px 18px -10px rgba(22, 35, 44, .16)",
+        "purpose": "卡片、面板、搜尋列靜止狀態：有層次的立體感。"
+      },
+      {
+        "name": "hairline-sheet",
         "value": "0 1px 2px rgba(22, 35, 44, .05)",
-        "purpose": "卡片與面板靜止狀態（方向：下次打磨提升為有層次的靜止陰影）。"
+        "purpose": "側邊欄目前頁、分段控制選中項。"
       },
       {
         "name": "lifted-sheet",
@@ -350,7 +370,7 @@
       "refersTo": "button-primary",
       "description": "主要動作：墨色膠囊，按下去讓人放心。",
       "html": "<button class=\"ds-btn-primary\">＋ 新增筆記</button>",
-      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-btn-primary{border:0;border-radius:999px;padding:11px 20px;background:var(--ink);color:#fff;font:600 14px var(--sans);cursor:pointer;transition:background .2s,transform .15s var(--ease)}.ds-btn-primary:hover{background:#24343f}.ds-btn-primary:active{transform:scale(.98)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}"
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:'Source Sans 3','Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-btn-primary{border:0;border-radius:999px;padding:11px 20px;background:var(--ink);color:#fff;font:600 14px var(--sans);cursor:pointer;transition:background .2s,transform .15s var(--ease)}.ds-btn-primary:hover{background:#24343f}.ds-btn-primary:active{transform:scale(.98)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}"
     },
     {
       "name": "Secondary Button",
@@ -358,7 +378,7 @@
       "refersTo": "button-secondary",
       "description": "次要動作：紙頁白膠囊加頁緣線。",
       "html": "<button class=\"ds-btn-secondary\">存到學習庫</button>",
-      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-btn-secondary{border:1px solid var(--line);border-radius:999px;padding:10px 18px;background:var(--surface);color:var(--ink);font:600 14px var(--sans);cursor:pointer;transition:border-color .2s}.ds-btn-secondary:hover{border-color:#cfc8bb}.ds-btn-secondary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}"
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:'Source Sans 3','Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-btn-secondary{border:1px solid var(--line);border-radius:999px;padding:10px 18px;background:var(--surface);color:var(--ink);font:600 14px var(--sans);cursor:pointer;transition:border-color .2s}.ds-btn-secondary:hover{border-color:#cfc8bb}.ds-btn-secondary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}"
     },
     {
       "name": "Link Button",
@@ -366,7 +386,7 @@
       "refersTo": "button-link",
       "description": "處方簽藍文字動作，例如「✦ AI 整理」。",
       "html": "<button class=\"ds-btn-link\">✦ AI 整理</button>",
-      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-btn-link{border:0;border-radius:999px;padding:4px 8px;background:none;color:var(--accent);font:600 13px var(--sans);cursor:pointer;transition:background .2s}.ds-btn-link:hover{background:var(--accent-soft)}.ds-btn-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px}"
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:'Source Sans 3','Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-btn-link{border:0;border-radius:999px;padding:4px 8px;background:none;color:var(--accent);font:600 13px var(--sans);cursor:pointer;transition:background .2s}.ds-btn-link:hover{background:var(--accent-soft)}.ds-btn-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px}"
     },
     {
       "name": "Search Bar",
@@ -374,7 +394,7 @@
       "refersTo": "input-field",
       "description": "膠囊形搜尋列，聚焦時出現處方簽淡藍光暈。",
       "html": "<form class=\"ds-search\"><span>⌕</span><input placeholder=\"用一句話找筆記\" /><button>搜尋</button></form>",
-      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-search{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 18px;background:var(--surface);border:1px solid var(--line);border-radius:999px;box-shadow:0 1px 2px rgba(22,35,44,.05);transition:border-color .2s,box-shadow .2s;font-family:var(--sans)}.ds-search:focus-within{border-color:#c9d6e0;box-shadow:0 0 0 4px var(--accent-soft)}.ds-search span{color:var(--faint);font-size:20px}.ds-search input{flex:1;border:0;outline:0;background:none;padding:10px 4px;font:15px var(--sans);color:var(--ink)}.ds-search button{border:0;border-radius:999px;padding:11px 20px;background:var(--ink);color:#fff;font:600 14px var(--sans)}"
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:'Source Sans 3','Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-search{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 18px;background:var(--surface);border:1px solid var(--line);border-radius:999px;box-shadow:0 1px 2px rgba(22,35,44,.05);transition:border-color .2s,box-shadow .2s;font-family:var(--sans)}.ds-search:focus-within{border-color:#c9d6e0;box-shadow:0 0 0 4px var(--accent-soft)}.ds-search span{color:var(--faint);font-size:20px}.ds-search input{flex:1;border:0;outline:0;background:none;padding:10px 4px;font:15px var(--sans);color:var(--ink)}.ds-search button{border:0;border-radius:999px;padding:11px 20px;background:var(--ink);color:#fff;font:600 14px var(--sans)}"
     },
     {
       "name": "Text Field",
@@ -382,7 +402,7 @@
       "refersTo": "input-field",
       "description": "暖白底輸入框，10px 圓角。",
       "html": "<label class=\"ds-field\">主訴<input value=\"咳嗽兩週，有痰\" /></label>",
-      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-field{display:grid;gap:6px;color:var(--ink-2);font:600 13px var(--sans)}.ds-field input{padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:#fdfcfa;font:400 14px var(--sans);color:var(--ink);transition:border-color .2s,box-shadow .2s,background .2s}.ds-field input:focus{outline:0;border-color:#b9cad8;background:#fff;box-shadow:0 0 0 4px var(--accent-soft)}"
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:'Source Sans 3','Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-field{display:grid;gap:6px;color:var(--ink-2);font:600 13px var(--sans)}.ds-field input{padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:#fdfcfa;font:400 14px var(--sans);color:var(--ink);transition:border-color .2s,box-shadow .2s,background .2s}.ds-field input:focus{outline:0;border-color:#b9cad8;background:#fff;box-shadow:0 0 0 4px var(--accent-soft)}"
     },
     {
       "name": "Topic Chips",
@@ -390,7 +410,7 @@
       "refersTo": "chip-topic",
       "description": "主題標籤：色點＋名稱＋計數；選中反轉為墨底。",
       "html": "<div class=\"ds-chips\"><button class=\"ds-chip is-active\" style=\"--hue:210\"><i></i>全部<small>12</small></button><button class=\"ds-chip\" style=\"--hue:28\"><i></i>蟲咬的問題<small>3</small></button><button class=\"ds-chip\" style=\"--hue:152\"><i></i>咳嗽的處置<small>5</small></button></div>",
-      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-chips{display:flex;gap:6px;flex-wrap:wrap}.ds-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink-2);font:14px var(--sans);cursor:pointer}.ds-chip i{width:8px;height:8px;border-radius:50%;background:hsl(var(--hue) 40% 52%)}.ds-chip small{color:var(--faint);font-size:12px}.ds-chip.is-active{background:var(--ink);border-color:var(--ink);color:#fff}.ds-chip.is-active i{background:#fff}.ds-chip.is-active small{color:rgba(255,255,255,.7)}"
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:'Source Sans 3','Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-chips{display:flex;gap:6px;flex-wrap:wrap}.ds-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink-2);font:14px var(--sans);cursor:pointer}.ds-chip i{width:8px;height:8px;border-radius:50%;background:hsl(var(--hue) 40% 52%)}.ds-chip small{color:var(--faint);font-size:12px}.ds-chip.is-active{background:var(--ink);border-color:var(--ink);color:#fff}.ds-chip.is-active i{background:#fff}.ds-chip.is-active small{color:rgba(255,255,255,.7)}"
     },
     {
       "name": "Note Card",
@@ -398,7 +418,7 @@
       "refersTo": "card",
       "description": "學習庫筆記卡：引文封面、主題色點、標題、摘要、來源與日期。",
       "html": "<article class=\"ds-card\" style=\"--hue:28\"><div class=\"ds-cover\"><blockquote>跳蚤咬傷常見於下肢與足踝，小於1公分的搔癢丘疹。</blockquote><span>✎ 文字</span></div><div class=\"ds-body\"><em>蟲咬的問題</em><b>跳蚤咬傷的辨識</b><p>多見於下肢，家中有寵物時要考慮。</p><footer><span>AFP</span><span>今天</span></footer></div></article>",
-      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-card{width:260px;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(22,35,44,.05);font-family:var(--sans);color:var(--ink);transition:transform .35s var(--ease),box-shadow .35s var(--ease)}.ds-card:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(22,35,44,.04),0 12px 32px -12px rgba(22,35,44,.18)}.ds-cover{position:relative;aspect-ratio:4/3;padding:22px 20px 50px;background:hsl(var(--hue) 35% 94%)}.ds-cover blockquote{margin:0;font:15px/1.7 var(--serif);color:hsl(var(--hue) 30% 22%)}.ds-cover span{position:absolute;left:12px;bottom:12px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.92);font-size:12px;font-weight:600;color:var(--ink-2)}.ds-body{display:grid;gap:8px;padding:16px 18px 18px}.ds-body em{font-style:normal;font-size:12px;color:var(--muted)}.ds-body b{font-size:15px;font-weight:600}.ds-body p{margin:0;font-size:13px;color:var(--muted)}.ds-body footer{display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--line-2);font-size:12px;color:var(--faint)}"
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:'Source Sans 3','Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-card{width:260px;overflow:hidden;background:var(--surface);border:0;border-radius:16px;box-shadow:0 1px 1px rgba(22,35,44,.04),0 2px 4px -1px rgba(22,35,44,.05),0 8px 18px -10px rgba(22,35,44,.16);font-family:var(--sans);color:var(--ink);transition:transform .35s var(--ease),box-shadow .35s var(--ease)}.ds-card:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(22,35,44,.04),0 12px 32px -12px rgba(22,35,44,.18)}.ds-cover{position:relative;aspect-ratio:4/3;padding:22px 20px 50px;background:hsl(var(--hue) 35% 94%)}.ds-cover blockquote{margin:0;font:15px/1.7 var(--serif);color:hsl(var(--hue) 30% 22%)}.ds-cover span{position:absolute;left:12px;bottom:12px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.92);font-size:12px;font-weight:600;color:var(--ink-2)}.ds-body{display:grid;gap:8px;padding:16px 18px 18px}.ds-body em{font-style:normal;font-size:12px;color:var(--muted)}.ds-body b{font-size:15px;font-weight:600}.ds-body p{margin:0;font-size:13px;color:var(--muted)}.ds-body footer{display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--line-2);font-size:12px;color:var(--faint)}"
     },
     {
       "name": "Recommendation Card",
@@ -406,7 +426,7 @@
       "refersTo": "card",
       "description": "推薦藥卡：外觀照片封面、藥名、分類、理由徽章、採用按鈕。",
       "html": "<article class=\"ds-rec\" style=\"--hue:200\"><div class=\"ds-rec-cover\">D</div><div class=\"ds-rec-body\"><b>dextromethorphan</b><span>鎮咳劑</span><em>常用第一線類別</em></div><div class=\"ds-rec-actions\"><button>採用</button><button aria-label=\"更多\">⋯</button></div></article>",
-      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-rec{width:196px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(22,35,44,.05);font-family:var(--sans);overflow:hidden;transition:transform .3s var(--ease),box-shadow .3s var(--ease)}.ds-rec:hover{transform:translateY(-3px);box-shadow:0 1px 2px rgba(22,35,44,.04),0 12px 32px -12px rgba(22,35,44,.18)}.ds-rec-cover{height:118px;display:grid;place-items:center;background:linear-gradient(140deg,hsl(var(--hue) 30% 95%),hsl(var(--hue) 28% 89%));font:700 44px var(--serif);color:hsl(var(--hue) 30% 40% / .5)}.ds-rec-body{display:grid;gap:4px;padding:12px 14px 6px}.ds-rec-body b{font-size:14px;color:var(--ink)}.ds-rec-body span{font-size:12px;color:var(--muted)}.ds-rec-body em{justify-self:start;padding:2px 8px;border-radius:999px;background:var(--paper);font:600 11px var(--sans);color:var(--ink-2)}.ds-rec-actions{display:flex;gap:6px;padding:8px 12px 12px}.ds-rec-actions button:first-child{flex:1;padding:8px;border:0;border-radius:999px;background:var(--ink);color:#fff;font:600 13px var(--sans)}.ds-rec-actions button:last-child{width:34px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted)}"
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:'Source Sans 3','Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-rec{width:196px;background:var(--surface);border:0;border-radius:16px;box-shadow:0 1px 1px rgba(22,35,44,.04),0 2px 4px -1px rgba(22,35,44,.05),0 8px 18px -10px rgba(22,35,44,.16);font-family:var(--sans);overflow:hidden;transition:transform .3s var(--ease),box-shadow .3s var(--ease)}.ds-rec:hover{transform:translateY(-3px);box-shadow:0 1px 2px rgba(22,35,44,.04),0 12px 32px -12px rgba(22,35,44,.18)}.ds-rec-cover{height:118px;display:grid;place-items:center;background:linear-gradient(140deg,hsl(var(--hue) 30% 95%),hsl(var(--hue) 28% 89%));font:700 44px var(--serif);color:hsl(var(--hue) 30% 40% / .5)}.ds-rec-body{display:grid;gap:4px;padding:12px 14px 6px}.ds-rec-body b{font-size:14px;color:var(--ink)}.ds-rec-body span{font-size:12px;color:var(--muted)}.ds-rec-body em{justify-self:start;padding:2px 8px;border-radius:999px;background:var(--paper);font:600 11px var(--sans);color:var(--ink-2)}.ds-rec-actions{display:flex;gap:6px;padding:8px 12px 12px}.ds-rec-actions button:first-child{flex:1;padding:8px;border:0;border-radius:999px;background:var(--ink);color:#fff;font:600 13px var(--sans)}.ds-rec-actions button:last-child{width:34px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted)}"
     },
     {
       "name": "Side Navigation",
@@ -414,7 +434,7 @@
       "refersTo": "",
       "description": "側邊欄：目前頁為紙頁白底加頁緣線，圖示轉為處方簽藍。",
       "html": "<nav class=\"ds-nav\"><a class=\"is-active\"><i>❖</i>學習庫</a><a><i>◫</i>病歷與開藥</a><a><i>▤</i>衛教單</a></nav>",
-      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-nav{display:grid;gap:2px;width:200px;padding:12px;background:#fbfaf7;font-family:var(--sans)}.ds-nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--ink-2);font-size:14px;font-weight:500;cursor:pointer;transition:background .2s}.ds-nav a i{width:20px;text-align:center;font-style:normal;color:var(--faint)}.ds-nav a:hover{background:rgba(22,35,44,.04)}.ds-nav a.is-active{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(22,35,44,.05),inset 0 0 0 1px var(--line)}.ds-nav a.is-active i{color:var(--accent)}"
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:'Source Sans 3','Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-nav{display:grid;gap:2px;width:200px;padding:12px;background:#fbfaf7;font-family:var(--sans)}.ds-nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--ink-2);font-size:14px;font-weight:500;cursor:pointer;transition:background .2s}.ds-nav a i{width:20px;text-align:center;font-style:normal;color:var(--faint)}.ds-nav a:hover{background:rgba(22,35,44,.04)}.ds-nav a.is-active{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(22,35,44,.05),inset 0 0 0 1px var(--line)}.ds-nav a.is-active i{color:var(--accent)}"
     }
   ],
   "narrative": {
@@ -469,7 +489,7 @@
       "**Do** 讓手札紙（#f5f3ee）當頁面底、紙頁白（#ffffff）當卡片，用明度差而不是大量邊框區分層級。",
       "**Do** 把處方簽藍（#1f5e8c）留給連結、焦點與目前位置。",
       "**Do** 用名稱雜湊出的 `--hue` 為主題上色，並在索引、卡片、主題頁、病灶標籤保持一致。",
-      "**Do** 標題與主題名稱用 Noto Serif TC；資料、按鈕、藥名用 Inter／Noto Sans TC。",
+      "**Do** 標題與主題名稱用 Noto Serif TC；資料、按鈕、藥名用 Source Sans 3／Noto Sans TC。",
       "**Do** 所有動作與標籤使用膠囊形，卡片 16px、輸入框 10px、對話框 22px。",
       "**Do** 用同一條緩出曲線 `cubic-bezier(.2, .7, .2, 1)` 做浮起與淡入，並遵守 `prefers-reduced-motion`。",
       "**Do** 在 AI 產生的內容旁放上琥珀色「AI 產生，待醫師確認」標籤。",

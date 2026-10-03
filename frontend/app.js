@@ -1,6 +1,20 @@
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
+// Lucide 圖示（index.html 內的 SVG sprite）
+const icon = (name, cls = '') => `<svg class="icon${cls ? ` ${cls}` : ''}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+
+// 圖片載入完成再淡入；外部圖片（例如 TFDA 外觀圖）失敗時移除，改顯示卡片底色占位，不出現破圖
+document.addEventListener('load', (event) => {
+  if (event.target.tagName === 'IMG') event.target.classList.add('loaded');
+}, true);
+document.addEventListener('error', (event) => {
+  const img = event.target;
+  if (img.tagName !== 'IMG') return;
+  img.closest('.cover, .rec-cover, .rx-thumb, .tile-cover, figure')?.classList.add('img-failed');
+  img.remove();
+}, true);
+
 const toast = $('#toast');
 let toastTimer;
 let aiStatus = { chat: false, vision: false, embedding: false, transcribe: false, image: false };
@@ -101,7 +115,7 @@ async function loadHealth() {
 // 依主題組織：全部 = 每個主題一個書架；選定主題 = 該主題全部筆記；搜尋 = 依相關度排列
 
 const KIND_LABEL = { figure: '圖片', note: '文字', voice: '語音', drug: '藥品卡', education: '衛教單' };
-const KIND_ICON = { figure: '▧', note: '✎', voice: '◉', drug: '℞', education: '▤' };
+const KIND_ICON = { figure: 'image', note: 'type', voice: 'mic', drug: 'pill', education: 'file-heart' };
 const SHELF_LIMIT = 4;
 const libraryState = { q: '', mode: 'auto', topic: '', items: [], topics: [], searchMode: 'none' };
 
@@ -172,7 +186,7 @@ function cardHtml(item, index, showTopic) {
   const source = item.source_title || (item.source_url ? new URL(safeUrl(item.source_url) || 'https://x').hostname : '');
   return `
     <button type="button" class="note-card" data-id="${item.id}" style="${hueStyle(topic)};--i:${index}">
-      <div class="cover">${cover}<span class="cover-kind"><span aria-hidden="true">${KIND_ICON[item.kind] || '▤'}</span>${KIND_LABEL[item.kind] || ''}</span></div>
+      <div class="cover">${cover}<span class="cover-kind">${icon(KIND_ICON[item.kind] || 'type')}${KIND_LABEL[item.kind] || ''}</span></div>
       <div class="card-body">
         ${showTopic ? `<span class="card-topic">${escapeHtml(topic)}</span>` : ''}
         <b>${escapeHtml(item.title)}</b>
@@ -183,8 +197,8 @@ function cardHtml(item, index, showTopic) {
 }
 
 function emptyHtml(title, text, withButton = true) {
-  return `<div class="empty-state"><div class="empty-mark" aria-hidden="true">❖</div><h3>${title}</h3><p>${text}</p>
-    ${withButton ? '<button class="primary-button" type="button" data-action="add">＋ 新增第一則筆記</button>' : ''}</div>`;
+  return `<div class="empty-state"><div class="empty-mark">${icon('book-open')}</div><h3>${title}</h3><p>${text}</p>
+    ${withButton ? `<button class="primary-button" type="button" data-action="add">${icon('plus')}新增第一則筆記</button>` : ''}</div>`;
 }
 
 function renderLibrary() {
@@ -211,10 +225,16 @@ function renderLibrary() {
     const info = libraryState.topics.find((t) => t.topic === topic);
     main.innerHTML = `
       <header class="topic-hero" style="${hueStyle(topic)}">
-        <p class="eyebrow">主題</p>
-        <h2>${escapeHtml(topic)}</h2>
+        <h2 class="topic-title">${escapeHtml(topic)}</h2>
+        <form class="topic-rename" hidden>
+          <label class="sr-only" for="topicRenameInput">新的主題名稱</label>
+          <input id="topicRenameInput" value="${escapeHtml(topic)}" maxlength="40" list="topicOptions" autocomplete="off" />
+          <button class="primary-button" type="submit">儲存</button>
+          <button class="secondary-button" type="button" data-action="cancel-rename">取消</button>
+          <p>輸入既有主題的名稱，就會把兩個主題合併。</p>
+        </form>
         <div class="topic-hero-meta"><span>${group.length} 則筆記</span><span>最後更新 ${info ? formatDate(info.updated_at) : ''}</span>
-          ${topic !== '未分類' ? '<button class="link-button" type="button" data-action="rename-topic">✎ 重新命名</button>' : ''}</div>
+          ${topic !== '未分類' ? `<button class="link-button" type="button" data-action="rename-topic">${icon('pencil')}重新命名</button>` : ''}</div>
       </header>
       <div class="card-grid">${group.map((item, i) => cardHtml(item, i, false)).join('')}</div>`;
     return;
@@ -237,7 +257,7 @@ function topicTileHtml(info, items, index) {
   const group = items.filter((item) => (item.topic || '未分類') === info.topic);
   const images = group.filter((item) => item.image_url).slice(0, 3);
   const glyph = [...info.topic][0];
-  const kinds = Object.entries(info.kinds).map(([kind, n]) => `<span>${KIND_ICON[kind] || '▤'} ${n}</span>`).join('');
+  const kinds = Object.entries(info.kinds).map(([kind, n]) => `<span title="${KIND_LABEL[kind] || ''}">${icon(KIND_ICON[kind] || 'type')}${n}</span>`).join('');
   return `
     <button type="button" class="topic-tile" data-topic-open="${escapeHtml(info.topic)}" style="${hueStyle(info.topic)};--i:${index}">
       <div class="tile-cover ${images.length ? `stack-${images.length}` : 'empty'}">
@@ -275,17 +295,31 @@ $('#libraryMain').addEventListener('click', async (event) => {
   const action = event.target.closest('[data-action]')?.dataset.action;
   if (action === 'add') openLibraryForm();
   if (action === 'clear-search') setLibraryHash({ topic: libraryState.topic });
-  if (action === 'rename-topic') {
-    const name = prompt('新的主題名稱（輸入既有主題的名稱即可合併）', libraryState.topic)?.trim();
-    if (!name || name === libraryState.topic) return;
-    try {
-      await api('/api/library/topics', jsonBody({ old: libraryState.topic, new: name }, 'PUT'));
-      showToast('主題已更新');
-      libraryState.loaded = false;
-      setLibraryHash({ topic: name });
-    } catch (error) {
-      showToast(error.message);
-    }
+  if (action === 'rename-topic' || action === 'cancel-rename') toggleRename(action === 'rename-topic');
+});
+
+// 主題頁就地改名（取代瀏覽器原生 prompt）
+function toggleRename(open) {
+  const hero = $('.topic-hero');
+  if (!hero) return;
+  hero.querySelector('.topic-title').hidden = open;
+  hero.querySelector('.topic-hero-meta').hidden = open;
+  hero.querySelector('.topic-rename').hidden = !open;
+  if (open) hero.querySelector('input').select();
+}
+
+$('#libraryMain').addEventListener('submit', async (event) => {
+  if (!event.target.matches('.topic-rename')) return;
+  event.preventDefault();
+  const name = event.target.querySelector('input').value.trim();
+  if (!name || name === libraryState.topic) return toggleRename(false);
+  try {
+    await api('/api/library/topics', jsonBody({ old: libraryState.topic, new: name }, 'PUT'));
+    showToast(libraryState.topics.some((t) => t.topic === name) ? `已合併到「${name}」` : '主題已更新');
+    libraryState.loaded = false;
+    setLibraryHash({ topic: name });
+  } catch (error) {
+    showToast(error.message);
   }
 });
 
@@ -365,15 +399,16 @@ function openViewer(item) {
   const topic = item.topic || '未分類';
   $('#viewerBody').innerHTML = `
     <div class="dialog-head">
-      <div><p class="eyebrow" style="${hueStyle(topic)}">${escapeHtml(topic)}・${KIND_LABEL[item.kind] || ''}</p><h2>${escapeHtml(item.title)}</h2></div>
-      <button class="close-button" type="button" data-close aria-label="關閉">×</button>
+      <div><h2>${escapeHtml(item.title)}</h2>
+        <p class="dialog-meta"><span class="topic-dot" style="${hueStyle(topic)}">${escapeHtml(topic)}</span><span>${icon(KIND_ICON[item.kind] || 'type')}${KIND_LABEL[item.kind] || ''}</span></p></div>
+      <button class="close-button" type="button" data-close aria-label="關閉">${icon('x')}</button>
     </div>
     ${item.image_url ? `<a class="viewer-image" href="${escapeHtml(item.image_url)}" target="_blank" rel="noopener"><img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" /></a>` : ''}
     ${item.audio_url ? `<audio class="viewer-audio" controls src="${escapeHtml(item.audio_url)}"></audio>` : ''}
     ${item.source_title || url ? `<div class="viewer-source">
       <b>來源</b>
       <span>${escapeHtml(item.source_title || '—')}${item.source_year ? `（${escapeHtml(item.source_year)}）` : ''}</span>
-      ${url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">開啟原始來源 ↗</a>` : ''}
+      ${url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">開啟原始來源${icon('external-link')}</a>` : ''}
     </div>` : ''}
     ${item.ai_summary ? `<div class="viewer-block"><b>摘要 ${meta.mode === 'azure' ? '<span class="ai-label">AI 產生，待醫師確認</span>' : ''}</b><p>${escapeHtml(item.ai_summary)}</p></div>` : ''}
     ${item.kind === 'note' && item.note ? `<div class="viewer-block"><b>筆記內容</b><p>${escapeHtml(item.note)}</p></div>` : ''}
@@ -382,7 +417,7 @@ function openViewer(item) {
     ${item.kind !== 'note' && item.note ? `<div class="viewer-block"><b>我的註記</b><p>${escapeHtml(item.note)}</p></div>` : ''}
     ${item.tags.length ? `<div class="card-tags">${item.tags.map((t) => `<span>#${escapeHtml(t)}</span>`).join('')}</div>` : ''}
     <div class="dialog-actions">
-      <button class="danger-button" type="button" data-delete="${item.id}">刪除</button>
+      <button class="danger-button" type="button" data-delete="${item.id}">${icon('trash-2')}刪除</button>
       <button class="secondary-button" type="button" data-edit="${item.id}">編輯</button>
     </div>`;
   viewer.showModal();
@@ -395,8 +430,16 @@ viewer.addEventListener('click', async (event) => {
     viewer.close();
     openLibraryForm(libraryState.items.find((i) => i.id === Number(edit.dataset.edit)));
   }
+  // 兩段式刪除：第一次按下要求確認，3 秒內再按一次才刪除（取代瀏覽器原生 confirm）
   const del = event.target.closest('[data-delete]');
-  if (del && confirm('確定刪除這筆筆記（含圖片或錄音）？此動作無法復原。')) {
+  if (del && !del.classList.contains('confirming')) {
+    del.classList.add('confirming');
+    del.innerHTML = `${icon('trash-2')}再按一次確定刪除`;
+    clearTimeout(del._reset);
+    del._reset = setTimeout(() => { del.classList.remove('confirming'); del.innerHTML = `${icon('trash-2')}刪除`; }, 3000);
+  } else if (del) {
+    clearTimeout(del._reset);
+    del.disabled = true;
     await api(`/api/library/${del.dataset.delete}`, { method: 'DELETE' });
     viewer.close();
     showToast('已刪除');
@@ -489,7 +532,7 @@ function fillReview(kind, data) {
   if (uploaded.image_url) {
     preview.innerHTML = `<a href="${escapeHtml(uploaded.image_url)}" target="_blank" rel="noopener"><img src="${escapeHtml(uploaded.image_url)}" alt="上傳的圖片" /></a>`;
   } else if (uploaded.audio_url) {
-    preview.innerHTML = `<div class="audio-preview"><span>◉</span><b>錄音</b><audio controls src="${escapeHtml(uploaded.audio_url)}"></audio></div>`;
+    preview.innerHTML = `<div class="audio-preview">${icon('audio-lines')}<b>錄音</b><audio controls src="${escapeHtml(uploaded.audio_url)}"></audio></div>`;
   } else {
     preview.innerHTML = '';
   }
@@ -555,11 +598,11 @@ async function runAnalysis(payload, loadingText) {
     const ai = $('#aiResult');
     ai.hidden = false;
     ai.classList.toggle('warn', Boolean(result.message));
-    ai.textContent = result.message || [
-      `✦ AI 已整理完成（${aiMeta.model}）`,
+    ai.innerHTML = result.message ? escapeHtml(result.message) : icon('sparkles') + escapeHtml([
+      `AI 已整理完成（${aiMeta.model}）`,
       s.topic ? (result.topic_exists ? `歸入現有主題「${s.topic}」` : `建立新主題「${s.topic}」`) : '',
       s.source_title ? '並帶入辨識到的來源' : '',
-    ].filter(Boolean).join('，') + '。請確認內容後儲存。';
+    ].filter(Boolean).join('，') + '。請確認內容後儲存。');
   } catch (error) {
     // AI 失敗時仍讓醫師手動完成
     fillReview(kind, { content: payload.text || '' });
