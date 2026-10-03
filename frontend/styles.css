@@ -492,9 +492,6 @@ main { flex: 1; min-width: 0; }
 .recs-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 18px; }
 .recs-head h2 { margin: 0; font-family: var(--serif); font-size: 24px; }
 .recs-head p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
-.recs-filters { display: flex; padding: 3px; border-radius: 999px; background: #ebe7df; }
-.seg { padding: 7px 14px; border: 0; border-radius: 999px; background: none; color: var(--muted); font-size: 13px; font-weight: 600; }
-.seg.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
 .recs-empty { padding: 56px 24px; text-align: center; border: 1px dashed #d6cfc1; border-radius: var(--radius); color: var(--muted); }
 .recs-empty .empty-mark { font-family: var(--serif); font-size: 40px; color: #c8bfae; }
 
@@ -793,10 +790,7 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .picker-nhi.self-pay { color: var(--muted); }
 .nhi-cell { display: block; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .nhi-cell small { display: block; color: var(--warn); font-size: 11px; }
-.nhi-toggle { padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted); font-size: 13px; font-weight: 600; }
-.nhi-toggle[aria-pressed="true"] { border-color: var(--ok); background: var(--ok-soft); color: var(--ok); }
 .recs-head { flex-wrap: wrap; }
-.recs-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .picker-nhi { display: block; margin-top: 2px; }
 .drug-products { overflow-x: auto; }
 .drug-products table { min-width: 760px; }

@@ -23,7 +23,7 @@ ROW_LIMIT = 12
 # 推薦範圍：有效、製劑、需要醫師處方或指示的藥品
 CATEGORIES = {
     "須由醫師處方使用": "rx", "限由醫師使用": "rx",
-    "醫師藥師藥劑生指示藥品": "otc", "須經醫師指示使用": "otc", "成藥": "otc", "乙類成藥": "otc",
+    "醫師藥師藥劑生指示藥品": "otc", "須經醫師指示使用": "otc", "成藥": "general", "乙類成藥": "general",
 }
 FORM_GROUPS = [
     ("injection", ("注射",)),
@@ -345,8 +345,6 @@ def recommend(condition_names: list[str], allergy_ids: list[str], dismissed: lis
                 reasons.append(f"你在此病灶採用過 {here} 次")
             elif anywhere:
                 reasons.append(f"你在其他病灶採用過 {anywhere} 次")
-            if preferred:
-                reasons.append("常見首選")
             if combination:
                 reasons.append("複方製劑")
             items.append({

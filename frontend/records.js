@@ -11,6 +11,8 @@ const FREQUENCIES = [
 ];
 const DAYS = [1, 3, 5, 7, 14, 28];
 const SOURCE_LABEL = { keyword: '關鍵字', ai: 'AI', manual: '手動' };
+// TFDA 許可證「藥品類別」：處方藥、指示藥、成藥（甲乙類成藥可自行購買）
+const CATEGORY_LABEL = { rx: '處方', otc: '指示藥', general: '成藥' };
 
 // ATC 有些名稱是全大寫（例：OTHER COLD PREPARATIONS），轉成一般大小寫
 const drugLabel = (name) => (name && name === name.toUpperCase() ? name.charAt(0) + name.slice(1).toLowerCase() : name);
@@ -44,8 +46,6 @@ const rx = {
   records: [],
   record: null,
   recs: { rows: [], excluded: [] },
-  category: '',
-  nhiOnly: false,
   railActive: {},      // 每排目前可用 Tab 進入的卡片（roving tabindex）
   removedCache: {},    // 本次移除的病灶，供「復原」還原原本的來源
   loaded: false,
@@ -437,8 +437,7 @@ function recCardHtml(item, condition, active) {
 
 function renderRecommendations() {
   const rows = rx.recs.rows.map((row, rowIndex) => {
-    const items = row.items.filter((item) => (!rx.category || item.categories.includes(rx.category))
-      && (!rx.nhiOnly || item.nhi?.covered_products > 0));
+    const { items } = row;
     const activeAtc = items.some((i) => i.atc_code === rx.railActive[row.condition]) ? rx.railActive[row.condition] : items[0]?.atc_code;
     return `
       <section class="rec-row" style="animation-delay:${rowIndex * 60}ms">
@@ -454,7 +453,7 @@ function renderRecommendations() {
               </div>
               <button type="button" class="rail-nav next" data-rail-nav="1" tabindex="-1" aria-hidden="true">${icon('arrow-right')}</button>
             </div>`
-          : '<p class="muted-text rec-none">這個篩選條件下沒有推薦藥品</p>'}
+          : '<p class="muted-text rec-none">這個病灶目前沒有可推薦的藥品（可能都已被過敏或你的回饋排除）</p>'}
       </section>`;
   }).join('');
   $('#recRows').innerHTML = rows;
@@ -534,21 +533,6 @@ $('#recRows').addEventListener('dragstart', (event) => {
 $('#recRows').addEventListener('scroll', (event) => {
   if (event.target.classList?.contains('rec-rail')) updateRailNav(event.target);
 }, true);
-
-$$('.recs-filters .seg').forEach((seg) => seg.addEventListener('click', () => {
-  rx.category = seg.dataset.cat;
-  $$('.recs-filters .seg').forEach((s) => {
-    s.classList.toggle('active', s === seg);
-    s.setAttribute('aria-pressed', String(s === seg));
-  });
-  renderRecommendations();
-}));
-
-$('#nhiOnly').addEventListener('click', () => {
-  rx.nhiOnly = !rx.nhiOnly;
-  $('#nhiOnly').setAttribute('aria-pressed', String(rx.nhiOnly));
-  renderRecommendations();
-});
 
 // 鍵盤：每排只佔一個 Tab 停駐點，左右方向鍵切換卡片；選單內上下鍵移動
 const CARD_CONTROLS = ['.rec-open', '.adopt-button', '.rec-more'];
@@ -848,7 +832,7 @@ $('#rxList').addEventListener('click', async (event) => {
     picker.innerHTML = detail.products.slice(0, 40).map((p) => `
       <button type="button" data-license="${escapeHtml(p.license_no)}" class="${p.license_no === item.license_no ? 'selected' : ''}">
         ${p.image_url ? `<img src="${escapeHtml(p.image_url)}" alt="" referrerpolicy="no-referrer" />` : '<span class="no-img">無圖</span>'}
-        <span><b>${escapeHtml(p.name_zh)}</b><small>${escapeHtml(p.dosage_form)}・${p.category === 'rx' ? '處方' : '指示藥'}・${escapeHtml(p.applicant)}</small>
+        <span><b>${escapeHtml(p.name_zh)}</b><small>${escapeHtml(p.dosage_form)}・${CATEGORY_LABEL[p.category] || ''}・${escapeHtml(p.applicant)}</small>
           <small class="${p.nhi.length ? 'picker-nhi' : 'picker-nhi self-pay'}">${p.nhi.length ? `健保 ${escapeHtml(p.nhi[0].code)}・每${escapeHtml(p.nhi[0].unit)} ${money(p.nhi[0].price)}${p.nhi.length > 1 ? `（另有 ${p.nhi.length - 1} 種規格）` : ''}` : '非健保給付（自費）'}</small></span>
       </button>`).join('');
     picker.hidden = false;
@@ -902,7 +886,7 @@ async function openDrug(atc, condition = '') {
     <details class="drug-products">
       <summary>市售品項與藥廠（${d.products.length}）</summary>
       <table><thead><tr><th>品名</th><th>劑型</th><th>類別</th><th>健保代碼與支付價</th><th>許可證</th><th>申請商</th></tr></thead>
-      <tbody>${d.products.map((p) => `<tr><td>${escapeHtml(p.name_zh)}</td><td>${escapeHtml(p.dosage_form)}</td><td>${p.category === 'rx' ? '處方' : '指示藥'}</td>
+      <tbody>${d.products.map((p) => `<tr><td>${escapeHtml(p.name_zh)}</td><td>${escapeHtml(p.dosage_form)}</td><td>${CATEGORY_LABEL[p.category] || ''}</td>
         <td>${p.nhi.length ? p.nhi.map((c) => `<span class="nhi-cell">${escapeHtml(c.code)}・${money(c.price)}／${escapeHtml(c.unit)}${c.next_price != null ? `<small>${escapeHtml(c.next_price_start)} 起 ${money(c.next_price)}</small>` : ''}</span>`).join('') : '<span class="self-pay">非健保給付</span>'}</td>
         <td>${escapeHtml(p.license_no)}</td><td>${escapeHtml(p.applicant)}</td></tr>`).join('')}</tbody></table>
     </details>
