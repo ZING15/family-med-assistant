@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-03T13:51:51+00:00",
+  "title": "Design System: 新手家醫看診助手",
+  "extensions": {
+    "colorMeta": {
+      "prescription-ink-blue": {
+        "role": "primary",
+        "displayName": "Prescription Ink Blue 處方簽藍",
+        "canonical": "#1f5e8c",
+        "tonalRamp": [
+          "#0e2a3f",
+          "#18496d",
+          "#22689a",
+          "#2c87c8",
+          "#58a3da",
+          "#8abfe5",
+          "#bcdaf0",
+          "#eaf4fa"
+        ]
+      },
+      "prescription-ink-deep": {
+        "role": "primary",
+        "displayName": "Prescription Ink Deep 深處方簽藍",
+        "canonical": "#164a70",
+        "tonalRamp": [
+          "#0d2a40",
+          "#16496f",
+          "#1f689e",
+          "#2887cd",
+          "#54a4de",
+          "#88bfe8",
+          "#bbdaf2",
+          "#eaf4fb"
+        ]
+      },
+      "prescription-ink-wash": {
+        "role": "primary",
+        "displayName": "Prescription Ink Wash 處方簽淡藍",
+        "canonical": "#e6eef5",
+        "tonalRamp": [
+          "#162737",
+          "#26445f",
+          "#366187",
+          "#467eaf",
+          "#6d9cc5",
+          "#99bad6",
+          "#c5d7e8",
+          "#edf3f8"
+        ]
+      },
+      "notebook-ink": {
+        "role": "neutral",
+        "displayName": "Notebook Ink 手札墨",
+        "canonical": "#16232c",
+        "tonalRamp": [
+          "#192933",
+          "#2c4658",
+          "#3f647e",
+          "#5282a3",
+          "#779fbb",
+          "#a0bccf",
+          "#c9d9e4",
+          "#eef3f6"
+        ]
+      },
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Graphite 石墨",
+        "canonical": "#3a4a55",
+        "tonalRamp": [
+          "#1f282d",
+          "#36454f",
+          "#4d6270",
+          "#637f92",
+          "#869dac",
+          "#aabac5",
+          "#ced8de",
+          "#f0f3f5"
+        ]
+      },
+      "pencil-grey": {
+        "role": "neutral",
+        "displayName": "Pencil Grey 鉛筆灰",
+        "canonical": "#6e7a83",
+        "tonalRamp": [
+          "#23272a",
+          "#3d4348",
+          "#566067",
+          "#707c85",
+          "#909aa2",
+          "#b1b8be",
+          "#d3d7da",
+          "#f1f2f3"
+        ]
+      },
+      "faded-pencil": {
+        "role": "neutral",
+        "displayName": "Faded Pencil 淡鉛筆",
+        "canonical": "#9aa4ab",
+        "tonalRamp": [
+          "#23272a",
+          "#3c4348",
+          "#566067",
+          "#6f7c86",
+          "#909ba2",
+          "#b1b9be",
+          "#d2d7da",
+          "#f1f2f3"
+        ]
+      },
+      "notebook-paper": {
+        "role": "neutral",
+        "displayName": "Notebook Paper 手札紙",
+        "canonical": "#f5f3ee",
+        "tonalRamp": [
+          "#302a1c",
+          "#534a31",
+          "#776946",
+          "#9a885b",
+          "#b3a47f",
+          "#cac0a5",
+          "#e1dbcc",
+          "#f6f4ef"
+        ]
+      },
+      "sheet-white": {
+        "role": "neutral",
+        "displayName": "Sheet White 紙頁白",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#262626",
+          "#424242",
+          "#5e5e5e",
+          "#7a7a7a",
+          "#999999",
+          "#b8b8b8",
+          "#d6d6d6",
+          "#f2f2f2"
+        ]
+      },
+      "margin-rule": {
+        "role": "neutral",
+        "displayName": "Margin Rule 頁緣線",
+        "canonical": "#e4dfd5",
+        "tonalRamp": [
+          "#2f291e",
+          "#514734",
+          "#73654a",
+          "#958360",
+          "#afa083",
+          "#c7bda8",
+          "#dfd9cd",
+          "#f5f3ef"
+        ]
+      },
+      "faint-rule": {
+        "role": "neutral",
+        "displayName": "Faint Rule 淡格線",
+        "canonical": "#eeeae2",
+        "tonalRamp": [
+          "#302a1c",
+          "#544831",
+          "#776746",
+          "#9a855a",
+          "#b4a27e",
+          "#cabea5",
+          "#e1dacc",
+          "#f6f3ef"
+        ]
+      },
+      "sage-confirm": {
+        "role": "status",
+        "displayName": "Sage Confirm 鼠尾草綠",
+        "canonical": "#2f7d6b",
+        "tonalRamp": [
+          "#153830",
+          "#246052",
+          "#348975",
+          "#43b298",
+          "#6bc7b2",
+          "#97d8c9",
+          "#c4e9e0",
+          "#ecf8f5"
+        ]
+      },
+      "sage-wash": {
+        "role": "status",
+        "displayName": "Sage Wash 鼠尾草淡綠",
+        "canonical": "#e5f2ee",
+        "tonalRamp": [
+          "#1a332b",
+          "#2c584b",
+          "#3f7e6a",
+          "#52a38a",
+          "#77bba6",
+          "#a0cfc1",
+          "#c9e4db",
+          "#eef6f4"
+        ]
+      },
+      "amber-caution": {
+        "role": "status",
+        "displayName": "Amber Caution 琥珀",
+        "canonical": "#93600f",
+        "tonalRamp": [
+          "#452d07",
+          "#784f0c",
+          "#ab7011",
+          "#de9117",
+          "#ecac46",
+          "#f2c57d",
+          "#f7deb5",
+          "#fdf5e8"
+        ]
+      },
+      "amber-wash": {
+        "role": "status",
+        "displayName": "Amber Wash 琥珀淡底",
+        "canonical": "#fbf0dc",
+        "tonalRamp": [
+          "#452f08",
+          "#77520e",
+          "#a97413",
+          "#dc9719",
+          "#eab148",
+          "#f0c87f",
+          "#f7e0b6",
+          "#fcf5e8"
+        ]
+      },
+      "iodine-red": {
+        "role": "status",
+        "displayName": "Iodine Red 優碘紅",
+        "canonical": "#b4432f",
+        "tonalRamp": [
+          "#3d1710",
+          "#69271b",
+          "#963827",
+          "#c24833",
+          "#d56f5d",
+          "#e19a8e",
+          "#eec5be",
+          "#faedeb"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "每頁開頭的大標，一頁一個。"
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "對話框、搜尋結果、推薦欄標題。"
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "書架、推薦列、主題卡、病歷卡片標題。"
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "預設內文與表單。"
+      },
+      "body-small": {
+        "displayName": "Body Small",
+        "purpose": "摘要、說明、提示、表格；全站最常見字級。"
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "eyebrow 與區塊小標，加寬字距。"
+      }
+    },
+    "shadows": [
+      {
+        "name": "resting-sheet",
+        "value": "0 1px 2px rgba(22, 35, 44, .05)",
+        "purpose": "卡片與面板靜止狀態（方向：下次打磨提升為有層次的靜止陰影）。"
+      },
+      {
+        "name": "lifted-sheet",
+        "value": "0 1px 2px rgba(22, 35, 44, .04), 0 12px 32px -12px rgba(22, 35, 44, .18)",
+        "purpose": "懸停、主要新增按鈕、彈出選單、toast。"
+      },
+      {
+        "name": "floating-page",
+        "value": "0 40px 100px -20px rgba(22, 35, 44, .45)",
+        "purpose": "對話框。"
+      },
+      {
+        "name": "focus-halo",
+        "value": "0 0 0 4px #e6eef5",
+        "purpose": "輸入框與搜尋列聚焦。"
+      },
+      {
+        "name": "adopted-ring",
+        "value": "0 0 0 3px #e5f2ee",
+        "purpose": "已採用的推薦藥卡。"
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-notebook",
+        "value": "cubic-bezier(.2, .7, .2, 1)",
+        "purpose": "所有浮起、淡入、對話框彈出的唯一曲線。"
+      },
+      {
+        "name": "rise",
+        "value": "opacity 0→1, translateY(10px)→0, .5s",
+        "purpose": "卡片與區塊進場，依序延遲 35–60ms。"
+      },
+      {
+        "name": "pop",
+        "value": "opacity 0→1, translateY(12px) scale(.98)→none, .3s",
+        "purpose": "對話框開啟。"
+      },
+      {
+        "name": "image-fade",
+        "value": "opacity .4s",
+        "purpose": "外部圖片載入完成後淡入。"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "640px"
+      },
+      {
+        "name": "compact-sidebar",
+        "value": "860px"
+      },
+      {
+        "name": "library-stack",
+        "value": "1080px"
+      },
+      {
+        "name": "records-stack",
+        "value": "1180px"
+      },
+      {
+        "name": "recent-row-3",
+        "value": "1240px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "主要動作：墨色膠囊，按下去讓人放心。",
+      "html": "<button class=\"ds-btn-primary\">＋ 新增筆記</button>",
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-btn-primary{border:0;border-radius:999px;padding:11px 20px;background:var(--ink);color:#fff;font:600 14px var(--sans);cursor:pointer;transition:background .2s,transform .15s var(--ease)}.ds-btn-primary:hover{background:#24343f}.ds-btn-primary:active{transform:scale(.98)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "次要動作：紙頁白膠囊加頁緣線。",
+      "html": "<button class=\"ds-btn-secondary\">存到學習庫</button>",
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-btn-secondary{border:1px solid var(--line);border-radius:999px;padding:10px 18px;background:var(--surface);color:var(--ink);font:600 14px var(--sans);cursor:pointer;transition:border-color .2s}.ds-btn-secondary:hover{border-color:#cfc8bb}.ds-btn-secondary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}"
+    },
+    {
+      "name": "Link Button",
+      "kind": "button",
+      "refersTo": "button-link",
+      "description": "處方簽藍文字動作，例如「✦ AI 整理」。",
+      "html": "<button class=\"ds-btn-link\">✦ AI 整理</button>",
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-btn-link{border:0;border-radius:999px;padding:4px 8px;background:none;color:var(--accent);font:600 13px var(--sans);cursor:pointer;transition:background .2s}.ds-btn-link:hover{background:var(--accent-soft)}.ds-btn-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px}"
+    },
+    {
+      "name": "Search Bar",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "膠囊形搜尋列，聚焦時出現處方簽淡藍光暈。",
+      "html": "<form class=\"ds-search\"><span>⌕</span><input placeholder=\"用一句話找筆記\" /><button>搜尋</button></form>",
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-search{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 18px;background:var(--surface);border:1px solid var(--line);border-radius:999px;box-shadow:0 1px 2px rgba(22,35,44,.05);transition:border-color .2s,box-shadow .2s;font-family:var(--sans)}.ds-search:focus-within{border-color:#c9d6e0;box-shadow:0 0 0 4px var(--accent-soft)}.ds-search span{color:var(--faint);font-size:20px}.ds-search input{flex:1;border:0;outline:0;background:none;padding:10px 4px;font:15px var(--sans);color:var(--ink)}.ds-search button{border:0;border-radius:999px;padding:11px 20px;background:var(--ink);color:#fff;font:600 14px var(--sans)}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "暖白底輸入框，10px 圓角。",
+      "html": "<label class=\"ds-field\">主訴<input value=\"咳嗽兩週，有痰\" /></label>",
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-field{display:grid;gap:6px;color:var(--ink-2);font:600 13px var(--sans)}.ds-field input{padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:#fdfcfa;font:400 14px var(--sans);color:var(--ink);transition:border-color .2s,box-shadow .2s,background .2s}.ds-field input:focus{outline:0;border-color:#b9cad8;background:#fff;box-shadow:0 0 0 4px var(--accent-soft)}"
+    },
+    {
+      "name": "Topic Chips",
+      "kind": "chip",
+      "refersTo": "chip-topic",
+      "description": "主題標籤：色點＋名稱＋計數；選中反轉為墨底。",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip is-active\" style=\"--hue:210\"><i></i>全部<small>12</small></button><button class=\"ds-chip\" style=\"--hue:28\"><i></i>蟲咬的問題<small>3</small></button><button class=\"ds-chip\" style=\"--hue:152\"><i></i>咳嗽的處置<small>5</small></button></div>",
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-chips{display:flex;gap:6px;flex-wrap:wrap}.ds-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink-2);font:14px var(--sans);cursor:pointer}.ds-chip i{width:8px;height:8px;border-radius:50%;background:hsl(var(--hue) 40% 52%)}.ds-chip small{color:var(--faint);font-size:12px}.ds-chip.is-active{background:var(--ink);border-color:var(--ink);color:#fff}.ds-chip.is-active i{background:#fff}.ds-chip.is-active small{color:rgba(255,255,255,.7)}"
+    },
+    {
+      "name": "Note Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "學習庫筆記卡：引文封面、主題色點、標題、摘要、來源與日期。",
+      "html": "<article class=\"ds-card\" style=\"--hue:28\"><div class=\"ds-cover\"><blockquote>跳蚤咬傷常見於下肢與足踝，小於1公分的搔癢丘疹。</blockquote><span>✎ 文字</span></div><div class=\"ds-body\"><em>蟲咬的問題</em><b>跳蚤咬傷的辨識</b><p>多見於下肢，家中有寵物時要考慮。</p><footer><span>AFP</span><span>今天</span></footer></div></article>",
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-card{width:260px;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(22,35,44,.05);font-family:var(--sans);color:var(--ink);transition:transform .35s var(--ease),box-shadow .35s var(--ease)}.ds-card:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(22,35,44,.04),0 12px 32px -12px rgba(22,35,44,.18)}.ds-cover{position:relative;aspect-ratio:4/3;padding:22px 20px 50px;background:hsl(var(--hue) 35% 94%)}.ds-cover blockquote{margin:0;font:15px/1.7 var(--serif);color:hsl(var(--hue) 30% 22%)}.ds-cover span{position:absolute;left:12px;bottom:12px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.92);font-size:12px;font-weight:600;color:var(--ink-2)}.ds-body{display:grid;gap:8px;padding:16px 18px 18px}.ds-body em{font-style:normal;font-size:12px;color:var(--muted)}.ds-body b{font-size:15px;font-weight:600}.ds-body p{margin:0;font-size:13px;color:var(--muted)}.ds-body footer{display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--line-2);font-size:12px;color:var(--faint)}"
+    },
+    {
+      "name": "Recommendation Card",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "推薦藥卡：外觀照片封面、藥名、分類、理由徽章、採用按鈕。",
+      "html": "<article class=\"ds-rec\" style=\"--hue:200\"><div class=\"ds-rec-cover\">D</div><div class=\"ds-rec-body\"><b>dextromethorphan</b><span>鎮咳劑</span><em>常用第一線類別</em></div><div class=\"ds-rec-actions\"><button>採用</button><button aria-label=\"更多\">⋯</button></div></article>",
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-rec{width:196px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(22,35,44,.05);font-family:var(--sans);overflow:hidden;transition:transform .3s var(--ease),box-shadow .3s var(--ease)}.ds-rec:hover{transform:translateY(-3px);box-shadow:0 1px 2px rgba(22,35,44,.04),0 12px 32px -12px rgba(22,35,44,.18)}.ds-rec-cover{height:118px;display:grid;place-items:center;background:linear-gradient(140deg,hsl(var(--hue) 30% 95%),hsl(var(--hue) 28% 89%));font:700 44px var(--serif);color:hsl(var(--hue) 30% 40% / .5)}.ds-rec-body{display:grid;gap:4px;padding:12px 14px 6px}.ds-rec-body b{font-size:14px;color:var(--ink)}.ds-rec-body span{font-size:12px;color:var(--muted)}.ds-rec-body em{justify-self:start;padding:2px 8px;border-radius:999px;background:var(--paper);font:600 11px var(--sans);color:var(--ink-2)}.ds-rec-actions{display:flex;gap:6px;padding:8px 12px 12px}.ds-rec-actions button:first-child{flex:1;padding:8px;border:0;border-radius:999px;background:var(--ink);color:#fff;font:600 13px var(--sans)}.ds-rec-actions button:last-child{width:34px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted)}"
+    },
+    {
+      "name": "Side Navigation",
+      "kind": "nav",
+      "refersTo": "",
+      "description": "側邊欄：目前頁為紙頁白底加頁緣線，圖示轉為處方簽藍。",
+      "html": "<nav class=\"ds-nav\"><a class=\"is-active\"><i>❖</i>學習庫</a><a><i>◫</i>病歷與開藥</a><a><i>▤</i>衛教單</a></nav>",
+      "css": ":host{--paper:#f5f3ee;--surface:#fff;--ink:#16232c;--ink-2:#3a4a55;--muted:#6e7a83;--faint:#9aa4ab;--line:#e4dfd5;--line-2:#eeeae2;--accent:#1f5e8c;--accent-soft:#e6eef5;--ok:#2f7d6b;--ok-soft:#e5f2ee;--serif:'Noto Serif TC','Songti TC',serif;--sans:Inter,'Noto Sans TC','PingFang TC',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}.ds-nav{display:grid;gap:2px;width:200px;padding:12px;background:#fbfaf7;font-family:var(--sans)}.ds-nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--ink-2);font-size:14px;font-weight:500;cursor:pointer;transition:background .2s}.ds-nav a i{width:20px;text-align:center;font-style:normal;color:var(--faint)}.ds-nav a:hover{background:rgba(22,35,44,.04)}.ds-nav a.is-active{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(22,35,44,.05),inset 0 0 0 1px var(--line)}.ds-nav a.is-active i{color:var(--accent)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Clinical Notebook（臨床手札）",
+    "overview": "**Creative North Star: \"The Clinical Notebook\"（臨床手札）**\n\n這套介面是一本醫師自己的臨床手札：米白紙頁、墨色字跡、襯線體寫下的標題，像資深學長借你翻的那本筆記。它沉穩、溫和、專業。可靠，但不冷漠；安靜，但每一頁都有內容。資訊密度適中，讓醫師在看診空檔的幾分鐘內就能找到東西、做出決定，再回到病人身上。\n\n色彩被刻意壓低：紙、墨、鉛筆灰構成九成畫面，只有「處方簽藍」標記可以點的東西與目前的位置。真正有顏色的是內容本身：每個臨床主題由名稱算出一個固定色相，像在手札頁緣貼上的彩色索引貼，讓「蟲咬的問題」在索引、卡片、主題頁上永遠是同一個顏色。\n\n元件手感是**柔軟而親切**：膠囊形按鈕、大圓角卡片、溫暖的紙白輸入框。深度追求**有層次的立體感**：紙頁疊在紙頁上，每一層看得出前後。（目前實作的卡片在靜止時幾乎是平的，見 Elevation & Depth 的方向說明。）",
+    "keyCharacteristics": [
+      "紙感暖白底（notebook-paper）與墨色字，不用純黑、不用純灰",
+      "襯線體只給標題與主題名稱，內文、標籤與數字都用無襯線體",
+      "單一強調色「處方簽藍」，只用在互動、焦點與目前位置",
+      "主題色由名稱雜湊而來（色相 0–360，飽和度約 35–40%），是唯一的「彩色」來源",
+      "膠囊形動作與標籤、16px 圓角卡片、22px 圓角對話框",
+      "動態只有一種曲線：緩出的 `cubic-bezier(.2, .7, .2, 1)`，以浮起與淡入呈現"
+    ],
+    "rules": [
+      {
+        "name": "The Ink-Only-Where-You-Act Rule",
+        "body": "處方簽藍只出現在可以點、正在聚焦或代表「你在這裡」的地方。它不拿來裝飾標題、圖示或背景。",
+        "section": "colors"
+      },
+      {
+        "name": "The Content-Carries-Color Rule",
+        "body": "畫面上唯一的「彩色」來自內容（主題色、TFDA 藥品外觀照片、醫師上傳的圖表）。介面框架本身維持紙、墨、鉛筆三色。",
+        "section": "colors"
+      },
+      {
+        "name": "The Status-Means-Attention Rule",
+        "body": "綠、琥珀、紅只用來傳達狀態（完成、待確認、危險或過敏），不可當作品牌色或裝飾使用。",
+        "section": "colors"
+      },
+      {
+        "name": "The Serif-Is-For-Names Rule",
+        "body": "襯線體只給「名字」：頁面標題、主題名稱、書架標題、引文封面。按鈕、表單、數字、藥名一律用無襯線體。",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular-Numbers Rule",
+        "body": "計數、日期、計時器與 ICD-10 碼使用 `font-variant-numeric: tabular-nums`，讓數字對齊不跳動。",
+        "section": "typography"
+      },
+      {
+        "name": "The Grid-Must-Shrink Rule",
+        "body": "任何包含橫向捲動內容的格線欄位都用 `minmax(0, 1fr)`，避免整頁在手機上被撐寬。",
+        "section": "layout"
+      },
+      {
+        "name": "The Stacked-Sheets Rule",
+        "body": "深度表達「哪張紙在上面」。同一層的元素陰影一致；只有在上一層的東西（彈出層、對話框）才能比下面的東西更浮。",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** 讓手札紙（#f5f3ee）當頁面底、紙頁白（#ffffff）當卡片，用明度差而不是大量邊框區分層級。",
+      "**Do** 把處方簽藍（#1f5e8c）留給連結、焦點與目前位置。",
+      "**Do** 用名稱雜湊出的 `--hue` 為主題上色，並在索引、卡片、主題頁、病灶標籤保持一致。",
+      "**Do** 標題與主題名稱用 Noto Serif TC；資料、按鈕、藥名用 Inter／Noto Sans TC。",
+      "**Do** 所有動作與標籤使用膠囊形，卡片 16px、輸入框 10px、對話框 22px。",
+      "**Do** 用同一條緩出曲線 `cubic-bezier(.2, .7, .2, 1)` 做浮起與淡入，並遵守 `prefers-reduced-motion`。",
+      "**Do** 在 AI 產生的內容旁放上琥珀色「AI 產生，待醫師確認」標籤。",
+      "**Do** 外部圖片（TFDA 外觀圖）載入完成後再淡入。"
+    ],
+    "donts": [
+      "**Don't** 使用純黑 #000 或冷灰；文字最深就是手札墨 #16232c。",
+      "**Don't** 把綠、琥珀、紅當裝飾色或品牌色。",
+      "**Don't** 在介面框架上加入第二個強調色；彩色只能來自內容。",
+      "**Don't** 用直角或小於 8px 的圓角。",
+      "**Don't** 在內文、按鈕、表單或數字上使用襯線體。",
+      "**Don't** 讓含橫向捲動的格線欄位使用 `1fr`（請用 `minmax(0, 1fr)`）。"
+    ]
+  }
+}
