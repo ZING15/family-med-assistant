@@ -11,12 +11,27 @@ import base64
 import json
 import math
 import re
+import shutil
+import subprocess
+import tempfile
+import urllib.error
+import urllib.request
+import uuid
 from datetime import datetime
 from pathlib import Path
 
 from openai import AzureOpenAI
+from opencc import OpenCC
 
 from .config import azure
+
+# MAI-Transcribe 的中文輸出為簡體，轉成台灣正體與用語
+_to_traditional = OpenCC("s2twp").convert
+SPEECH_FORMATS = {".wav", ".mp3", ".flac"}
+
+
+class TranscriptionError(RuntimeError):
+    pass
 
 
 def _meta(mode: str, model: str = "") -> dict:
@@ -89,7 +104,9 @@ class AIService:
 
     @property
     def transcribe_ready(self) -> bool:
-        return self._transcribe is not None
+        return self._transcribe is not None or bool(
+            azure.speech_model and azure.speech_endpoint and azure.speech_api_key
+        )
 
     @property
     def image_ready(self) -> bool:
@@ -149,16 +166,56 @@ class AIService:
 
     # ---- 語音轉文字 ----
     def transcribe(self, audio_path: Path) -> tuple[str | None, dict]:
-        if not self.transcribe_ready:
-            return None, _meta("demo")
-        with open(audio_path, "rb") as f:
-            response = self._transcribe.audio.transcriptions.create(
-                model=azure.transcribe_deployment,
-                file=(audio_path.name, f),
-                # 提示醫學情境，讓中英夾雜的專有名詞辨識更準
-                prompt="以下是醫師以繁體中文口述的醫學學習筆記，可能夾雜英文醫學名詞。",
-            )
-        return response.text, _meta("azure", azure.transcribe_deployment)
+        if self._transcribe is not None:
+            with open(audio_path, "rb") as f:
+                response = self._transcribe.audio.transcriptions.create(
+                    model=azure.transcribe_deployment,
+                    file=(audio_path.name, f),
+                    # 提示醫學情境，讓中英夾雜的專有名詞辨識更準
+                    prompt="以下是醫師以繁體中文口述的醫學學習筆記，可能夾雜英文醫學名詞。",
+                )
+            return _to_traditional(response.text), _meta("azure", azure.transcribe_deployment)
+        if azure.speech_model and azure.speech_endpoint and azure.speech_api_key:
+            return _to_traditional(self._speech_transcribe(audio_path)), _meta("azure", azure.speech_model)
+        return None, _meta("demo")
+
+    def _speech_transcribe(self, audio_path: Path) -> str:
+        """Azure Speech 快速轉錄 API（enhancedMode 指定 MAI-Transcribe 模型）。"""
+        with tempfile.TemporaryDirectory() as tmp:
+            path = audio_path if audio_path.suffix in SPEECH_FORMATS else _convert_to_wav(audio_path, Path(tmp))
+            definition = {
+                "enhancedMode": {
+                    "enabled": True,
+                    "model": azure.speech_model,
+                    # clean：去除「嗯、呃」等贅字，適合整理成筆記
+                    "modelOptions": {"transcribeStyle": "clean"},
+                }
+            }
+            boundary = uuid.uuid4().hex
+            body = (
+                f'--{boundary}\r\nContent-Disposition: form-data; name="audio"; filename="{path.name}"\r\n'
+                f"Content-Type: application/octet-stream\r\n\r\n"
+            ).encode() + path.read_bytes() + (
+                f'\r\n--{boundary}\r\nContent-Disposition: form-data; name="definition"\r\n\r\n'
+                f"{json.dumps(definition)}\r\n--{boundary}--\r\n"
+            ).encode()
+        host = azure.speech_endpoint.rstrip("/")
+        request = urllib.request.Request(
+            f"{host}/speechtotext/transcriptions:transcribe?api-version={azure.speech_api_version}",
+            data=body,
+            headers={
+                "Ocp-Apim-Subscription-Key": azure.speech_api_key,
+                "Content-Type": f"multipart/form-data; boundary={boundary}",
+            },
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=120) as response:
+                result = json.loads(response.read())
+        except urllib.error.HTTPError as error:
+            raise TranscriptionError(f"語音服務回應 {error.code}：{error.read().decode()[:200]}") from error
+        except urllib.error.URLError as error:
+            raise TranscriptionError(f"無法連線語音服務：{error.reason}") from error
+        return " ".join(p["text"] for p in result.get("combinedPhrases", []))
 
     # ---- Embedding ----
     def embed(self, text: str) -> list[float] | None:
@@ -178,6 +235,20 @@ class AIService:
         if getattr(item, "b64_json", None):
             return base64.b64decode(item.b64_json), _meta("azure", azure.image_deployment)
         return None, _meta("azure", azure.image_deployment)
+
+
+def _convert_to_wav(source: Path, folder: Path) -> Path:
+    """瀏覽器錄音多為 webm／m4a，MAI-Transcribe 只收 WAV／MP3／FLAC，以 ffmpeg 轉成 16kHz 單聲道 WAV。"""
+    if not shutil.which("ffmpeg"):
+        raise TranscriptionError("伺服器需要安裝 ffmpeg 才能轉換這個音檔格式（brew install ffmpeg）")
+    target = folder / f"{source.stem}.wav"
+    result = subprocess.run(
+        ["ffmpeg", "-y", "-loglevel", "error", "-i", str(source), "-ac", "1", "-ar", "16000", str(target)],
+        capture_output=True, text=True, timeout=120,
+    )
+    if result.returncode != 0:
+        raise TranscriptionError(f"音檔轉換失敗：{result.stderr.strip()[:200]}")
+    return target
 
 
 def cosine(a: list[float], b: list[float]) -> float:

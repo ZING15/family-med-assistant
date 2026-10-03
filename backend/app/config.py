@@ -29,7 +29,13 @@ class AzureSettings:
     embedding_deployment = env("AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
     # 圖片辨識可另用較強的模型（中文表格 OCR 品質差異大）；未設定時沿用對話模型
     vision_deployment = env("AZURE_OPENAI_VISION_DEPLOYMENT") or chat_deployment
-    # 語音轉文字（gpt-4o-mini-transcribe 等）需要 2025-03-01-preview 以上的 API 版本
+    # 語音轉文字，二擇一：
+    # 1. Azure Speech 快速轉錄 + MAI-Transcribe（不需部署，用同一個 Foundry 資源的金鑰）
+    speech_model = env("AZURE_SPEECH_MODEL")
+    speech_endpoint = env("AZURE_SPEECH_ENDPOINT") or endpoint
+    speech_api_key = env("AZURE_SPEECH_API_KEY") or api_key
+    speech_api_version = env("AZURE_SPEECH_API_VERSION", "2025-10-15")
+    # 2. Azure OpenAI 部署（gpt-4o-mini-transcribe 等，需要 2025-03-01-preview 以上的 API 版本）
     transcribe_deployment = env("AZURE_OPENAI_TRANSCRIBE_DEPLOYMENT")
     transcribe_api_version = env("AZURE_OPENAI_TRANSCRIBE_API_VERSION", "2025-03-01-preview")
     # 圖片生成模型常部署在不同區域的資源，因此允許另設端點與金鑰

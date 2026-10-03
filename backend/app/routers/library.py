@@ -19,7 +19,7 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 from openai import OpenAIError
 from pydantic import BaseModel, Field
 
-from ..ai import ai, cosine
+from ..ai import TranscriptionError, ai, cosine
 from ..config import UPLOAD_DIR
 from ..db import app_db, now
 
@@ -141,14 +141,18 @@ def analyze(body: AnalyzeIn):
             if text is None:
                 return {
                     "suggestion": {}, "transcript": "", "ai_meta": meta,
-                    "message": "語音辨識尚未設定（需要 AZURE_OPENAI_TRANSCRIBE_DEPLOYMENT），請手動輸入內容。",
+                    "message": "語音辨識尚未設定（需要 AZURE_SPEECH_MODEL 或 AZURE_OPENAI_TRANSCRIBE_DEPLOYMENT），請手動輸入內容。",
                 }
             transcript = text.strip()
             if not transcript:
                 raise HTTPException(422, "沒有辨識到語音內容，請確認麥克風或音檔")
+            transcribe_model = meta["model"]
             suggestion, meta = ai.analyze_text(transcript, spoken=True)
+            meta = {**meta, "model": f"{transcribe_model} + {meta['model']}" if meta["model"] else transcribe_model}
     except OpenAIError as error:
         raise HTTPException(502, f"AI 服務錯誤：{getattr(error, 'message', str(error))[:200]}")
+    except TranscriptionError as error:
+        raise HTTPException(502, str(error))
 
     message = "" if meta["mode"] == "azure" else "示範模式：尚未設定 Azure OpenAI，請手動輸入內容。"
     return {"suggestion": suggestion, "transcript": transcript, "ai_meta": meta, "message": message}
