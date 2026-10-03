@@ -57,6 +57,20 @@ class LibraryItemIn(BaseModel):
     ref_id: str = ""
 
 
+class TopicRename(BaseModel):
+    old: str = Field(..., min_length=1)
+    new: str = Field(..., min_length=1, max_length=40)
+
+
+class TopicAssignment(BaseModel):
+    id: int
+    topic: str = Field(..., min_length=1, max_length=40)
+
+
+class TopicApply(BaseModel):
+    assignments: list[TopicAssignment]
+
+
 class AnalyzeIn(BaseModel):
     mode: Literal["image", "text", "voice"]
     image_path: str = ""
@@ -86,6 +100,43 @@ def _resolve_upload(image_path: str):
     if not str(path).startswith(str(UPLOAD_DIR.resolve())) or not path.is_file():
         raise HTTPException(404, "找不到上傳的圖片")
     return path
+
+
+_topic_vectors: dict[str, list[float]] = {}
+
+
+def _existing_topics() -> list[str]:
+    """現有主題，依筆記數量排序。"""
+    with app_db() as con:
+        rows = con.execute(
+            "SELECT topic, COUNT(*) AS n FROM library_items WHERE topic != '' GROUP BY topic ORDER BY n DESC, MAX(updated_at) DESC"
+        ).fetchall()
+    return [r["topic"] for r in rows]
+
+
+def _topic_vector(topic: str) -> list[float] | None:
+    if topic not in _topic_vectors:
+        vector = ai.embed(topic)
+        if vector is None:
+            return None
+        _topic_vectors[topic] = vector
+    return _topic_vectors[topic]
+
+
+def _related_topics(suggestion: dict, topics: list[str], limit: int = 3) -> list[dict]:
+    """用 embedding 找出與 AI 建議內容最接近的現有主題，讓醫師一鍵改用。"""
+    if not topics or not ai.embedding_ready:
+        return []
+    query = ai.embed(f"{suggestion.get('topic', '')}｜{suggestion.get('title', '')}｜{' '.join(suggestion.get('tags', []))}")
+    if not query:
+        return []
+    scored = []
+    for topic in topics:
+        vector = _topic_vector(topic)
+        if vector:
+            scored.append({"topic": topic, "score": round(cosine(query, vector), 3)})
+    scored.sort(key=lambda t: t["score"], reverse=True)
+    return [t for t in scored[:limit] if t["score"] >= 0.35]
 
 
 @router.post("/uploads")
@@ -126,15 +177,16 @@ async def upload_audio(file: UploadFile = File(...)):
 def analyze(body: AnalyzeIn):
     """AI 整理內容，只回傳建議，不自動儲存。"""
     transcript = ""
+    topics = _existing_topics()
     try:
         if body.mode == "image":
             path = _resolve_upload(body.image_path)
             mime = next((m for m, ext in ALLOWED_TYPES.items() if path.suffix == ext), "image/png")
-            suggestion, meta = ai.analyze_figure(path.read_bytes(), mime)
+            suggestion, meta = ai.analyze_figure(path.read_bytes(), mime, topics)
         elif body.mode == "text":
             if not body.text.strip():
                 raise HTTPException(422, "請先輸入筆記內容")
-            suggestion, meta = ai.analyze_text(body.text)
+            suggestion, meta = ai.analyze_text(body.text, topics=topics)
         else:
             path = _resolve_upload(body.audio_path)
             text, meta = ai.transcribe(path)
@@ -147,7 +199,7 @@ def analyze(body: AnalyzeIn):
             if not transcript:
                 raise HTTPException(422, "沒有辨識到語音內容，請確認麥克風或音檔")
             transcribe_model = meta["model"]
-            suggestion, meta = ai.analyze_text(transcript, spoken=True)
+            suggestion, meta = ai.analyze_text(transcript, spoken=True, topics=topics)
             meta = {**meta, "model": f"{transcribe_model} + {meta['model']}" if meta["model"] else transcribe_model}
     except OpenAIError as error:
         raise HTTPException(502, f"AI 服務錯誤：{getattr(error, 'message', str(error))[:200]}")
@@ -155,11 +207,22 @@ def analyze(body: AnalyzeIn):
         raise HTTPException(502, str(error))
 
     message = "" if meta["mode"] == "azure" else "示範模式：尚未設定 Azure OpenAI，請手動輸入內容。"
-    return {"suggestion": suggestion, "transcript": transcript, "ai_meta": meta, "message": message}
+    try:
+        related = _related_topics(suggestion, topics) if meta["mode"] == "azure" else []
+    except OpenAIError:
+        related = []
+    return {
+        "suggestion": suggestion,
+        "transcript": transcript,
+        "ai_meta": meta,
+        "message": message,
+        "topic_exists": suggestion.get("topic", "") in topics,
+        "related_topics": [t for t in related if t["topic"] != suggestion.get("topic")],
+    }
 
 
 @router.get("")
-def list_items(q: str = "", tag: str = "", kind: str = "", mode: str = "auto"):
+def list_items(q: str = "", tag: str = "", kind: str = "", topic: str = "", mode: str = "auto"):
     """
     mode: keyword | semantic | auto
     auto 會在 embedding 可用時合併語意與關鍵字分數，否則只用關鍵字。
@@ -170,6 +233,8 @@ def list_items(q: str = "", tag: str = "", kind: str = "", mode: str = "auto"):
     items = []
     for row in rows:
         if kind and row["kind"] != kind:
+            continue
+        if topic and row["topic"] != topic:
             continue
         tags = json.loads(row["tags"] or "[]")
         if tag and tag not in tags:
@@ -214,6 +279,70 @@ def list_tags():
         for t in json.loads(row["tags"] or "[]"):
             counts[t] = counts.get(t, 0) + 1
     return {"tags": sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))}
+
+
+@router.get("/topics")
+def list_topics():
+    """主題清單：筆記數、最後更新時間與一張封面圖。"""
+    with app_db() as con:
+        rows = con.execute(
+            "SELECT topic, kind, image_path, updated_at FROM library_items ORDER BY updated_at DESC"
+        ).fetchall()
+    topics: dict[str, dict] = {}
+    for row in rows:
+        name = row["topic"] or "未分類"
+        entry = topics.setdefault(name, {"topic": name, "count": 0, "updated_at": row["updated_at"], "cover_url": "", "kinds": {}})
+        entry["count"] += 1
+        entry["kinds"][row["kind"]] = entry["kinds"].get(row["kind"], 0) + 1
+        if not entry["cover_url"] and row["image_path"]:
+            entry["cover_url"] = f"/uploads/{row['image_path']}"
+    return {"topics": sorted(topics.values(), key=lambda t: (-t["count"], t["topic"]))}
+
+
+@router.put("/topics")
+def rename_topic(body: TopicRename):
+    """主題改名；改成已存在的名稱即為合併。"""
+    with app_db() as con:
+        old = "" if body.old == "未分類" else body.old
+        cur = con.execute(
+            "UPDATE library_items SET topic = ?, updated_at = ? WHERE topic = ?", (body.new.strip(), now(), old)
+        )
+    return {"updated": cur.rowcount}
+
+
+@router.post("/topics/reorganize")
+def propose_topics():
+    """AI 建議新的主題分類，只回傳建議，醫師確認後再套用。"""
+    with app_db() as con:
+        rows = con.execute("SELECT id, title, topic, tags, ai_summary, note FROM library_items").fetchall()
+    if not rows:
+        return {"assignments": []}
+    items = [
+        {"id": r["id"], "title": r["title"], "topic": r["topic"], "tags": json.loads(r["tags"] or "[]"),
+         "summary": r["ai_summary"] or r["note"]}
+        for r in rows
+    ]
+    try:
+        result, meta = ai.propose_topics(items)
+    except OpenAIError as error:
+        raise HTTPException(502, f"AI 服務錯誤：{getattr(error, 'message', str(error))[:200]}")
+    if result is None:
+        raise HTTPException(503, "需要設定 Azure OpenAI 才能使用 AI 整理主題")
+    current = {i["id"]: i for i in items}
+    assignments = [
+        {"id": a["id"], "title": current[a["id"]]["title"], "old": current[a["id"]]["topic"], "topic": str(a["topic"]).strip()}
+        for a in result.get("assignments", [])
+        if isinstance(a, dict) and a.get("id") in current and str(a.get("topic", "")).strip()
+    ]
+    return {"assignments": assignments, "ai_meta": meta}
+
+
+@router.post("/topics/apply")
+def apply_topics(body: TopicApply):
+    with app_db() as con:
+        for a in body.assignments:
+            con.execute("UPDATE library_items SET topic = ?, updated_at = ? WHERE id = ?", (a.topic.strip(), now(), a.id))
+    return {"updated": len(body.assignments)}
 
 
 @router.get("/{item_id}")

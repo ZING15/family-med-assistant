@@ -15,6 +15,15 @@ from .routers import library
 app = FastAPI(title="新手家醫看診助手 API", version="0.2.0")
 
 
+@app.middleware("http")
+async def no_cache_frontend(request, call_next):
+    """前端檔案每次都向伺服器確認是否有新版（開發期間修改後重新整理即可看到）。"""
+    response = await call_next(request)
+    if not request.url.path.startswith(("/api", "/uploads")):
+        response.headers["Cache-Control"] = "no-cache"
+    return response
+
+
 def cleanup_orphan_uploads(max_age_hours: int = 6) -> int:
     """刪除上傳後沒有存成筆記（例如按了取消）且超過時限的檔案。"""
     folder = UPLOAD_DIR / "library"

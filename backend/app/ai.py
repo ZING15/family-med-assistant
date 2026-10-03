@@ -40,7 +40,7 @@ def _meta(mode: str, model: str = "") -> dict:
 
 # 學習庫三種輸入共用的輸出格式；source_* 只在內容中明確出現時才填
 NOTE_FIELDS = (
-    "\"title\": 繁體中文標題(20字內), \"topic\": 主題分類(例：皮膚科／蟲咬), "
+    "\"title\": 繁體中文標題(20字內), \"topic\": 主題(見主題規則), "
     "\"tags\": 3-6個繁中或英文醫學標籤, \"summary\": 1-2句繁體中文重點, "
     "\"source_title\": 引用的期刊、指南或文章名稱(多個以；分隔), "
     "\"source_year\": 出版年份(4位數), "
@@ -52,6 +52,22 @@ SOURCE_RULE = (
     "圖說、頁尾、作者年份（例如 Stanley 2017）。年份與 DOI 也只在內容中出現時才填。"
     "完全看不到任何參考資料才留空字串，不可自行杜撰期刊名稱。"
 )
+TOPIC_RULE = (
+    "主題規則：topic 是以臨床問題為中心的主題，用 4-12 字的繁體中文片語，"
+    "例如「咳嗽的處置」「蟲咬的問題」「上消化道出血評估」「兒童發燒」；不要用科別（皮膚科、小兒科）或「醫學知識」這類籠統名稱。"
+)
+
+
+def topic_instruction(topics: list[str]) -> str:
+    if not topics:
+        return TOPIC_RULE
+    listed = "、".join(f"「{t}」" for t in topics[:60])
+    return (
+        TOPIC_RULE + f"現有主題：{listed}。內容屬於其中某個主題時，topic 必須一字不差地沿用該主題；"
+        "只有和所有現有主題都無關時才建立新主題。"
+    )
+
+
 EMPTY_NOTE = {
     "title": "", "topic": "", "tags": [], "summary": "",
     "source_title": "", "source_year": "", "source_url": "", "extracted_text": "",
@@ -139,12 +155,12 @@ class AIService:
         return json.loads(content), _meta("azure", deployment)
 
     # ---- 學習庫：圖片 ----
-    def analyze_figure(self, image_bytes: bytes, mime: str) -> tuple[dict, dict]:
+    def analyze_figure(self, image_bytes: bytes, mime: str, topics: list[str] = ()) -> tuple[dict, dict]:
         system = (
             "你協助醫師把期刊圖表、評估量表或醫學 AI 查詢結果的截圖整理成學習筆記。"
             "只描述圖中呈現的內容，不做病人診斷或影像判讀。"
             f"回傳 JSON：{{{NOTE_FIELDS}, \"extracted_text\": 圖中可辨識的文字(保留原文與表格結構)}}。"
-            + SOURCE_RULE
+            + SOURCE_RULE + topic_instruction(list(topics))
         )
         data_url = f"data:{mime};base64,{base64.b64encode(image_bytes).decode()}"
         user = [
@@ -155,14 +171,28 @@ class AIService:
         return _normalize(result), meta
 
     # ---- 學習庫：文字與語音逐字稿 ----
-    def analyze_text(self, text: str, spoken: bool = False) -> tuple[dict, dict]:
+    def analyze_text(self, text: str, spoken: bool = False, topics: list[str] = ()) -> tuple[dict, dict]:
         kind = "醫師口述的語音逐字稿（可能有口語贅字或辨識錯字）" if spoken else "醫師寫的文字筆記"
         system = (
             f"你協助醫師整理學習筆記。以下是{kind}。不做病人診斷。"
-            f"回傳 JSON：{{{NOTE_FIELDS}}}。" + SOURCE_RULE
+            f"回傳 JSON：{{{NOTE_FIELDS}}}。" + SOURCE_RULE + topic_instruction(list(topics))
         )
         result, meta = self.chat_json(system, text[:12000])
         return _normalize(result), meta
+
+    # ---- 學習庫：重新整理主題 ----
+    def propose_topics(self, items: list[dict]) -> tuple[dict | None, dict]:
+        """把所有筆記重新歸類成臨床問題導向的主題，相關筆記合併到同一主題。"""
+        system = (
+            "你協助醫師整理學習庫的主題分類。" + TOPIC_RULE
+            + "請把相關的筆記歸到同一個主題（主題數量盡量精簡，但不要硬把無關的內容合併）。"
+            "回傳 JSON：{\"assignments\": [{\"id\": 筆記 id, \"topic\": 主題}]}，每筆筆記都要出現一次。"
+        )
+        lines = "\n".join(
+            f"id={i['id']}｜標題：{i['title']}｜原主題：{i['topic']}｜標籤：{'、'.join(i['tags'])}｜摘要：{i['summary'][:80]}"
+            for i in items
+        )
+        return self.chat_json(system, lines, max_tokens=3000)
 
     # ---- 語音轉文字 ----
     def transcribe(self, audio_path: Path) -> tuple[str | None, dict]:

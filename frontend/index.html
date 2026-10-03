@@ -3,89 +3,78 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="新手家醫看診助手 - 圖像學習庫、用藥推薦與衛教單（練習專案）" />
+    <meta name="description" content="新手家醫看診助手 - 學習庫、用藥推薦與衛教單（練習專案）" />
     <title>新手家醫看診助手</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="app-shell">
       <aside class="sidebar" aria-label="主要導覽">
         <a class="brand" href="#library" aria-label="新手家醫看診助手首頁">
-          <span class="brand-mark">✚</span>
-          <span>新手家醫<br /><strong>看診助手</strong></span>
+          <span class="brand-mark" aria-hidden="true">✚</span>
+          <span class="brand-text">新手家醫<strong>看診助手</strong></span>
         </a>
 
         <nav class="nav-list">
-          <a class="nav-item" data-view="library" href="#library"><span>▧</span>圖像學習庫</a>
-          <a class="nav-item" data-view="records" href="#records"><span>◫</span>病歷與開藥</a>
-          <a class="nav-item" data-view="education" href="#education"><span>▤</span>衛教單</a>
+          <a class="nav-item" data-view="library" href="#library"><span aria-hidden="true">❖</span><em>學習庫</em></a>
+          <a class="nav-item" data-view="records" href="#records"><span aria-hidden="true">◫</span><em>病歷與開藥</em></a>
+          <a class="nav-item" data-view="education" href="#education"><span aria-hidden="true">▤</span><em>衛教單</em></a>
         </nav>
 
-        <div class="privacy-note">
-          <span class="shield">◈</span>
-          <div><strong>練習資料，非臨床建議</strong><br />請勿輸入姓名、病歷號或可辨識影像。</div>
+        <div class="sidebar-foot">
+          <span class="ai-status" id="aiStatus" title="AI 服務狀態">AI 檢查中…</span>
+          <p class="privacy-note"><b>練習資料，非臨床建議</b>請勿輸入姓名、病歷號或可辨識影像。</p>
         </div>
       </aside>
 
       <main>
-        <header class="topbar">
-          <div class="crumb">新手家醫看診助手 <span>/</span> <b id="crumbTitle">圖像學習庫</b></div>
-          <div class="top-actions">
-            <span class="ai-status" id="aiStatus" title="AI 服務狀態">AI 檢查中…</span>
-          </div>
-        </header>
-
         <div class="content">
-          <!-- F-01 / F-02 圖像學習庫 -->
-          <section class="view" id="view-library" data-title="圖像學習庫">
-            <div class="view-head">
+          <!-- F-01 / F-02 學習庫 -->
+          <section class="view" id="view-library" data-title="學習庫">
+            <header class="library-hero">
               <div>
-                <p class="eyebrow">圖像學習庫</p>
-                <h1>需要時，馬上找回那張圖</h1>
-                <p class="view-sub">用圖片、文字或語音收藏學到的東西；用關鍵字或一句話搜尋。</p>
+                <p class="eyebrow">學習庫</p>
+                <h1>把學到的，<br class="mobile-break" />整理成自己的臨床知識</h1>
+                <p class="hero-meta" id="libraryStats">　</p>
               </div>
-              <button class="primary-button" id="addLibraryButton" type="button">＋ 新增筆記</button>
-            </div>
+              <button class="primary-button add-button" id="addLibraryButton" type="button"><span aria-hidden="true">＋</span>新增筆記</button>
+            </header>
 
             <form class="library-search" id="librarySearchForm" role="search">
+              <span class="search-icon" aria-hidden="true">⌕</span>
               <label class="sr-only" for="libraryQuery">搜尋學習庫</label>
-              <input id="libraryQuery" type="search" placeholder="例：胃出血嚴重度評估、COPD 分級、asthma step therapy" autocomplete="off" />
+              <input id="libraryQuery" type="search" placeholder="用一句話找筆記，例如「兒童發燒什麼時候要驗尿」" autocomplete="off" />
               <select id="librarySearchMode" aria-label="搜尋方式">
                 <option value="auto">智慧搜尋</option>
-                <option value="keyword">只比對關鍵字</option>
+                <option value="keyword">關鍵字</option>
               </select>
               <button class="primary-button" type="submit">搜尋</button>
             </form>
 
-            <div class="filter-row">
-              <div class="kind-tabs" role="tablist" aria-label="類型">
-                <button type="button" class="chip active" data-kind="">全部</button>
-                <button type="button" class="chip" data-kind="figure">圖片</button>
-                <button type="button" class="chip" data-kind="note">文字</button>
-                <button type="button" class="chip" data-kind="voice">語音</button>
-                <button type="button" class="chip" data-kind="drug">藥品卡</button>
-                <button type="button" class="chip" data-kind="education">衛教單</button>
-              </div>
-              <div class="tag-cloud" id="tagCloud" aria-label="標籤"></div>
-            </div>
+            <div class="library-layout">
+              <aside class="topic-index" aria-label="主題">
+                <div class="topic-index-head">
+                  <span>主題</span>
+                  <button class="link-button" id="reorganizeButton" type="button" title="AI 依臨床問題重新整理主題">✦ AI 整理</button>
+                </div>
+                <nav class="topic-list" id="topicList"></nav>
+              </aside>
 
-            <p class="search-meta" id="searchMeta"></p>
-            <div class="library-grid" id="libraryGrid"></div>
-            <div class="empty-state" id="libraryEmpty" hidden>
-              <span>▧</span>
-              <h3>還沒有收藏</h3>
-              <p>上傳圖表截圖、寫下重點或錄一段語音，AI 會幫你整理標題、標籤與摘要。</p>
+              <div class="library-main" id="libraryMain" aria-live="polite"></div>
             </div>
           </section>
 
           <!-- F-03～F-07 病歷與開藥（開發中） -->
           <section class="view" id="view-records" data-title="病歷與開藥" hidden>
-            <div class="view-head"><div><p class="eyebrow">病歷與開藥</p><h1>開發中</h1><p class="view-sub">寫病歷時偵測病灶並推薦藥品，預計 10/6 完成。</p></div></div>
+            <header class="library-hero"><div><p class="eyebrow">病歷與開藥</p><h1>開發中</h1><p class="hero-meta">寫病歷時偵測病灶並推薦藥品，預計 10/6 完成。</p></div></header>
           </section>
 
           <!-- F-08／F-09 衛教單（開發中） -->
           <section class="view" id="view-education" data-title="衛教單" hidden>
-            <div class="view-head"><div><p class="eyebrow">衛教單</p><h1>開發中</h1><p class="view-sub">中文衛教單與 AI 衛教圖，預計 10/7 完成。</p></div></div>
+            <header class="library-hero"><div><p class="eyebrow">衛教單</p><h1>開發中</h1><p class="hero-meta">中文衛教單與 AI 衛教圖，預計 10/7 完成。</p></div></header>
           </section>
         </div>
       </main>
@@ -156,10 +145,13 @@
             <div class="preview-column" id="reviewPreview"></div>
             <div class="field-column">
               <label>標題<input id="fTitle" required maxlength="120" /></label>
-              <div class="two-col even">
-                <label>主題<input id="fTopic" placeholder="例：皮膚科／蟲咬" /></label>
-                <label>標籤（以逗號分隔）<input id="fTags" /></label>
+              <div class="topic-field">
+                <label for="fTopic">主題 <span class="topic-badge" id="topicBadge" hidden></span></label>
+                <input id="fTopic" list="topicOptions" placeholder="例：咳嗽的處置、蟲咬的問題" autocomplete="off" />
+                <datalist id="topicOptions"></datalist>
+                <div class="related-topics" id="relatedTopics" hidden></div>
               </div>
+              <label>標籤（以逗號分隔）<input id="fTags" /></label>
               <label>摘要<textarea id="fSummary" rows="2"></textarea></label>
               <label><span id="contentLabel">內容</span><textarea id="fContent" rows="6"></textarea></label>
               <fieldset class="source-fields">
@@ -187,6 +179,22 @@
     <!-- 檢視學習筆記 -->
     <dialog id="libraryViewer" class="app-dialog wide-dialog">
       <div class="viewer" id="viewerBody"></div>
+    </dialog>
+
+    <!-- AI 整理主題 -->
+    <dialog id="reorganizeDialog" class="app-dialog wide-dialog">
+      <div class="dialog-body">
+        <div class="dialog-head">
+          <div><p class="eyebrow">AI 整理主題</p><h2>依臨床問題重新分類</h2></div>
+          <button class="close-button" type="button" data-close aria-label="關閉">×</button>
+        </div>
+        <p class="dialog-intro">AI 會把相關的筆記歸到同一個主題。你可以逐筆修改，確認後才會套用。</p>
+        <div id="reorganizeBody" class="reorganize-body"></div>
+        <div class="dialog-actions">
+          <button class="secondary-button" type="button" data-close>取消</button>
+          <button class="primary-button" id="applyTopicsButton" type="button" disabled>套用分類</button>
+        </div>
+      </div>
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>

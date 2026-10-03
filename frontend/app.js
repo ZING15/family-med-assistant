@@ -44,12 +44,39 @@ const jsonBody = (data, method = 'POST') => ({
 
 /* ---------- 導覽 ---------- */
 
+function hashParams() {
+  const [, query = ''] = location.hash.split('?');
+  return new URLSearchParams(query);
+}
+
 function showView() {
-  const name = location.hash.replace('#', '') || 'library';
+  const name = location.hash.replace('#', '').split('?')[0] || 'library';
   const view = $(`#view-${name}`) ? name : 'library';
   $$('.view').forEach((section) => { section.hidden = section.id !== `view-${view}`; });
   $$('.nav-item').forEach((link) => link.classList.toggle('active', link.dataset.view === view));
-  $('#crumbTitle').textContent = $(`#view-${view}`).dataset.title;
+  document.title = `${$(`#view-${view}`).dataset.title}・新手家醫看診助手`;
+  if (view === 'library') syncLibraryFromHash();
+}
+
+// 學習庫狀態寫在網址：#library?topic=… 或 #library?q=…，可用上一頁返回
+function syncLibraryFromHash() {
+  const params = hashParams();
+  const topic = params.get('topic') || '';
+  const q = params.get('q') || '';
+  if (topic === libraryState.topic && q === libraryState.q && libraryState.loaded) return;
+  libraryState.topic = topic;
+  libraryState.q = q;
+  $('#libraryQuery').value = q;
+  loadLibrary();
+}
+
+function setLibraryHash({ topic = '', q = '' } = {}) {
+  const params = new URLSearchParams();
+  if (q) params.set('q', q);
+  else if (topic) params.set('topic', topic);
+  const hash = `#library${params.toString() ? `?${params}` : ''}`;
+  if (location.hash !== hash) location.hash = hash;
+  else syncLibraryFromHash();
 }
 
 async function loadHealth() {
@@ -69,102 +96,275 @@ async function loadHealth() {
   }
 }
 
-/* ---------- 學習庫：列表與搜尋 ---------- */
+/* ---------- 學習庫：主題與列表 ---------- */
+// 依主題組織：全部 = 每個主題一個書架；選定主題 = 該主題全部筆記；搜尋 = 依相關度排列
 
 const KIND_LABEL = { figure: '圖片', note: '文字', voice: '語音', drug: '藥品卡', education: '衛教單' };
 const KIND_ICON = { figure: '▧', note: '✎', voice: '◉', drug: '℞', education: '▤' };
-const libraryState = { q: '', mode: 'auto', kind: '', tag: '', items: [] };
+const SHELF_LIMIT = 4;
+const libraryState = { q: '', mode: 'auto', topic: '', items: [], topics: [], searchMode: 'none' };
+
+// 主題名稱 → 固定色相，讓同一主題在各處顏色一致
+function topicHue(topic) {
+  let hash = 0;
+  for (const char of topic || '未分類') hash = (hash * 31 + char.codePointAt(0)) % 360;
+  return (hash * 7) % 360;
+}
+const hueStyle = (topic) => `--hue:${topicHue(topic)}`;
+
+function formatDate(iso) {
+  const date = new Date(iso);
+  const days = Math.floor((Date.now() - date) / 86400000);
+  if (days < 1) return '今天';
+  if (days < 2) return '昨天';
+  if (days < 7) return `${days} 天前`;
+  return `${date.getMonth() + 1}/${date.getDate()}`;
+}
 
 async function loadLibrary() {
   const params = new URLSearchParams();
-  for (const key of ['q', 'mode', 'kind', 'tag']) if (libraryState[key]) params.set(key, libraryState[key]);
+  if (libraryState.q) { params.set('q', libraryState.q); params.set('mode', libraryState.mode); }
   try {
-    const data = await api(`/api/library?${params}`);
-    libraryState.items = data.items;
-    renderLibrary(data);
+    const [list, topics] = await Promise.all([api(`/api/library?${params}`), api('/api/library/topics')]);
+    libraryState.items = list.items;
+    libraryState.searchMode = list.search_mode;
+    libraryState.topics = topics.topics;
+    libraryState.loaded = true;
+    if (libraryState.topic && !topics.topics.some((t) => t.topic === libraryState.topic)) libraryState.topic = '';
+    renderTopicIndex();
+    renderLibrary();
   } catch (error) {
     showToast(error.message);
   }
 }
 
-async function loadTags() {
-  const { tags } = await api('/api/library/tags');
-  $('#tagCloud').innerHTML = tags.slice(0, 14).map(([tag, count]) =>
-    `<button type="button" class="chip tag-chip ${libraryState.tag === tag ? 'active' : ''}" data-tag="${escapeHtml(tag)}">#${escapeHtml(tag)} <small>${count}</small></button>`
-  ).join('');
+function renderTopicIndex() {
+  const total = libraryState.topics.reduce((sum, t) => sum + t.count, 0);
+  $('#libraryStats').innerHTML = total
+    ? `<b>${total}</b> 則筆記，整理在 <b>${libraryState.topics.length}</b> 個主題`
+    : '用圖片、文字或語音收藏學到的東西，AI 會幫你歸到對的主題';
+  $('#topicOptions').innerHTML = libraryState.topics
+    .filter((t) => t.topic !== '未分類')
+    .map((t) => `<option value="${escapeHtml(t.topic)}"></option>`).join('');
+  $('#reorganizeButton').hidden = total < 2;
+  const link = (topic, label, count, extra = '') => `
+    <button type="button" class="topic-link ${extra} ${libraryState.topic === topic && !libraryState.q ? 'active' : ''}" data-topic="${escapeHtml(topic)}" style="${hueStyle(topic)}">
+      <span class="dot" aria-hidden="true"></span><span>${escapeHtml(label)}</span><small>${count}</small>
+    </button>`;
+  $('#topicList').innerHTML = link('', '全部', total, 'all')
+    + libraryState.topics.map((t) => link(t.topic, t.topic, t.count)).join('');
 }
 
-function renderLibrary({ items, search_mode: mode }) {
-  const grid = $('#libraryGrid');
-  $('#libraryEmpty').hidden = items.length > 0 || Boolean(libraryState.q || libraryState.tag || libraryState.kind);
-  const modeText = { hybrid: '智慧搜尋（語意＋關鍵字）', keyword: '關鍵字搜尋' }[mode];
-  $('#searchMeta').textContent = libraryState.q
-    ? `「${libraryState.q}」找到 ${items.length} 筆・${modeText}${mode === 'keyword' && libraryState.mode === 'auto' ? '（語意搜尋需設定 AI）' : ''}`
-    : '';
-
-  grid.innerHTML = items.map((item) => {
-    const thumb = item.image_url
-      ? `<img src="${escapeHtml(item.image_url)}" alt="" loading="lazy" />`
-      : `<span class="thumb-placeholder ${escapeHtml(item.kind)}">${KIND_ICON[item.kind] || '▤'}</span>`;
-    const source = item.source_title || item.source_url;
-    const excerpt = item.ai_summary || item.note || item.extracted_text;
-    return `
-      <button type="button" class="library-card" data-id="${item.id}">
-        <div class="library-thumb">${thumb}<span class="kind-badge">${KIND_LABEL[item.kind] || item.kind}</span></div>
-        <div class="library-card-body">
-          <b>${escapeHtml(item.title)}</b>
-          ${excerpt ? `<p>${escapeHtml(excerpt)}</p>` : ''}
-          <div class="card-tags">${item.tags.slice(0, 3).map((t) => `<span>#${escapeHtml(t)}</span>`).join('')}</div>
-          ${source ? `<small class="card-source">來源：${escapeHtml(source)}${item.source_year ? `（${escapeHtml(item.source_year)}）` : ''}</small>` : ''}
-        </div>
-      </button>`;
-  }).join('');
+function cardHtml(item, index, showTopic) {
+  const topic = item.topic || '未分類';
+  let cover;
+  if (item.image_url) {
+    cover = `<img src="${escapeHtml(item.image_url)}" alt="" loading="lazy" />`;
+  } else if (item.kind === 'voice') {
+    // 依 id 產生固定的波形，純裝飾
+    const bars = Array.from({ length: 36 }, (_, i) => 18 + Math.abs(Math.sin((item.id + 1) * (i + 3) * 0.7)) * 82);
+    cover = `<div class="cover-text"><div class="wave" aria-hidden="true">${bars.map((h) => `<i style="height:${h.toFixed(0)}%"></i>`).join('')}</div></div>`;
+  } else {
+    const text = item.note || item.ai_summary || item.extracted_text || item.title;
+    cover = `<div class="cover-text"><blockquote>${escapeHtml(text.slice(0, 160))}</blockquote></div>`;
+  }
+  const source = item.source_title || (item.source_url ? new URL(safeUrl(item.source_url) || 'https://x').hostname : '');
+  return `
+    <button type="button" class="note-card" data-id="${item.id}" style="${hueStyle(topic)};--i:${index}">
+      <div class="cover">${cover}<span class="cover-kind"><span aria-hidden="true">${KIND_ICON[item.kind] || '▤'}</span>${KIND_LABEL[item.kind] || ''}</span></div>
+      <div class="card-body">
+        ${showTopic ? `<span class="card-topic">${escapeHtml(topic)}</span>` : ''}
+        <b>${escapeHtml(item.title)}</b>
+        ${item.ai_summary ? `<p>${escapeHtml(item.ai_summary)}</p>` : ''}
+        <div class="card-meta"><span>${source ? escapeHtml(source) : '&nbsp;'}</span><span>${formatDate(item.updated_at)}</span></div>
+      </div>
+    </button>`;
 }
+
+function emptyHtml(title, text, withButton = true) {
+  return `<div class="empty-state"><div class="empty-mark" aria-hidden="true">❖</div><h3>${title}</h3><p>${text}</p>
+    ${withButton ? '<button class="primary-button" type="button" data-action="add">＋ 新增第一則筆記</button>' : ''}</div>`;
+}
+
+function renderLibrary() {
+  const main = $('#libraryMain');
+  const { items, q, topic } = libraryState;
+
+  if (q) {
+    const modeText = { hybrid: '智慧搜尋（語意＋關鍵字）', keyword: '關鍵字比對' }[libraryState.searchMode] || '';
+    main.innerHTML = `
+      <div class="results-head"><h2>「${escapeHtml(q)}」</h2><span>${items.length} 則相關筆記・${modeText}</span>
+        <button class="link-button" type="button" data-action="clear-search" style="margin-left:auto">清除搜尋</button></div>
+      ${items.length ? `<div class="card-grid">${items.map((item, i) => cardHtml(item, i, true)).join('')}</div>`
+        : emptyHtml('找不到相關筆記', '換個說法試試，或用英文醫學名詞搜尋。', false)}`;
+    return;
+  }
+
+  if (!items.length) {
+    main.innerHTML = emptyHtml('學習庫還是空的', '上傳一張圖表截圖、寫下一段重點，或錄一段語音，AI 會幫你整理並歸到主題。');
+    return;
+  }
+
+  if (topic) {
+    const group = items.filter((item) => (item.topic || '未分類') === topic);
+    const info = libraryState.topics.find((t) => t.topic === topic);
+    main.innerHTML = `
+      <header class="topic-hero" style="${hueStyle(topic)}">
+        <p class="eyebrow">主題</p>
+        <h2>${escapeHtml(topic)}</h2>
+        <div class="topic-hero-meta"><span>${group.length} 則筆記</span><span>最後更新 ${info ? formatDate(info.updated_at) : ''}</span>
+          ${topic !== '未分類' ? '<button class="link-button" type="button" data-action="rename-topic">✎ 重新命名</button>' : ''}</div>
+      </header>
+      <div class="card-grid">${group.map((item, i) => cardHtml(item, i, false)).join('')}</div>`;
+    return;
+  }
+
+  // 全部：最近新增 + 主題卡（每個主題像一本相簿）
+  const recent = [...items].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, SHELF_LIMIT);
+  main.innerHTML = `
+    <section class="shelf">
+      <div class="shelf-head plain"><h2>最近新增</h2></div>
+      <div class="card-grid row-4">${recent.map((item, i) => cardHtml(item, i, true)).join('')}</div>
+    </section>
+    <section class="shelf" style="animation-delay:80ms">
+      <div class="shelf-head plain"><h2>所有主題</h2><span class="shelf-count">${libraryState.topics.length} 個</span></div>
+      <div class="topic-grid">${libraryState.topics.map((t, i) => topicTileHtml(t, items, i)).join('')}</div>
+    </section>`;
+}
+
+function topicTileHtml(info, items, index) {
+  const group = items.filter((item) => (item.topic || '未分類') === info.topic);
+  const images = group.filter((item) => item.image_url).slice(0, 3);
+  const glyph = [...info.topic][0];
+  const kinds = Object.entries(info.kinds).map(([kind, n]) => `<span>${KIND_ICON[kind] || '▤'} ${n}</span>`).join('');
+  return `
+    <button type="button" class="topic-tile" data-topic-open="${escapeHtml(info.topic)}" style="${hueStyle(info.topic)};--i:${index}">
+      <div class="tile-cover ${images.length ? `stack-${images.length}` : 'empty'}">
+        ${images.length
+          ? images.map((item) => `<img src="${escapeHtml(item.image_url)}" alt="" loading="lazy" />`).join('')
+          : `<span class="tile-glyph" aria-hidden="true">${escapeHtml(glyph)}</span>`}
+      </div>
+      <div class="tile-body">
+        <b>${escapeHtml(info.topic)}</b>
+        <ul>${group.slice(0, 3).map((item) => `<li>${escapeHtml(item.title)}</li>`).join('')}</ul>
+        <div class="tile-meta"><span class="tile-kinds">${kinds}</span><span>${info.count} 則・${formatDate(info.updated_at)}</span></div>
+      </div>
+    </button>`;
+}
+
+function selectTopic(topic) {
+  setLibraryHash({ topic });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+$('#topicList').addEventListener('click', (event) => {
+  const link = event.target.closest('[data-topic]');
+  if (link) selectTopic(link.dataset.topic);
+});
+
+$('#libraryMain').addEventListener('click', async (event) => {
+  const card = event.target.closest('.note-card');
+  if (card) {
+    const item = libraryState.items.find((i) => i.id === Number(card.dataset.id));
+    if (item) openViewer(item);
+    return;
+  }
+  const open = event.target.closest('[data-topic-open]');
+  if (open) return selectTopic(open.dataset.topicOpen);
+  const action = event.target.closest('[data-action]')?.dataset.action;
+  if (action === 'add') openLibraryForm();
+  if (action === 'clear-search') setLibraryHash({ topic: libraryState.topic });
+  if (action === 'rename-topic') {
+    const name = prompt('新的主題名稱（輸入既有主題的名稱即可合併）', libraryState.topic)?.trim();
+    if (!name || name === libraryState.topic) return;
+    try {
+      await api('/api/library/topics', jsonBody({ old: libraryState.topic, new: name }, 'PUT'));
+      showToast('主題已更新');
+      libraryState.loaded = false;
+      setLibraryHash({ topic: name });
+    } catch (error) {
+      showToast(error.message);
+    }
+  }
+});
 
 $('#librarySearchForm').addEventListener('submit', (event) => {
   event.preventDefault();
-  libraryState.q = $('#libraryQuery').value.trim();
   libraryState.mode = $('#librarySearchMode').value;
-  loadLibrary();
+  setLibraryHash({ q: $('#libraryQuery').value.trim(), topic: libraryState.topic });
 });
 
 $('#libraryQuery').addEventListener('search', () => {
-  if (!$('#libraryQuery').value) { libraryState.q = ''; loadLibrary(); }
+  if (!$('#libraryQuery').value) setLibraryHash({ topic: libraryState.topic });
 });
 
-$('.kind-tabs').addEventListener('click', (event) => {
-  const chip = event.target.closest('[data-kind]');
-  if (!chip) return;
-  libraryState.kind = chip.dataset.kind;
-  $$('.kind-tabs .chip').forEach((c) => c.classList.toggle('active', c === chip));
-  loadLibrary();
+/* ---------- 學習庫：AI 整理主題 ---------- */
+
+const reorganizeDialog = $('#reorganizeDialog');
+let proposal = [];
+
+$('#reorganizeButton').addEventListener('click', async () => {
+  const body = $('#reorganizeBody');
+  $('#applyTopicsButton').disabled = true;
+  body.innerHTML = '<div class="reorganize-loading"><div class="spinner"></div>AI 正在閱讀你的筆記並歸類…</div>';
+  reorganizeDialog.showModal();
+  try {
+    const result = await api('/api/library/topics/reorganize', { method: 'POST' });
+    proposal = result.assignments;
+    renderProposal();
+  } catch (error) {
+    body.innerHTML = `<p class="ai-result warn">${escapeHtml(error.message)}</p>`;
+  }
 });
 
-$('#tagCloud').addEventListener('click', (event) => {
-  const chip = event.target.closest('[data-tag]');
-  if (!chip) return;
-  libraryState.tag = libraryState.tag === chip.dataset.tag ? '' : chip.dataset.tag;
-  loadTags();
-  loadLibrary();
+function renderProposal() {
+  const groups = [...new Set(proposal.map((a) => a.topic))];
+  $('#reorganizeBody').innerHTML = `
+    <div class="reorganize-groups">${groups.map((g) => `<span style="${hueStyle(g)}">${escapeHtml(g)}・${proposal.filter((a) => a.topic === g).length}</span>`).join('')}</div>
+    <table class="reorganize-table">
+      <thead><tr><th>筆記</th><th>原主題</th><th>新主題</th></tr></thead>
+      <tbody>${proposal.map((a, i) => `
+        <tr><td>${escapeHtml(a.title)}</td><td class="old">${escapeHtml(a.old || '—')}</td>
+        <td><input data-index="${i}" value="${escapeHtml(a.topic)}" list="topicOptions" aria-label="${escapeHtml(a.title)} 的新主題" /></td></tr>`).join('')}
+      </tbody>
+    </table>`;
+  $('#applyTopicsButton').disabled = !proposal.length;
+}
+
+$('#reorganizeBody').addEventListener('change', (event) => {
+  const input = event.target.closest('input[data-index]');
+  if (!input) return;
+  proposal[Number(input.dataset.index)].topic = input.value.trim() || proposal[Number(input.dataset.index)].topic;
+  renderProposal();
+});
+
+$('#applyTopicsButton').addEventListener('click', async () => {
+  try {
+    await api('/api/library/topics/apply', jsonBody({ assignments: proposal.map(({ id, topic }) => ({ id, topic })) }));
+    reorganizeDialog.close();
+    showToast('主題已重新整理');
+    libraryState.loaded = false;
+    setLibraryHash();
+  } catch (error) {
+    showToast(error.message);
+  }
+});
+
+reorganizeDialog.addEventListener('click', (event) => {
+  if (event.target === reorganizeDialog || event.target.closest('[data-close]')) reorganizeDialog.close();
 });
 
 /* ---------- 學習庫：檢視 ---------- */
 
 const viewer = $('#libraryViewer');
 
-$('#libraryGrid').addEventListener('click', (event) => {
-  const card = event.target.closest('.library-card');
-  if (!card) return;
-  const item = libraryState.items.find((i) => i.id === Number(card.dataset.id));
-  if (item) openViewer(item);
-});
-
 function openViewer(item) {
   const url = safeUrl(item.source_url);
   const meta = item.ai_meta || {};
+  const topic = item.topic || '未分類';
   $('#viewerBody').innerHTML = `
     <div class="dialog-head">
-      <div><p class="eyebrow">${KIND_LABEL[item.kind] || ''}${item.topic ? `・${escapeHtml(item.topic)}` : ''}</p><h2>${escapeHtml(item.title)}</h2></div>
+      <div><p class="eyebrow" style="${hueStyle(topic)}">${escapeHtml(topic)}・${KIND_LABEL[item.kind] || ''}</p><h2>${escapeHtml(item.title)}</h2></div>
       <button class="close-button" type="button" data-close aria-label="關閉">×</button>
     </div>
     ${item.image_url ? `<a class="viewer-image" href="${escapeHtml(item.image_url)}" target="_blank" rel="noopener"><img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" /></a>` : ''}
@@ -179,7 +379,7 @@ function openViewer(item) {
     ${item.kind === 'voice' && item.extracted_text ? `<details class="viewer-block" open><summary><b>逐字稿</b></summary><p>${escapeHtml(item.extracted_text)}</p></details>` : ''}
     ${item.kind === 'figure' && item.extracted_text ? `<details class="viewer-block"><summary><b>圖中文字</b></summary><p>${escapeHtml(item.extracted_text)}</p></details>` : ''}
     ${item.kind !== 'note' && item.note ? `<div class="viewer-block"><b>我的註記</b><p>${escapeHtml(item.note)}</p></div>` : ''}
-    <div class="card-tags">${item.tags.map((t) => `<span>#${escapeHtml(t)}</span>`).join('')}</div>
+    ${item.tags.length ? `<div class="card-tags">${item.tags.map((t) => `<span>#${escapeHtml(t)}</span>`).join('')}</div>` : ''}
     <div class="dialog-actions">
       <button class="danger-button" type="button" data-delete="${item.id}">刪除</button>
       <button class="secondary-button" type="button" data-edit="${item.id}">編輯</button>
@@ -278,6 +478,8 @@ function fillReview(kind, data) {
   form.sourceUrl.value = data.source_url || '';
   form.sourceYear.value = data.source_year || '';
   form.note.value = data.note || '';
+  renderRelatedTopics(data.related_topics || []);
+  updateTopicBadge();
   $('#contentLabel').textContent = CONTENT_LABEL[kind] || '內容';
   $('#noteField').hidden = kind === 'note';
   form.content.rows = kind === 'figure' ? 4 : 7;
@@ -295,6 +497,47 @@ function fillReview(kind, data) {
   libraryDialog.dataset.kind = kind;
 }
 
+const existingTopics = () => libraryState.topics.map((t) => t.topic).filter((t) => t !== '未分類');
+
+// 主題欄位旁的標示：沿用現有主題或建立新主題
+function updateTopicBadge() {
+  const value = form.topic.value.trim();
+  const badge = $('#topicBadge');
+  badge.hidden = !value;
+  const exists = existingTopics().includes(value);
+  badge.className = `topic-badge ${exists ? 'existing' : 'new'}`;
+  badge.textContent = exists ? '沿用現有主題' : '新主題';
+}
+
+function renderRelatedTopics(related) {
+  const box = $('#relatedTopics');
+  const current = form.topic.value.trim();
+  const options = related.filter((t) => t.topic !== current);
+  box.hidden = !options.length;
+  box.innerHTML = options.length
+    ? `<span>相關的現有主題：</span>${options.map((t) => `<button type="button" data-topic-pick="${escapeHtml(t.topic)}" style="${hueStyle(t.topic)}">${escapeHtml(t.topic)}</button>`).join('')}`
+    : '';
+}
+
+form.topic.addEventListener('input', updateTopicBadge);
+$('#relatedTopics').addEventListener('click', (event) => {
+  const pick = event.target.closest('[data-topic-pick]');
+  if (!pick) return;
+  const previous = form.topic.value.trim();
+  form.topic.value = pick.dataset.topicPick;
+  pick.remove();
+  if (previous && !existingTopics().includes(previous)) {
+    // 把被取代的新主題保留成可切回的選項
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.dataset.topicPick = previous;
+    back.style.cssText = hueStyle(previous);
+    back.textContent = `${previous}（AI 建議的新主題）`;
+    $('#relatedTopics').append(back);
+  }
+  updateTopicBadge();
+});
+
 async function runAnalysis(payload, loadingText) {
   $('#loadingText').textContent = loadingText;
   showStep('loading');
@@ -305,13 +548,17 @@ async function runAnalysis(payload, loadingText) {
     const s = result.suggestion || {};
     fillReview(kind, {
       ...s,
+      related_topics: result.related_topics,
       content: payload.mode === 'text' ? payload.text : payload.mode === 'voice' ? result.transcript : s.extracted_text,
     });
     const ai = $('#aiResult');
     ai.hidden = false;
     ai.classList.toggle('warn', Boolean(result.message));
-    ai.textContent = result.message
-      || `✦ AI 已整理完成（${aiMeta.model}）${s.source_title ? '，並帶入辨識到的來源' : ''}。請確認內容後儲存。`;
+    ai.textContent = result.message || [
+      `✦ AI 已整理完成（${aiMeta.model}）`,
+      s.topic ? (result.topic_exists ? `歸入現有主題「${s.topic}」` : `建立新主題「${s.topic}」`) : '',
+      s.source_title ? '並帶入辨識到的來源' : '',
+    ].filter(Boolean).join('，') + '。請確認內容後儲存。';
   } catch (error) {
     // AI 失敗時仍讓醫師手動完成
     fillReview(kind, { content: payload.text || '' });
@@ -499,7 +746,6 @@ $('#libraryForm').addEventListener('submit', async (event) => {
 });
 
 function refreshLibrary() {
-  loadTags();
   loadLibrary();
 }
 
@@ -508,4 +754,3 @@ function refreshLibrary() {
 window.addEventListener('hashchange', showView);
 showView();
 loadHealth();
-refreshLibrary();
