@@ -13,8 +13,6 @@ data/uploads/
 
 # Not published: interview transcripts (real people)
 參考資料/
-archive/*
-!archive/產品規格_v0.1.md
 
 # OS / editor
 .DS_Store
