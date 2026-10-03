@@ -14,6 +14,7 @@ import re
 from functools import lru_cache
 from pathlib import Path
 
+from . import nhi
 from .db import app_db, drug_db
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -147,7 +148,7 @@ def concepts_for_prefix(prefix: str) -> tuple[dict, ...]:
     with drug_db() as con:
         rows = con.execute(
             f"""SELECT atc_main, atc_main_name_en, ahfs_main_name_zh, ahfs_confidence, drug_category, dosage_form,
-                       image_url, name_zh, indication
+                       image_url, name_zh, indication, license_no
                 FROM products
                 WHERE is_active = 1 AND license_type LIKE '製%' AND atc_main LIKE ?
                   AND drug_category IN ({_category_sql()})""",
@@ -158,9 +159,10 @@ def concepts_for_prefix(prefix: str) -> tuple[dict, ...]:
         c = grouped.setdefault(r["atc_main"], {
             "atc_code": r["atc_main"], "name_en": r["atc_main_name_en"], "class_zh": "",
             "product_count": 0, "categories": set(), "forms": {}, "image_url": "", "sample_name": "",
-            "indication": "",
+            "indication": "", "licenses": [],
         })
         c["product_count"] += 1
+        c["licenses"].append(r["license_no"])
         c["categories"].add(CATEGORIES[r["drug_category"]])
         group = form_group(r["dosage_form"] or "")
         c["forms"][group] = c["forms"].get(group, 0) + 1
@@ -181,6 +183,7 @@ def concepts_for_prefix(prefix: str) -> tuple[dict, ...]:
     for c in grouped.values():
         c["class_zh"] = c["class_zh"] or class_by_l4.get(c["atc_code"][:5], "")
         c["categories"] = sorted(c["categories"])
+        c["nhi"] = nhi.summarize(c.pop("licenses"))
         c["forms"] = [{"group": g, "label": FORM_LABEL[g], "count": n}
                       for g, n in sorted(c["forms"].items(), key=lambda kv: -kv[1])]
         result.append(c)
@@ -211,8 +214,13 @@ def concept_detail(atc: str) -> dict | None:
     data = dict(concept)
     data["display_name"] = display_name(atc, data["name_en"])
     data["class_zh"] = class_zh(atc, data["ahfs_main_name_zh"] or "")
-    data["products"] = [dict(p) | {"category": CATEGORIES[p["drug_category"]], "form_group": form_group(p["dosage_form"] or "")}
+    data["products"] = [dict(p) | {"category": CATEGORIES[p["drug_category"]], "form_group": form_group(p["dosage_form"] or ""),
+                                   "nhi": nhi.for_license(p["license_no"])}
                         for p in products]
+    # 健保給付的品項排前面（同樣有給付時，維持有外觀圖的優先）
+    data["products"].sort(key=lambda p: not p["nhi"])
+    data["nhi"] = nhi.summarize([p["license_no"] for p in data["products"]])
+    data["nhi_as_of"] = nhi.as_of()
     data["class_path"] = [data["atc_l1"], data["atc_l2"], data["atc_l3"], data["atc_l4"], atc]
     return data
 
@@ -222,7 +230,7 @@ def search_drugs(query: str, limit: int = 15) -> list[dict]:
     with drug_db() as con:
         rows = con.execute(
             f"""SELECT atc_main AS atc_code, MAX(atc_main_name_en) AS name_en, MAX(ahfs_main_name_zh) AS class_zh,
-                       COUNT(*) AS product_count, MAX(name_zh) AS sample_name
+                       COUNT(*) AS product_count, MAX(name_zh) AS sample_name, GROUP_CONCAT(license_no) AS licenses
                 FROM products
                 WHERE is_active = 1 AND license_type LIKE '製%' AND atc_main != ''
                   AND drug_category IN ({_category_sql()})
@@ -230,8 +238,14 @@ def search_drugs(query: str, limit: int = 15) -> list[dict]:
                 GROUP BY atc_main ORDER BY product_count DESC LIMIT ?""",
             (q, q, q, q, limit),
         ).fetchall()
-    return [dict(r) | {"display_name": display_name(r["atc_code"], r["name_en"]),
-                       "class_zh": class_zh(r["atc_code"], r["class_zh"] or "")} for r in rows]
+    results = []
+    for r in rows:
+        item = dict(r)
+        licenses = (item.pop("licenses") or "").split(",")
+        results.append(item | {"display_name": display_name(r["atc_code"], r["name_en"]),
+                               "class_zh": class_zh(r["atc_code"], r["class_zh"] or ""),
+                               "nhi": nhi.summarize(licenses)})
+    return results
 
 
 # ---------- 推薦 ----------
@@ -322,7 +336,7 @@ def recommend(condition_names: list[str], allergy_ids: list[str], dismissed: lis
                 "atc_code": code, "name_en": c["name_en"], "display_name": display_name(code, c["name_en"]),
                 "class_zh": class_zh(code, c["class_zh"]), "preferred": preferred,
                 "product_count": c["product_count"], "categories": c["categories"], "forms": c["forms"],
-                "image_url": c["image_url"], "sample_name": c["sample_name"], "score": round(score, 3),
+                "image_url": c["image_url"], "sample_name": c["sample_name"], "score": round(score, 3), "nhi": c["nhi"],
                 "reasons": reasons, "warning": class_warning, "adopted_here": here, "_prefix": c["_prefix"],
             })
         ranked = diversify(items)

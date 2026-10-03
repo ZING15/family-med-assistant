@@ -23,6 +23,8 @@ UPLOAD_DIR = DATA_DIR / "uploads"
 APP_DB = DATA_DIR / "app.sqlite"
 # 藥品參考表為唯讀，隨程式一起部署
 DRUG_DB = ROOT / "data" / "drug_reference" / "drug_reference.sqlite"
+# 健保給付藥品（scripts/build_nhi_drugs.py 產生；沒有這個檔時不顯示健保資訊）
+NHI_DB = ROOT / "data" / "drug_reference" / "nhi_drugs.sqlite"
 # 設定後整個網站需要密碼才能使用（給受測醫師的共用密碼）；本機開發留空
 APP_PASSWORD = env("APP_PASSWORD")
 

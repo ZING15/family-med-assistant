@@ -557,7 +557,7 @@ main { flex: 1; min-width: 0; }
 .summary-empty p { flex: 1 1 260px; margin: 0; color: var(--muted); font-size: 14px; }
 .ai-label-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 14px 0 0; color: var(--faint); font-size: 12px; }
 .ai-label-line .ai-label { margin: 0; }
-.drug-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line-2); }
+.drug-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line-2); }
 .drug-facts b { display: block; margin-top: 4px; font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
 .drug-facts .wide { grid-column: 1 / -1; }
 .drug-facts p { margin: 4px 0 0; color: var(--ink-2); font-size: 14px; line-height: 1.65; }
@@ -782,3 +782,22 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
   .tray-item .rx-dose { grid-column: 1 / -1; grid-row: 2; }
   .rec-row-head { flex-wrap: wrap; }
 }
+
+/* ---------- 健保給付（健保署健保用藥品項） ---------- */
+.nhi-tag { display: inline-block; margin-right: 6px; padding: 1px 7px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); font-size: 11px; font-weight: 700; vertical-align: 1px; }
+.nhi-tag.self-pay { background: var(--paper); color: var(--muted); }
+.rec-meta.no-nhi { color: var(--muted); }
+.rx-nhi { color: var(--ink-2); font-size: 12px; font-variant-numeric: tabular-nums; }
+.rx-nhi.self-pay, .self-pay { color: var(--muted); }
+.picker-nhi { color: var(--ok); font-variant-numeric: tabular-nums; }
+.picker-nhi.self-pay { color: var(--muted); }
+.nhi-cell { display: block; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.nhi-cell small { display: block; color: var(--warn); font-size: 11px; }
+.nhi-toggle { padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted); font-size: 13px; font-weight: 600; }
+.nhi-toggle[aria-pressed="true"] { border-color: var(--ok); background: var(--ok-soft); color: var(--ok); }
+.recs-head { flex-wrap: wrap; }
+.recs-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.picker-nhi { display: block; margin-top: 2px; }
+.drug-products { overflow-x: auto; }
+.drug-products table { min-width: 760px; }
+.drug-products td:nth-child(2), .drug-products td:nth-child(3), .drug-products th { white-space: nowrap; }

@@ -6,7 +6,7 @@ import sqlite3
 from contextlib import contextmanager
 from datetime import datetime
 
-from .config import APP_DB, DRUG_DB
+from .config import APP_DB, DRUG_DB, NHI_DB
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS library_items (
@@ -95,6 +95,20 @@ def app_db():
     try:
         yield con
         con.commit()
+    finally:
+        con.close()
+
+
+@contextmanager
+def nhi_db():
+    """健保給付藥品表為唯讀；檔案不存在時回傳 None。"""
+    if not NHI_DB.is_file():
+        yield None
+        return
+    con = sqlite3.connect(f"file:{NHI_DB}?mode=ro", uri=True)
+    con.row_factory = sqlite3.Row
+    try:
+        yield con
     finally:
         con.close()
 
