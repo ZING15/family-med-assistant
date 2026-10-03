@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
+import base64
+import secrets
 import time
 
 from fastapi import FastAPI
+from fastapi.responses import PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
 from .ai import ai
-from .config import DRUG_DB, FRONTEND_DIR, UPLOAD_DIR
+from .config import APP_PASSWORD, DRUG_DB, FRONTEND_DIR, UPLOAD_DIR
 from .db import app_db, init_app_db
 from .routers import library, records
 
@@ -22,6 +25,28 @@ async def no_cache_frontend(request, call_next):
     if not request.url.path.startswith(("/api", "/uploads")):
         response.headers["Cache-Control"] = "no-cache"
     return response
+
+
+def _password_ok(header: str) -> bool:
+    """HTTP Basic 驗證：帳號不限，只比對密碼。"""
+    if not header.startswith("Basic "):
+        return False
+    try:
+        _, _, password = base64.b64decode(header[6:]).decode("utf-8").partition(":")
+    except ValueError:
+        return False
+    return secrets.compare_digest(password.encode(), APP_PASSWORD.encode())
+
+
+@app.middleware("http")
+async def require_password(request, call_next):
+    """有設定 APP_PASSWORD 時，瀏覽器會跳出登入視窗；避免網址外流後被任意使用 AI 額度。"""
+    if APP_PASSWORD and not _password_ok(request.headers.get("authorization", "")):
+        return PlainTextResponse(
+            "需要密碼才能使用新手家醫看診助手", status_code=401,
+            headers={"WWW-Authenticate": 'Basic realm="family-med-assistant", charset="UTF-8"'},
+        )
+    return await call_next(request)
 
 
 def cleanup_orphan_uploads(max_age_hours: int = 6) -> int:

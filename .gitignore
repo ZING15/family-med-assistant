@@ -45,3 +45,6 @@ archive/*
 **/.impeccable/live/deferred-svelte-component-accepts.json
 **/.impeccable/live/*.png
 # impeccable-ignore-end
+
+# 部署打包產物
+dist/

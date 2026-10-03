@@ -298,13 +298,26 @@ class AIService:
         return None, _meta("azure", azure.image_deployment)
 
 
+def _ffmpeg_path() -> str | None:
+    """優先用系統安裝的 ffmpeg；雲端主機沒有時，改用 imageio-ffmpeg 套件內附的執行檔。"""
+    found = shutil.which("ffmpeg")
+    if found:
+        return found
+    try:
+        import imageio_ffmpeg
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except (ImportError, RuntimeError):
+        return None
+
+
 def _convert_to_wav(source: Path, folder: Path) -> Path:
     """瀏覽器錄音多為 webm／m4a，MAI-Transcribe 只收 WAV／MP3／FLAC，以 ffmpeg 轉成 16kHz 單聲道 WAV。"""
-    if not shutil.which("ffmpeg"):
-        raise TranscriptionError("伺服器需要安裝 ffmpeg 才能轉換這個音檔格式（brew install ffmpeg）")
+    ffmpeg = _ffmpeg_path()
+    if not ffmpeg:
+        raise TranscriptionError("伺服器需要 ffmpeg 才能轉換這個音檔格式（brew install ffmpeg，或 pip install imageio-ffmpeg）")
     target = folder / f"{source.stem}.wav"
     result = subprocess.run(
-        ["ffmpeg", "-y", "-loglevel", "error", "-i", str(source), "-ac", "1", "-ar", "16000", str(target)],
+        [ffmpeg, "-y", "-loglevel", "error", "-i", str(source), "-ac", "1", "-ar", "16000", str(target)],
         capture_output=True, text=True, timeout=120,
     )
     if result.returncode != 0:

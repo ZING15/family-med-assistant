@@ -28,6 +28,8 @@ backend/.venv/bin/uvicorn app.main:app --reload --app-dir backend
 
 AI 功能需要把 `.env.example` 複製成 `.env` 並填入 Azure OpenAI 設定；沒有設定時以示範模式運作。
 
+部署到 Azure App Service 給醫師試用：見 [部署指南_Azure.md](部署指南_Azure.md)。
+
 ## 目錄
 
 ```

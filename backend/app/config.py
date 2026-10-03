@@ -10,15 +10,21 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(ROOT / ".env")
 
-FRONTEND_DIR = ROOT / "frontend"
-DATA_DIR = ROOT / "data"
-UPLOAD_DIR = DATA_DIR / "uploads"
-APP_DB = DATA_DIR / "app.sqlite"
-DRUG_DB = DATA_DIR / "drug_reference" / "drug_reference.sqlite"
 
 
 def env(name: str, default: str = "") -> str:
     return os.getenv(name, default).strip()
+
+
+FRONTEND_DIR = ROOT / "frontend"
+# 會變動的資料（筆記、病歷、上傳檔）。部署到雲端時指向持久磁碟，例如 Azure App Service 的 /home/data
+DATA_DIR = Path(env("APP_DATA_DIR") or ROOT / "data")
+UPLOAD_DIR = DATA_DIR / "uploads"
+APP_DB = DATA_DIR / "app.sqlite"
+# 藥品參考表為唯讀，隨程式一起部署
+DRUG_DB = ROOT / "data" / "drug_reference" / "drug_reference.sqlite"
+# 設定後整個網站需要密碼才能使用（給受測醫師的共用密碼）；本機開發留空
+APP_PASSWORD = env("APP_PASSWORD")
 
 
 class AzureSettings:
