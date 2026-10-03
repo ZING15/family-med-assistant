@@ -1,27 +1,25 @@
-# 練習資料
+# 資料
 
-`medical-practice-cases.js` 由使用者指定的 Kaggle 資料集在本機轉換產生：
+本專案只使用政府資料開放平台上的 TFDA 開放資料（政府資料開放授權條款－第1版）。
 
-- 資料集：Medical Reccomandation dataSet
-- 來源：https://www.kaggle.com/datasets/joymarhew/medical-reccomadation-dataset/data
-- 擁有者：Joy Mathew
-- 版本：1（2023-09-04）
-- Kaggle 顯示授權：Unknown（於 2026-09-23 查閱）
+## 原始資料（`raw/tfda/`）
 
-## 使用限制
+| 資料夾 | 資料集 | 來源 |
+|---|---|---|
+| `license_36/` | 全部藥品許可證資料集 | https://data.gov.tw/dataset/9122 |
+| `ahfs_40/` | 藥品藥理治療分類 AHFS/DI 碼 | https://data.gov.tw/dataset/9118 |
+| `atc_41/` | 藥品藥理治療分類 ATC 碼 | https://data.gov.tw/dataset/9119 |
+| `appearance_42/` | 藥品外觀（圖片不下載，只保留 TFDA 圖檔連結） | https://data.gov.tw/dataset/9120 |
 
-- 僅供本專案的本機練習與介面展示。
-- 不可將原始資料或衍生資料公開發布、商業使用或重新散布，直到取得明確授權。
-- 匯入時會移除 `Name` 和 `DateOfBirth` 欄位。
-- `Disease` 僅改名為 `datasetLabel`，表示資料集的原始標記，**不是診斷**。
-- `Medicine` 不會匯入前端資料，避免形成處方或用藥建議功能。
+## 產生的資料
 
-## 重新產生
+| 檔案 | 說明 |
+|---|---|
+| `drug_reference/drug_reference.sqlite` | 執行 `python3 scripts/build_drug_reference.py` 產生的藥品參考表，程式唯讀使用 |
+| `app.sqlite` | 學習庫、病歷、推薦回饋（程式執行時自動建立） |
+| `uploads/` | 學習庫上傳的圖片與錄音 |
 
-將下載的 CSV 放入 `data/raw/medical data.csv` 後執行：
+## 不採用的資料
 
-```bash
-python3 scripts/import_kaggle_practice_data.py
-```
-
-輸出為 `data/medical-practice-cases.js`，可由原型直接載入。
+- Kaggle「Medical Reccomandation dataSet」：授權標示為 Unknown，且重複、缺漏多，藥物欄多為「Rest」「Antibiotics」等籠統描述，2026-10-03 評估後移除。
+- v0.1 的 Faker 合成病人資料與胸部 X 光樣本：產品不做影像判讀，2026-10-03 移除。

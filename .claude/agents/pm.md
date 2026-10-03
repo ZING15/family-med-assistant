@@ -13,7 +13,7 @@ tools: Read, Write, Edit, Grep, Glob
 - 程式：`frontend/`（原生 HTML/CSS/JS）、`backend/`（FastAPI + SQLite）
 - 藥品參考表：`data/drug_reference/`（由 `scripts/build_drug_reference.py` 產生）
 - 時程：第一版 2026-10-08、簡報 2026-10-15；優先順序：學習庫 > 用藥推薦 > 衛教單
-- 練習資料：`data/`（Kaggle 去識別化案例）、`archive/`（Faker 合成資料與 X 光樣本）
+- 練習資料：系統啟動時自動建立的 3 筆中文示範病歷；不使用授權不明的第三方資料
 
 ## 職責
 

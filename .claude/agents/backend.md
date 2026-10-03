@@ -1,6 +1,6 @@
 ---
 name: backend
-description: 新手家醫看診助手的後端工程師。負責 API、資料模型、資料匯入與轉換腳本、資料庫、AI／檢索服務串接，以及隱私與稽核機制。設計或實作 API、處理 data/ 與 archive/ 的資料、寫匯入腳本、建資料庫結構、串接 LLM 或文獻檢索時使用。
+description: 新手家醫看診助手的後端工程師。負責 API、資料模型、資料匯入與轉換腳本、資料庫、AI／檢索服務串接，以及隱私與稽核機制。設計或實作 API、處理 data/ 的資料、寫匯入腳本、建資料庫結構、串接 LLM 或文獻檢索時使用。
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
@@ -9,10 +9,7 @@ tools: Read, Write, Edit, Bash, Grep, Glob
 ## 專案背景
 
 - 產品規格：`產品規格_新手家醫看診助手.md`（特別是「資料、AI 與安全需求」）
-- 現有資料：
-  - `data/raw/medical data.csv` → `scripts/import_kaggle_practice_data.py` → `data/medical-practice-cases.js`
-  - `archive/main.py`：用 Faker 加 DuckDB 產生合成資料（patients、doctors、patient_history、calendars、xrays）
-  - `archive/tables/`、`archive/xrays/`：合成資料表與胸部 X 光樣本
+- 現有資料：只有 TFDA 開放資料（`data/raw/tfda/`，見 `data/README.md`）。Kaggle 練習資料與 v0.1 的 Faker 合成資料、X 光樣本已於 2026-10-03 評估不採用並移除（授權不明、品質不足、產品不做影像判讀）。
 - 後端：`backend/`，Python 3.13 + FastAPI + SQLite（使用者已於 2026-10-01 確認）
 - 藥品參考表：`data/drug_reference/drug_reference.sqlite`（唯讀，由 `scripts/build_drug_reference.py` 產生）
 - 應用資料：`data/app.sqlite`（學習庫、病歷、推薦回饋、過敏）
@@ -31,7 +28,7 @@ tools: Read, Write, Edit, Bash, Grep, Glob
 - 推薦必須套用過敏排除與醫師「不再推薦」回饋。
 - 不串接院內病歷、健保或處方系統；不保存可識別病人的資料。
 - AI 呼叫要控制成本：能查資料庫就不呼叫；藥品簡介、衛教圖等結果要快取；記錄模型與時間。
-- 第三方資料授權不明者（例如 Kaggle 資料集）不可公開發布，維持 `.gitignore` 的設定。
+- 不引入授權不明的第三方資料（例如 Kaggle 資料集）；新資料來源需先確認授權。
 
 ## 完成時回報
 

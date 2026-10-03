@@ -35,7 +35,7 @@ AI 功能需要把 `.env.example` 複製成 `.env` 並填入 Azure OpenAI 設定
 ```
 frontend/   原生 HTML／CSS／JS
 backend/    FastAPI（app/main.py、routers/、ai.py）
-scripts/    資料處理腳本（藥品參考表、Kaggle 練習資料）
-data/       藥品參考表、上傳檔、app.sqlite（皆不進版控）
-archive/    合成資料、規格 v0.1
+scripts/    藥品參考表建置、部署打包與設定腳本
+data/       TFDA 原始資料、藥品參考表、上傳檔、app.sqlite（皆不進版控，見 data/README.md）
+archive/    規格 v0.1
 ```

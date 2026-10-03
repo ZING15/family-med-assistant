@@ -1,7 +1,5 @@
-# Local practice data downloaded from third-party sources.
-# Keep out of any public repository until the source license is verified.
+# TFDA 原始下載檔（data.gov.tw，可重新下載）
 data/raw/
-data/medical-practice-cases.js
 
 # TFDA drug reference build output (large; regenerate with scripts/build_drug_reference.py)
 data/drug_reference/
@@ -13,7 +11,7 @@ __pycache__/
 data/app.sqlite
 data/uploads/
 
-# Not published: interview transcripts (real people) and archive data / Kaggle X-rays
+# Not published: interview transcripts (real people)
 參考資料/
 archive/*
 !archive/產品規格_v0.1.md
