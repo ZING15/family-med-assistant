@@ -107,7 +107,7 @@ def seed_records() -> None:
 @router.get("/catalog")
 def catalog():
     return {
-        "conditions": [{"name": c["name"], "icd10": c["icd10"]} for c in rec.conditions()],
+        "conditions": [{"name": c["name"], "icd10": c["icd10"], "chronic": c.get("chronic", False)} for c in rec.conditions()],
         "allergens": [{"id": a["id"], "name": a["name"]} for a in rec.allergens()],
     }
 
@@ -210,11 +210,18 @@ def add_feedback(body: FeedbackIn):
 
 @router.delete("/feedback")
 def remove_feedback(condition: str, atc_code: str, action: str = "never"):
-    """復原「此病灶不再推薦」。"""
+    """復原「此病灶不再推薦」；action=adopt 時只撤回最近一次採用（採用後按「復原」）。"""
     with app_db() as con:
-        cur = con.execute(
-            "DELETE FROM drug_feedback WHERE condition=? AND atc_code=? AND action=?", (condition, atc_code, action)
-        )
+        if action == "adopt":
+            cur = con.execute(
+                """DELETE FROM drug_feedback WHERE rowid = (SELECT rowid FROM drug_feedback
+                   WHERE condition=? AND atc_code=? AND action='adopt' ORDER BY created_at DESC LIMIT 1)""",
+                (condition, atc_code),
+            )
+        else:
+            cur = con.execute(
+                "DELETE FROM drug_feedback WHERE condition=? AND atc_code=? AND action=?", (condition, atc_code, action)
+            )
     return {"removed": cur.rowcount}
 
 

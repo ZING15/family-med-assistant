@@ -1,7 +1,7 @@
 """
 F-03～F-06 病灶偵測與用藥推薦。
 
-推薦分數 = 類別優先（對照表中越前面越常用） + 醫師回饋（曾在此病灶採用加分）
+推薦分數 = 類別優先（對照表中越前面越常用） + 常見首選成分加分 + 醫師回饋（曾在此病灶採用加分）
          + 市售品項數（TFDA 有效許可證數，代表可取得性） + 有外觀圖小幅加分
 排除：過敏原對應的 ATC 類別、醫師標記「此病灶不再推薦」、本次病歷「這次不用」。
 """
@@ -45,6 +45,37 @@ def conditions() -> list[dict]:
 @lru_cache
 def allergens() -> list[dict]:
     return json.loads((DATA_DIR / "allergens.json").read_text(encoding="utf-8"))["allergens"]
+
+
+@lru_cache
+def atc_labels() -> dict:
+    return json.loads((DATA_DIR / "atc_classes.json").read_text(encoding="utf-8"))
+
+
+def _longest_prefix(table: dict, atc: str) -> str:
+    keys = [k for k in table if atc.startswith(k)]
+    return table[max(keys, key=len)] if keys else ""
+
+
+def class_zh(atc: str, fallback: str = "") -> str:
+    """推薦卡的中文藥理類別：先查人工對照表，查不到才用 TFDA AHFS 推論的分類。"""
+    return _longest_prefix(atc_labels()["classes"], atc) or fallback
+
+
+def display_name(atc: str, name_en: str) -> str:
+    """ATC 的「combinations」「OTHER …」這類名稱改成醫師看得懂的寫法；一般成分維持英文學名。"""
+    if atc in atc_labels()["names"]:
+        return atc_labels()["names"][atc]
+    lowered = name_en.lower().strip()
+    if lowered in ("combinations", "various combinations"):
+        return f"{class_zh(atc) or '其他'}複方"
+    for suffix, label in ((", combinations with psycholeptics", " 複方（含鎮靜成分）"),
+                          (", combinations excl. psycholeptics", " 複方"), (", combinations", " 複方")):
+        if lowered.endswith(suffix):
+            return name_en[: -len(suffix)] + label
+    if name_en.isupper():
+        return name_en.capitalize()
+    return name_en
 
 
 def condition_by_name(name: str) -> dict | None:
@@ -178,6 +209,8 @@ def concept_detail(atc: str) -> dict | None:
             (atc,),
         ).fetchall()
     data = dict(concept)
+    data["display_name"] = display_name(atc, data["name_en"])
+    data["class_zh"] = class_zh(atc, data["ahfs_main_name_zh"] or "")
     data["products"] = [dict(p) | {"category": CATEGORIES[p["drug_category"]], "form_group": form_group(p["dosage_form"] or "")}
                         for p in products]
     data["class_path"] = [data["atc_l1"], data["atc_l2"], data["atc_l3"], data["atc_l4"], atc]
@@ -197,7 +230,8 @@ def search_drugs(query: str, limit: int = 15) -> list[dict]:
                 GROUP BY atc_main ORDER BY product_count DESC LIMIT ?""",
             (q, q, q, q, limit),
         ).fetchall()
-    return [dict(r) for r in rows]
+    return [dict(r) | {"display_name": display_name(r["atc_code"], r["name_en"]),
+                       "class_zh": class_zh(r["atc_code"], r["class_zh"] or "")} for r in rows]
 
 
 # ---------- 推薦 ----------
@@ -245,12 +279,14 @@ def recommend(condition_names: list[str], allergy_ids: list[str], dismissed: lis
         if not cond:
             continue
         prefixes = cond["atc"]
+        first_line = cond.get("first_line", [])
+        avoid = cond.get("avoid", [])
         candidates: dict[str, dict] = {}
         for rank, prefix in enumerate(prefixes):
             priority = 1 - rank / len(prefixes)
             for concept in concepts_for_prefix(prefix):
                 code = concept["atc_code"]
-                if code in candidates:
+                if code in candidates or any(code.startswith(a) for a in avoid):
                     continue
                 candidates[code] = {**concept, "_priority": priority, "_prefix": prefix}
 
@@ -259,29 +295,32 @@ def recommend(condition_names: list[str], allergy_ids: list[str], dismissed: lis
             key = (name, code)
             allergy_reason, class_warning = allergy_hit(code, rules)
             if allergy_reason:
-                excluded.append({"condition": name, "atc_code": code, "name_en": c["name_en"], "reason": "allergy", "label": f"過敏：{allergy_reason}"})
+                excluded.append({"condition": name, "atc_code": code, "name_en": display_name(code, c["name_en"]), "reason": "allergy", "label": f"過敏：{allergy_reason}"})
                 continue
             if key in never:
-                excluded.append({"condition": name, "atc_code": code, "name_en": c["name_en"], "reason": "never", "label": "你標記此病灶不再推薦"})
+                excluded.append({"condition": name, "atc_code": code, "name_en": display_name(code, c["name_en"]), "reason": "never", "label": "你標記此病灶不再推薦"})
                 continue
             if key in dismissed_keys:
-                excluded.append({"condition": name, "atc_code": code, "name_en": c["name_en"], "reason": "dismissed", "label": "本次病歷：這次不用"})
+                excluded.append({"condition": name, "atc_code": code, "name_en": display_name(code, c["name_en"]), "reason": "dismissed", "label": "本次病歷：這次不用"})
                 continue
             here, anywhere = adopt.get(key, 0), adopt_any.get(code, 0)
             combination = "combination" in c["name_en"].lower()
-            score = (3 * c["_priority"] + 2 * here + 0.5 * (anywhere - here)
+            preferred = any(code.startswith(f) for f in first_line)
+            score = (3 * c["_priority"] + (1.5 if preferred else 0) + 2 * here + 0.5 * (anywhere - here)
                      + math.log10(c["product_count"] + 1) + (0.2 if c["image_url"] else 0)
                      - (0.6 if combination else 0))  # 單方優先於複方
             reasons = []
-            if c["_priority"] == 1:
-                reasons.append("常用第一線類別")
             if here:
                 reasons.append(f"你在此病灶採用過 {here} 次")
             elif anywhere:
-                reasons.append(f"你採用過 {anywhere} 次")
-            reasons.append(f"TFDA 有效品項 {c['product_count']}")
+                reasons.append(f"你在其他病灶採用過 {anywhere} 次")
+            if preferred:
+                reasons.append("常見首選")
+            if combination:
+                reasons.append("複方製劑")
             items.append({
-                "atc_code": code, "name_en": c["name_en"], "class_zh": c["class_zh"],
+                "atc_code": code, "name_en": c["name_en"], "display_name": display_name(code, c["name_en"]),
+                "class_zh": class_zh(code, c["class_zh"]), "preferred": preferred,
                 "product_count": c["product_count"], "categories": c["categories"], "forms": c["forms"],
                 "image_url": c["image_url"], "sample_name": c["sample_name"], "score": round(score, 3),
                 "reasons": reasons, "warning": class_warning, "adopted_here": here, "_prefix": c["_prefix"],

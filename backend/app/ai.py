@@ -215,12 +215,12 @@ class AIService:
             "\"mechanism\": 作用機轉一句(40字內), "
             "\"common_usage\": 一般常見的用法頻率描述(例：每日一次、需要時使用；不寫劑量數字), "
             "\"frequency\": 從 QD、BID、TID、QID、HS、PRN 中選一個最常見的, "
-            "\"cautions\": 2-4 項醫師開立前要留意的事(禁忌、交互作用、特殊族群), "
+            "\"cautions\": 2-4 項醫師開立前要留意的事(禁忌、交互作用、特殊族群)；交互作用要點名藥物類別與後果，例如「併用 MAOI 或 SSRI 可能引發血清素症候群」，不要寫「某些藥物」這類含糊說法, "
             "\"patient_tips\": 2-3 項給病人的白話提醒}"
         )
         user = (
             f"成分：{concept['name_en']}（ATC {concept['atc_code']}）\n"
-            f"藥理分類：{concept.get('ahfs_main_name_zh') or ''}\n"
+            f"藥理分類：{concept.get('class_zh') or concept.get('ahfs_main_name_zh') or ''}\n"
             f"TFDA 許可證適應症範例：{concept.get('sample_indication') or ''}"
         )
         return self.chat_json(system, user, max_tokens=1200)

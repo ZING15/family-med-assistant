@@ -11,19 +11,30 @@ document.addEventListener('load', (event) => {
 document.addEventListener('error', (event) => {
   const img = event.target;
   if (img.tagName !== 'IMG') return;
-  img.closest('.cover, .rec-cover, .rx-thumb, .tile-cover, figure')?.classList.add('img-failed');
+  const box = img.closest('.cover, .rec-cover, .rx-thumb, .tile-cover, figure');
+  box?.classList.add('img-failed');
   img.remove();
+  // 藥品卡：外觀圖載入失敗時改顯示成分首字母，不留空白
+  if (box?.dataset.glyph) box.insertAdjacentHTML('beforeend', `<span class="pill-glyph" aria-hidden="true">${escapeHtml(box.dataset.glyph)}</span>`);
 }, true);
 
 const toast = $('#toast');
 let toastTimer;
 let aiStatus = { chat: false, vision: false, embedding: false, transcribe: false, image: false };
 
-function showToast(message) {
-  toast.textContent = message;
+// action：{ label, run }，例如「復原」；有動作時多停留幾秒讓人來得及按
+function showToast(message, action = null) {
+  toast.innerHTML = `<span>${escapeHtml(message)}</span>${action ? `<button type="button">${escapeHtml(action.label)}</button>` : ''}`;
+  toast.classList.toggle('has-action', Boolean(action));
+  if (action) {
+    toast.querySelector('button').addEventListener('click', () => {
+      toast.classList.remove('show');
+      action.run();
+    }, { once: true });
+  }
   toast.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), action ? 6000 : 2600);
 }
 
 function escapeHtml(value) {

@@ -143,7 +143,8 @@ def index_appearance(rows: list[dict]) -> dict[str, dict]:
     appearance = {}
     for r in rows:
         marking = " / ".join(m for m in (clean(r["標註一"]), clean(r["標註二"])) if m)
-        url = clean(r["外觀圖檔連結"])
+        # 少數藥品有多張外觀圖，以 ;;; 串在一起，取第一張
+        url = clean(r["外觀圖檔連結"]).split(";;;")[0].strip()
         appearance[r["許可證字號"]] = {
             "shape": clean(r["形狀"]),
             # 膠囊等多色藥品以 ; 分隔各部位顏色，去除空值與重複

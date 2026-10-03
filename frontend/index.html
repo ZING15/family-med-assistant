@@ -136,7 +136,10 @@
                   <label><span>主訴</span><textarea id="rChief" rows="2" placeholder="例：咳嗽兩週，有痰"></textarea></label>
                   <label><span>病史</span><textarea id="rHistory" rows="5" placeholder="現病史、過去病史、用藥與生活習慣（請去識別化）"></textarea></label>
                   <label><span>評估</span><textarea id="rAssessment" rows="2" placeholder="例：感冒後咳嗽，合併過敏性鼻炎"></textarea></label>
-                  <p class="soap-hint">輸入時會自動偵測病灶（「無發燒」這類否定不會被當成病灶）</p>
+                  <div class="soap-foot">
+                    <p class="soap-hint">輸入時會自動偵測病灶（「無發燒」這類否定不會被當成病灶）</p>
+                    <span class="save-state" id="saveState" role="status"></span>
+                  </div>
                 </section>
 
                 <section class="rx-card">
@@ -145,16 +148,16 @@
                     <button class="link-button" id="aiDetectButton" type="button"><svg class="icon" aria-hidden="true"><use href="#i-sparkles"/></svg><span>AI 偵測</span></button>
                   </div>
                   <div class="condition-chips" id="conditionChips"></div>
+                  <p class="removed-conditions" id="removedConditions" hidden></p>
                   <div class="condition-add">
                     <select id="conditionAdd" aria-label="手動新增病灶"><option value="">手動新增病灶…</option></select>
                   </div>
                   <p class="ai-other" id="aiOther" hidden></p>
                 </section>
 
-                <section class="rx-card">
+                <section class="rx-card" id="rxSection">
                   <div class="rx-card-head">
                     <h2 class="rx-card-title">開藥區 <small id="rxCount"></small></h2>
-                    <span class="save-state" id="saveState"></span>
                   </div>
                   <div class="rx-list" id="rxList"></div>
                   <div class="rx-search">
@@ -171,12 +174,22 @@
                     <p>依病灶與你的採用紀錄排序，點卡片看詳細資料</p>
                   </div>
                   <div class="recs-filters" role="group" aria-label="篩選">
-                    <button type="button" class="seg active" data-cat="">全部</button>
-                    <button type="button" class="seg" data-cat="rx">處方</button>
-                    <button type="button" class="seg" data-cat="otc">指示藥</button>
+                    <button type="button" class="seg active" data-cat="" aria-pressed="true">全部</button>
+                    <button type="button" class="seg" data-cat="rx" aria-pressed="false">處方</button>
+                    <button type="button" class="seg" data-cat="otc" aria-pressed="false">指示藥</button>
                   </div>
                 </div>
-                <div id="recRows" aria-live="polite"></div>
+                <!-- 本次處方與過敏排除：採用的結果與安全資訊固定在推薦上方 -->
+                <section class="recs-tray" id="recsTray" aria-labelledby="trayTitle">
+                  <div class="tray-head">
+                    <h3 id="trayTitle">本次處方 <small id="trayCount"></small></h3>
+                    <button type="button" class="link-button" id="trayJump">到開藥區調整品項</button>
+                  </div>
+                  <div class="tray-list" id="trayList"></div>
+                  <p class="tray-safety" id="traySafety"></p>
+                </section>
+                <p class="sr-only" id="recsStatus" role="status" aria-live="polite"></p>
+                <div id="recRows"></div>
                 <details class="excluded" id="excludedBox" hidden>
                   <summary id="excludedSummary"></summary>
                   <ul id="excludedList"></ul>
@@ -295,7 +308,7 @@
     </dialog>
 
     <!-- 藥品資訊卡 -->
-    <dialog id="drugDialog" class="app-dialog wide-dialog">
+    <dialog id="drugDialog" class="app-dialog wide-dialog" aria-labelledby="drugTitle">
       <div class="dialog-body" id="drugBody"></div>
     </dialog>
 
