@@ -2,7 +2,8 @@
 解析健保署「健保用藥品項查詢檔」，萃取目前有健保給付的藥品，並對回 TFDA 許可證。
 
 輸入（data/raw/nhi/，由健保署網站下載的 all1_YYYMM_*.TXT）：
-  - Big5（含 HKSCS 字）編碼、每列固定 1,859 byte 的文字檔，沒有分隔符號，欄位依 byte 位置切。
+  - Big5（含 HKSCS 字）編碼、每列固定 1,859 byte 的文字檔，欄位依健保署欄位格式說明的 byte 位置切。
+  - .TXT 與 .B5 兩種下載內容完全相同（MD5 一致），擇一放入即可。
   - 同一藥品代碼每次調價就多一列（有效起日～有效迄日），所以檔案同時是價格歷史。
   - 多個檔案只是同一份清單切段，合併即為完整資料。
 
@@ -22,7 +23,8 @@
   - nhi_covered_drugs.csv    目前有健保給付的藥品，UTF-8 BOM，可直接用 Excel 開啟
   - nhi_build_report.json    筆數與對應率統計
 
-欄位說明未公開的代碼欄（類別碼 1/2/3/4/5/9、a1～a5、末欄 Y/N）保留原值，不自行命名其意義。
+欄位位置依健保署「健保用藥品項查詢檔欄位格式說明」（109.01.09 更新）。
+藥品分類碼的名稱格式說明未列，已由健保署查詢網站逐碼確認並轉成 class_label；口服錠註記 a1～a5 的意義未公開，保留原值。
 """
 
 from __future__ import annotations
@@ -45,32 +47,41 @@ SOURCE_URL = "https://data.gov.tw/dataset/23715"
 ENCODING = "big5hkscs"  # cp950 有約 600 列解不開（如「塩野義」的「塩」）
 RECORD_BYTES = 1859
 
-# (欄位, 起, 迄) — byte 位置，由資料本身逐欄驗證
-FIELDS = [
-    ("change_mark", 0, 3),          # '*'：本期新增／異動
-    ("a_flag", 3, 14),              # a1～a5，意義未確認
-    ("is_combination", 14, 17),     # Y 複方／N 單方
-    ("nhi_code", 17, 28),
-    ("price", 28, 38),
-    ("start_date", 38, 46),
-    ("end_date", 46, 54),
-    ("name_en", 54, 174),
-    ("spec_qty", 174, 182),
-    ("spec_unit", 182, 236),
-    ("ingredient", 236, 294),
-    ("ingredient_qty", 294, 306),
-    ("ingredient_unit", 306, 358),
-    ("dosage_form", 358, 604),
-    ("vendor", 604, 767),           # 藥商，原檔截為 10 個中文字
-    ("class_code", 767, 771),       # 1/2/3/4/5/9，意義未確認
-    ("name_zh", 771, 900),
-    ("group_name", 900, 1135),      # 分類分組名稱：同成分、同劑型、同含量為一組
-    ("manufacturer", 1806, 1849),
-    ("atc_code", 1849, 1858),
-    ("tail_flag", 1858, 1859),      # Y/N，意義未確認
+# 依健保署「健保用藥品項查詢檔欄位格式說明」（109.01.09 更新，PDF 放在 data/raw/nhi/）：(欄位, 長度, 迄末位置)。
+# 迄末位置以 1 起算且含該 byte，所以 Python 切片為 [迄末 - 長度 : 迄末]；欄位之間以 1 個空白分隔。
+SPEC = [
+    ("new_mark", 2, 2),               # 1  New_mark：'*' 為本期新增／異動
+    ("oral_tablet_mark", 10, 13),     # 2  口服錠註記（a1～a5）
+    ("is_combination", 2, 16),        # 3  單/複方註記：Y 複方、N 單方
+    ("nhi_code", 10, 27),             # 4  藥品代碼
+    ("price", 9, 37),                 # 5  藥價參考金額
+    ("start_date", 7, 45),            # 6  藥價參考日期（民國）
+    ("end_date", 7, 53),              # 7  藥價參考截止日期（民國）
+    ("name_en", 120, 174),            # 8  藥品英文名稱
+    ("spec_qty", 7, 182),             # 9  藥品規格量
+    ("spec_unit", 52, 235),           # 10 藥品規格單位
+    ("ingredient", 56, 292),          # 11 成份名稱
+    ("ingredient_qty", 12, 305),      # 12 成份含量
+    ("ingredient_unit", 51, 357),     # 13 成份含量單位
+    ("dosage_form", 86, 444),         # 14 藥品劑型
+    ("vendor", 20, 624),              # 16 藥商名稱（僅 10 個中文字）
+    ("class_code", 1, 768),           # 18 藥品分類，見 CLASS_LABELS
+    ("quality_code", 1, 770),         # 19 品質分類碼（115 年 10 月檔全為空白）
+    ("name_zh", 128, 899),            # 20 藥品中文名稱
+    ("group_name", 300, 1200),        # 21 分類分組名稱：同成分、同劑型、同含量為一組
+    ("manufacturer", 42, 1848),       # 37 製造廠名稱
+    ("atc_code", 8, 1857),            # 38 ATC CODE
+    ("not_produced_5y", 1, 1859),     # 39 未生產或未輸入達五年（Y/N）
 ]
-# 複方第 2～6 成分：自 1200 起每組 121 byte（名稱 58、含量 12、單位 51）
-EXTRA_INGREDIENT_START, EXTRA_INGREDIENT_SIZE, EXTRA_INGREDIENT_COUNT = 1200, 121, 5
+FIELDS = [(name, end - length, end) for name, length, end in SPEC]
+
+# 藥品分類碼 → 健保署查詢網站顯示的名稱（2026-10-03 逐碼查詢官網確認；2 碼目前無給付中品項，未能確認）
+CLASS_LABELS = {"1": "研發廠", "3": "BA/BE學名藥", "4": "一般學名藥", "5": "生物相似性藥品", "9": "BE對照品"}
+
+# 22～36 複方一～五：每組 121 byte（成份名稱 56、含量 11、單位 51），第一組迄末位置 1256／1269／1321
+EXTRA_INGREDIENTS = [((1256 + i * 121 - 56, 1256 + i * 121),
+                      (1269 + i * 121 - 11, 1269 + i * 121),
+                      (1321 + i * 121 - 51, 1321 + i * 121)) for i in range(5)]
 
 # 健保代碼首碼 → TFDA 許可證字號中的類別（不含 衛署／衛部 字首，兩者號碼共用同一碼）
 CODE_KIND = {
@@ -89,7 +100,7 @@ ITEM_COLUMNS = [
     "nhi_code", "is_covered", "price", "price_start", "price_end", "next_price", "next_price_start",
     "first_listed", "name_zh", "name_en", "spec_qty", "spec_unit", "is_combination", "ingredients",
     "dosage_form", "group_name", "atc_code", "vendor", "manufacturer",
-    "class_code", "a_flag", "tail_flag", "change_mark",
+    "class_code", "class_label", "quality_code", "oral_tablet_mark", "not_produced_5y", "new_mark",
     "license_no", "license_status", "match_method",
 ]
 
@@ -119,12 +130,11 @@ def decode(chunk: bytes) -> str:
 def parse_line(raw: bytes) -> dict:
     row = {name: decode(raw[a:b]) for name, a, b in FIELDS}
     ingredients = [_format_ingredient(row["ingredient"], row["ingredient_qty"], row["ingredient_unit"])]
-    for i in range(EXTRA_INGREDIENT_COUNT):
-        a = EXTRA_INGREDIENT_START + i * EXTRA_INGREDIENT_SIZE
-        name = decode(raw[a:a + 58])
+    for (n0, n1), (q0, q1), (u0, u1) in EXTRA_INGREDIENTS:
+        name = decode(raw[n0:n1])
         if name:
-            qty = decode(raw[a + 58:a + 70])
-            unit = decode(raw[a + 70:a + EXTRA_INGREDIENT_SIZE])
+            qty = decode(raw[q0:q1])
+            unit = decode(raw[u0:u1])
             ingredients.append(_format_ingredient(name, qty, unit))
     row["ingredients"] = " + ".join(x for x in ingredients if x)
     row["price"] = parse_price(row["price"])
@@ -181,7 +191,8 @@ def build_items(rows: list[dict], as_of: str) -> list[dict]:
             **{k: base[k] for k in (
                 "nhi_code", "name_zh", "name_en", "spec_qty", "spec_unit", "is_combination", "ingredients",
                 "dosage_form", "group_name", "atc_code", "vendor", "manufacturer",
-                "class_code", "a_flag", "tail_flag", "change_mark")},
+                "class_code", "quality_code", "oral_tablet_mark", "not_produced_5y", "new_mark")},
+            "class_label": CLASS_LABELS.get(base["class_code"], ""),
             "is_covered": int(is_covered),
             "price": current["price"] if current else None,
             "price_start": roc_to_iso(current["start_date"]) if current else "",
@@ -324,6 +335,7 @@ def main() -> None:
         "covered_licenses": len({r["license_no"] for r in covered if r["license_no"]}),
         "covered_atc_codes": len({r["atc_code"] for r in covered if r["atc_code"]}),
         "covered_groups": len({r["group_name"] for r in covered if r["group_name"]}),
+        "covered_by_class": dict(Counter(r["class_label"] or r["class_code"] or "（空白）" for r in covered).most_common()),
         "covered_by_code_prefix": dict(Counter(r["nhi_code"][0] for r in covered).most_common()),
         "covered_match_method": dict(Counter(r["match_method"] or "unmatched" for r in covered).most_common()),
         "upcoming_price_changes": sum(1 for r in items if r["next_price_start"]),
