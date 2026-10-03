@@ -30,6 +30,41 @@ CREATE TABLE IF NOT EXISTS library_items (
     created_at      TEXT NOT NULL,
     updated_at      TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS records (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    patient_code    TEXT NOT NULL DEFAULT '',          -- 練習用代號，不可填真實身分
+    age             TEXT NOT NULL DEFAULT '',
+    sex             TEXT NOT NULL DEFAULT '',
+    allergies       TEXT NOT NULL DEFAULT '[]',        -- JSON：過敏原 id 或 "atc:<code>"（個別藥品）
+    chief_complaint TEXT NOT NULL DEFAULT '',
+    history         TEXT NOT NULL DEFAULT '',
+    assessment      TEXT NOT NULL DEFAULT '',
+    conditions      TEXT NOT NULL DEFAULT '[]',        -- JSON：[{name, source: keyword|ai|manual}]
+    removed_conditions TEXT NOT NULL DEFAULT '[]',     -- JSON：醫師手動移除、不再自動偵測的病灶
+    dismissed       TEXT NOT NULL DEFAULT '[]',        -- JSON：這次不用 [{condition, atc}]
+    prescriptions   TEXT NOT NULL DEFAULT '[]',        -- JSON：開藥區
+    created_at      TEXT NOT NULL,
+    updated_at      TEXT NOT NULL
+);
+
+-- 醫師回饋：adopt（採用，排序加分）或 never（此病灶不再推薦）
+CREATE TABLE IF NOT EXISTS drug_feedback (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    condition   TEXT NOT NULL,
+    atc_code    TEXT NOT NULL,
+    action      TEXT NOT NULL,
+    created_at  TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_feedback ON drug_feedback(condition, atc_code, action);
+
+-- AI 產生的藥品白話簡介，每個成分只產生一次
+CREATE TABLE IF NOT EXISTS drug_summaries (
+    atc_code     TEXT PRIMARY KEY,
+    summary      TEXT NOT NULL,
+    model        TEXT NOT NULL,
+    generated_at TEXT NOT NULL
+);
 """
 
 

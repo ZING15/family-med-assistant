@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from .ai import ai
 from .config import DRUG_DB, FRONTEND_DIR, UPLOAD_DIR
 from .db import app_db, init_app_db
-from .routers import library
+from .routers import library, records
 
 app = FastAPI(title="新手家醫看診助手 API", version="0.2.0")
 
@@ -50,6 +50,7 @@ def startup() -> None:
     init_app_db()
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
     cleanup_orphan_uploads()
+    records.seed_records()
 
 
 @app.get("/api/health")
@@ -63,6 +64,7 @@ def health():
 
 
 app.include_router(library.router)
+app.include_router(records.router)
 
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")

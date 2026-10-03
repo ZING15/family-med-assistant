@@ -1,0 +1,19 @@
+{
+  "_note": "過敏原 → 排除的 ATC 前綴。練習用，非完整交叉過敏資料。",
+  "allergens": [
+    {"id": "penicillin", "name": "Penicillin 類", "atc": ["J01C"]},
+    {"id": "cephalosporin", "name": "Cephalosporin 類", "atc": ["J01D"]},
+    {"id": "sulfonamide", "name": "磺胺類", "atc": ["J01E"]},
+    {"id": "macrolide", "name": "Macrolide 類", "atc": ["J01FA"]},
+    {"id": "fluoroquinolone", "name": "Fluoroquinolone 類", "atc": ["J01MA"]},
+    {"id": "tetracycline", "name": "Tetracycline 類", "atc": ["J01AA"]},
+    {"id": "nsaid", "name": "NSAIDs（非類固醇消炎止痛藥）", "atc": ["M01A", "M02AA", "N02BA"]},
+    {"id": "aspirin", "name": "Aspirin", "atc": ["N02BA01", "B01AC06"]},
+    {"id": "acetaminophen", "name": "Acetaminophen", "atc": ["N02BE01"]},
+    {"id": "opioid", "name": "鴉片類（含 codeine）", "atc": ["N02A", "R05DA04"]},
+    {"id": "acei", "name": "ACE 抑制劑", "atc": ["C09A", "C09B"]},
+    {"id": "benzodiazepine", "name": "Benzodiazepine 類", "atc": ["N05BA", "N05CD"]},
+    {"id": "sulfonylurea", "name": "Sulfonylurea 類", "atc": ["A10BB"]},
+    {"id": "corticosteroid", "name": "類固醇", "atc": ["H02AB", "D07A"]}
+  ]
+}

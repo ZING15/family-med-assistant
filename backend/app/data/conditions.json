@@ -1,0 +1,32 @@
+{
+  "_note": "練習用病灶對照表：關鍵字 → 常用藥理類別（ATC 前綴，依常用程度排序）。非臨床指引，供推薦系統示範。",
+  "conditions": [
+    {"name": "咳嗽", "icd10": "R05", "aliases": ["咳嗽", "乾咳", "久咳", "有痰", "cough"], "atc": ["R05DB", "R05DA", "R05CB", "R05CA", "R06AX"]},
+    {"name": "急性上呼吸道感染", "icd10": "J06.9", "aliases": ["上呼吸道感染", "感冒", "URI", "流鼻水", "鼻塞", "common cold"], "atc": ["N02BE", "R01BA", "R06AB", "R05X", "M01AE"]},
+    {"name": "扁桃腺炎／咽喉炎", "icd10": "J02.9", "aliases": ["喉嚨痛", "咽喉炎", "扁桃腺炎", "咽炎", "sore throat", "pharyngitis", "tonsillitis"], "atc": ["N02BE", "R02AA", "J01CA", "J01CE", "J01FA"]},
+    {"name": "鼻竇炎", "icd10": "J01.9", "aliases": ["鼻竇炎", "sinusitis", "膿鼻涕"], "atc": ["J01CA", "J01CR", "R01AD", "J01FA"]},
+    {"name": "過敏性鼻炎", "icd10": "J30.4", "aliases": ["過敏性鼻炎", "打噴嚏", "鼻子過敏", "allergic rhinitis"], "atc": ["R06AX", "R01AD", "R06AE", "R01AC"]},
+    {"name": "氣喘", "icd10": "J45.909", "aliases": ["氣喘", "哮喘", "喘鳴", "asthma", "wheezing"], "atc": ["R03AK", "R03AC", "R03BA", "R03DC"]},
+    {"name": "蕁麻疹", "icd10": "L50.9", "aliases": ["蕁麻疹", "風疹塊", "urticaria", "hives"], "atc": ["R06AX", "R06AE", "R06AB", "H02AB"]},
+    {"name": "異位性皮膚炎", "icd10": "L20.9", "aliases": ["異位性皮膚炎", "濕疹", "atopic dermatitis", "eczema"], "atc": ["D07AC", "D07AB", "D11AH", "D07AA", "R06AX"]},
+    {"name": "蟲咬皮膚炎", "icd10": "W57", "aliases": ["蟲咬", "蚊蟲叮咬", "跳蚤", "床蝨", "insect bite"], "atc": ["D07AB", "R06AX", "D04AA", "D07AA"]},
+    {"name": "恙蟲病", "icd10": "A75.3", "aliases": ["恙蟲病", "焦痂", "scrub typhus"], "atc": ["J01AA"]},
+    {"name": "高血壓", "icd10": "I10", "aliases": ["高血壓", "血壓高", "hypertension", "HTN"], "atc": ["C09CA", "C08CA", "C09AA", "C03AA", "C07AB"]},
+    {"name": "第二型糖尿病", "icd10": "E11.9", "aliases": ["糖尿病", "血糖高", "diabetes", "DM", "T2DM"], "atc": ["A10BA", "A10BH", "A10BK", "A10BB"]},
+    {"name": "高血脂", "icd10": "E78.5", "aliases": ["高血脂", "膽固醇高", "高膽固醇", "hyperlipidemia", "dyslipidemia"], "atc": ["C10AA", "C10AX", "C10AB"]},
+    {"name": "胃食道逆流", "icd10": "K21.9", "aliases": ["胃食道逆流", "火燒心", "胃酸逆流", "GERD", "reflux"], "atc": ["A02BC", "A02BA", "A02AD", "A03FA"]},
+    {"name": "消化不良", "icd10": "K30", "aliases": ["消化不良", "脹氣", "胃脹", "dyspepsia"], "atc": ["A03FA", "A02BA", "A09AA", "A03AX"]},
+    {"name": "便秘", "icd10": "K59.00", "aliases": ["便秘", "排便困難", "constipation"], "atc": ["A06AD", "A06AB", "A06AA"]},
+    {"name": "急性腹瀉", "icd10": "A09", "aliases": ["腹瀉", "拉肚子", "水瀉", "diarrhea"], "atc": ["A07FA", "A07BC", "A07DA"]},
+    {"name": "頭痛", "icd10": "R51.9", "aliases": ["頭痛", "偏頭痛", "headache", "migraine"], "atc": ["N02BE", "M01AE", "M01AB", "N02CC"]},
+    {"name": "肌肉骨骼疼痛", "icd10": "M79.1", "aliases": ["肌肉痠痛", "腰痛", "背痛", "肩頸痠痛", "扭傷", "myalgia", "low back pain"], "atc": ["N02BE", "M01AE", "M01AB", "M02AA", "M03BX", "M01AH"]},
+    {"name": "痛風", "icd10": "M10.9", "aliases": ["痛風", "gout"], "atc": ["M01AE", "M01AB", "M04AC", "M04AA"]},
+    {"name": "失眠", "icd10": "G47.00", "aliases": ["失眠", "睡不著", "淺眠", "insomnia"], "atc": ["N05CF", "N05CD", "N05BA"]},
+    {"name": "焦慮", "icd10": "F41.9", "aliases": ["焦慮", "緊張", "anxiety"], "atc": ["N06AB", "N05BA"]},
+    {"name": "尿路感染", "icd10": "N39.0", "aliases": ["尿路感染", "泌尿道感染", "膀胱炎", "頻尿", "解尿疼痛", "UTI", "cystitis"], "atc": ["J01DB", "J01DC", "J01CR", "J01MA", "J01XE"]},
+    {"name": "過敏性結膜炎", "icd10": "H10.45", "aliases": ["過敏性結膜炎", "眼睛癢", "allergic conjunctivitis"], "atc": ["S01GX", "S01GA", "S01BA"]},
+    {"name": "細菌性結膜炎", "icd10": "H10.9", "aliases": ["結膜炎", "紅眼", "眼屎多", "conjunctivitis"], "atc": ["S01AA", "S01AE"]},
+    {"name": "眩暈", "icd10": "R42", "aliases": ["眩暈", "頭暈", "暈眩", "vertigo", "dizziness"], "atc": ["N07CA", "R06AE", "A04AD"]},
+    {"name": "口腔潰瘍", "icd10": "K12.0", "aliases": ["口腔潰瘍", "嘴破", "口瘡", "aphthous ulcer"], "atc": ["A01AC", "A01AD"]}
+  ]
+}

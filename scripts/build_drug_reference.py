@@ -60,10 +60,22 @@ def load(name: str) -> list[dict]:
         return json.load(f)
 
 
+# 原始資料中無法編碼而變成「?」的字（主要是「酶」）
+TEXT_FIXES = {
+    "轉化?": "轉化酶",
+    "氧化?": "氧化酶",
+    "抗青黴素?": "抗青黴素酶",
+    "類?治類利尿劑": "類 Thiazide 利尿劑",
+}
+
+
 def clean(value) -> str:
     if value is None:
         return ""
-    return str(value).replace("　", "").strip()
+    text = str(value).replace("　", "").strip()
+    for broken, fixed in TEXT_FIXES.items():
+        text = text.replace(broken, fixed)
+    return text
 
 
 def atc_levels(code: str) -> dict:

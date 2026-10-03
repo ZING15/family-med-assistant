@@ -194,6 +194,37 @@ class AIService:
         )
         return self.chat_json(system, lines, max_tokens=3000)
 
+    # ---- 病歷：病灶擷取 ----
+    def extract_conditions(self, text: str, names: list[str]) -> tuple[dict | None, dict]:
+        system = (
+            "你協助醫師從練習病歷中找出『病灶／問題』，只做擷取，不下診斷結論。"
+            f"可用的病灶名稱：{'、'.join(names)}。"
+            "只回傳病歷中明確提到或醫師評估中列出的問題，忽略被否認的症狀（例如「無發燒」）。"
+            "回傳 JSON：{\"conditions\": [{\"name\": 必須是可用名稱之一, \"evidence\": 病歷中的原文片段}], "
+            "\"other\": [病歷中有但不在可用名稱裡的問題，繁體中文]}"
+        )
+        return self.chat_json(system, text[:6000], max_tokens=1200)
+
+    # ---- 藥品白話簡介 ----
+    def drug_summary(self, concept: dict) -> tuple[dict | None, dict]:
+        system = (
+            "你協助新手家醫科醫師快速認識藥品成分，並準備給病人的白話說明。依一般藥品知識整理，不是仿單。"
+            "不要給個別病人的劑量建議。回傳 JSON：{"
+            "\"name_zh\": 成分的台灣常用中文名, "
+            "\"purpose\": 一句白話說明這個藥用來做什麼(30字內), "
+            "\"mechanism\": 作用機轉一句(40字內), "
+            "\"common_usage\": 一般常見的用法頻率描述(例：每日一次、需要時使用；不寫劑量數字), "
+            "\"frequency\": 從 QD、BID、TID、QID、HS、PRN 中選一個最常見的, "
+            "\"cautions\": 2-4 項醫師開立前要留意的事(禁忌、交互作用、特殊族群), "
+            "\"patient_tips\": 2-3 項給病人的白話提醒}"
+        )
+        user = (
+            f"成分：{concept['name_en']}（ATC {concept['atc_code']}）\n"
+            f"藥理分類：{concept.get('ahfs_main_name_zh') or ''}\n"
+            f"TFDA 許可證適應症範例：{concept.get('sample_indication') or ''}"
+        )
+        return self.chat_json(system, user, max_tokens=1200)
+
     # ---- 語音轉文字 ----
     def transcribe(self, audio_path: Path) -> tuple[str | None, dict]:
         if self._transcribe is not None:

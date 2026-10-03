@@ -83,7 +83,9 @@ def _row_to_item(row) -> dict:
     item["tags"] = json.loads(item["tags"] or "[]")
     item["ai_meta"] = json.loads(item["ai_meta"] or "{}")
     item["has_embedding"] = bool(item.pop("embedding"))
-    item["image_url"] = f"/uploads/{item['image_path']}" if item["image_path"] else ""
+    # 藥品卡可直接引用 TFDA 外觀圖網址（不下載）
+    path = item["image_path"]
+    item["image_url"] = path if path.startswith("https://") else (f"/uploads/{path}" if path else "")
     item["audio_url"] = f"/uploads/{item['audio_path']}" if item["audio_path"] else ""
     return item
 
@@ -421,5 +423,5 @@ def delete_item(item_id: int):
     with app_db() as con:
         con.execute("DELETE FROM library_items WHERE id = ?", (item_id,))
     for key in ("image_path", "audio_path"):
-        if item[key]:
+        if item[key] and not item[key].startswith("https://"):
             (UPLOAD_DIR / item[key]).unlink(missing_ok=True)

@@ -67,9 +67,98 @@
             </div>
           </section>
 
-          <!-- F-03～F-07 病歷與開藥（開發中） -->
+          <!-- F-03～F-07 病歷與開藥 -->
           <section class="view" id="view-records" data-title="病歷與開藥" hidden>
-            <header class="library-hero"><div><p class="eyebrow">病歷與開藥</p><h1>開發中</h1><p class="hero-meta">寫病歷時偵測病灶並推薦藥品，預計 10/6 完成。</p></div></header>
+            <header class="library-hero rx-hero">
+              <div>
+                <p class="eyebrow">病歷與開藥</p>
+                <h1>寫病歷，推薦就在旁邊</h1>
+                <p class="hero-meta">偵測病灶、排除過敏，依你的選擇越用越準。練習資料，非臨床建議。</p>
+              </div>
+              <div class="rx-switcher">
+                <label class="sr-only" for="recordSelect">選擇病歷</label>
+                <select id="recordSelect"></select>
+                <button class="primary-button add-button" id="newRecordButton" type="button"><span aria-hidden="true">＋</span>新病歷</button>
+              </div>
+            </header>
+
+            <div class="rx-layout">
+              <div class="rx-editor">
+                <section class="rx-card patient-card">
+                  <div class="patient-row">
+                    <label>代號<input id="pCode" maxlength="30" /></label>
+                    <label>年齡<input id="pAge" inputmode="numeric" maxlength="3" /></label>
+                    <label>性別
+                      <select id="pSex"><option value="">—</option><option>女</option><option>男</option><option>其他</option></select>
+                    </label>
+                  </div>
+                  <div class="allergy-row">
+                    <span class="field-label">過敏</span>
+                    <div class="allergy-chips" id="allergyChips"></div>
+                    <div class="allergy-add">
+                      <button class="chip-button" id="allergyToggle" type="button" aria-expanded="false">＋ 新增過敏</button>
+                      <div class="allergy-pop" id="allergyPop" hidden>
+                        <p class="pop-title">常見過敏原</p>
+                        <div class="allergen-options" id="allergenOptions"></div>
+                        <p class="pop-title">或搜尋個別藥品</p>
+                        <input id="allergyDrugSearch" placeholder="例：amoxicillin、普拿疼" autocomplete="off" />
+                        <div class="search-results" id="allergyDrugResults"></div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="rx-card soap-card">
+                  <label><span>主訴</span><textarea id="rChief" rows="2" placeholder="例：咳嗽兩週，有痰"></textarea></label>
+                  <label><span>病史</span><textarea id="rHistory" rows="5" placeholder="現病史、過去病史、用藥與生活習慣（請去識別化）"></textarea></label>
+                  <label><span>評估</span><textarea id="rAssessment" rows="2" placeholder="例：感冒後咳嗽，合併過敏性鼻炎"></textarea></label>
+                  <p class="soap-hint">輸入時會自動偵測病灶（「無發燒」這類否定不會被當成病灶）</p>
+                </section>
+
+                <section class="rx-card">
+                  <div class="rx-card-head">
+                    <h3>病灶</h3>
+                    <button class="link-button" id="aiDetectButton" type="button">✦ AI 偵測</button>
+                  </div>
+                  <div class="condition-chips" id="conditionChips"></div>
+                  <div class="condition-add">
+                    <select id="conditionAdd" aria-label="手動新增病灶"><option value="">＋ 手動新增病灶</option></select>
+                  </div>
+                  <p class="ai-other" id="aiOther" hidden></p>
+                </section>
+
+                <section class="rx-card">
+                  <div class="rx-card-head">
+                    <h3>開藥區 <small id="rxCount"></small></h3>
+                    <span class="save-state" id="saveState"></span>
+                  </div>
+                  <div class="rx-list" id="rxList"></div>
+                  <div class="rx-search">
+                    <input id="rxDrugSearch" placeholder="搜尋藥品加入（成分或商品名）" autocomplete="off" />
+                    <div class="search-results" id="rxDrugResults"></div>
+                  </div>
+                </section>
+              </div>
+
+              <aside class="rx-recs" aria-label="推薦藥品">
+                <div class="recs-head">
+                  <div>
+                    <h2>推薦藥品</h2>
+                    <p>依病灶與你的採用紀錄排序，點卡片看詳細資料</p>
+                  </div>
+                  <div class="recs-filters" role="group" aria-label="篩選">
+                    <button type="button" class="seg active" data-cat="">全部</button>
+                    <button type="button" class="seg" data-cat="rx">處方</button>
+                    <button type="button" class="seg" data-cat="otc">指示藥</button>
+                  </div>
+                </div>
+                <div id="recRows" aria-live="polite"></div>
+                <details class="excluded" id="excludedBox" hidden>
+                  <summary id="excludedSummary"></summary>
+                  <ul id="excludedList"></ul>
+                </details>
+              </aside>
+            </div>
           </section>
 
           <!-- F-08／F-09 衛教單（開發中） -->
@@ -181,6 +270,11 @@
       <div class="viewer" id="viewerBody"></div>
     </dialog>
 
+    <!-- 藥品資訊卡 -->
+    <dialog id="drugDialog" class="app-dialog wide-dialog">
+      <div class="dialog-body" id="drugBody"></div>
+    </dialog>
+
     <!-- AI 整理主題 -->
     <dialog id="reorganizeDialog" class="app-dialog wide-dialog">
       <div class="dialog-body">
@@ -199,5 +293,6 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="app.js"></script>
+    <script src="records.js"></script>
   </body>
 </html>
