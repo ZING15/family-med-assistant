@@ -1,11 +1,22 @@
-"""F-01／F-02 圖像學習庫 API。"""
+"""
+F-01／F-02 學習庫 API。
+
+三種輸入方式：
+  - 圖片（kind=figure）：上傳圖片 → AI 辨識文字、建議欄位與來源 → 醫師確認後儲存
+  - 文字（kind=note）：醫師撰寫內容 → AI 建議標題、標籤、摘要與來源 → 醫師確認後儲存
+  - 語音（kind=voice）：錄音或上傳音檔 → AI 轉逐字稿並建議欄位 → 醫師確認後儲存
+來源為選填；AI 只在內容中明確出現期刊資訊時自動帶入。
+"""
 
 from __future__ import annotations
 
 import json
 import uuid
 
+from typing import Literal
+
 from fastapi import APIRouter, File, HTTPException, UploadFile
+from openai import OpenAIError
 from pydantic import BaseModel, Field
 
 from ..ai import ai, cosine
@@ -17,11 +28,19 @@ router = APIRouter(prefix="/api/library", tags=["library"])
 LIBRARY_UPLOADS = UPLOAD_DIR / "library"
 ALLOWED_TYPES = {"image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp", "image/gif": ".gif"}
 MAX_BYTES = 10 * 1024 * 1024
+# Azure 語音轉文字支援的格式；瀏覽器錄音在 Chrome 為 webm、Safari 為 mp4
+AUDIO_EXTENSIONS = {".webm", ".mp3", ".mp4", ".m4a", ".wav", ".mpeg", ".mpga"}
+AUDIO_MIME_EXT = {
+    "audio/webm": ".webm", "audio/mp4": ".m4a", "audio/x-m4a": ".m4a", "audio/m4a": ".m4a",
+    "audio/mpeg": ".mp3", "audio/mp3": ".mp3", "audio/wav": ".wav", "audio/x-wav": ".wav",
+    "audio/wave": ".wav", "video/webm": ".webm", "video/mp4": ".mp4",
+}
+MAX_AUDIO_BYTES = 25 * 1024 * 1024
 SEMANTIC_MIN_SCORE = 0.25
 
 
 class LibraryItemIn(BaseModel):
-    kind: str = Field("figure", pattern="^(figure|drug|education|note)$")
+    kind: str = Field("figure", pattern="^(figure|note|voice|drug|education)$")
     title: str = Field(..., min_length=1, max_length=120)
     topic: str = ""
     tags: list[str] = []
@@ -30,6 +49,7 @@ class LibraryItemIn(BaseModel):
     source_url: str = ""
     source_year: str = ""
     image_path: str = ""
+    audio_path: str = ""
     extracted_text: str = ""
     ai_summary: str = ""
     ai_meta: dict = {}
@@ -38,8 +58,10 @@ class LibraryItemIn(BaseModel):
 
 
 class AnalyzeIn(BaseModel):
-    image_path: str
-    hint: str = ""
+    mode: Literal["image", "text", "voice"]
+    image_path: str = ""
+    audio_path: str = ""
+    text: str = ""
 
 
 def _row_to_item(row) -> dict:
@@ -48,12 +70,14 @@ def _row_to_item(row) -> dict:
     item["ai_meta"] = json.loads(item["ai_meta"] or "{}")
     item["has_embedding"] = bool(item.pop("embedding"))
     item["image_url"] = f"/uploads/{item['image_path']}" if item["image_path"] else ""
+    item["audio_url"] = f"/uploads/{item['audio_path']}" if item["audio_path"] else ""
     return item
 
 
 def _embedding_text(data: LibraryItemIn) -> str:
     return "\n".join(
-        [data.title, data.topic, " ".join(data.tags), data.note, data.ai_summary, data.extracted_text]
+        [data.title, data.topic, " ".join(data.tags), data.note, data.ai_summary,
+         data.extracted_text, data.source_title]
     )
 
 
@@ -78,13 +102,56 @@ async def upload_image(file: UploadFile = File(...)):
     return {"image_path": image_path, "image_url": f"/uploads/{image_path}"}
 
 
+@router.post("/audio")
+async def upload_audio(file: UploadFile = File(...)):
+    mime = (file.content_type or "").split(";")[0].strip()
+    ext = AUDIO_MIME_EXT.get(mime) or next(
+        (e for e in AUDIO_EXTENSIONS if (file.filename or "").lower().endswith(e)), None
+    )
+    if not ext:
+        raise HTTPException(415, "只接受 mp3、m4a、wav、webm 或 mp4 音檔")
+    content = await file.read()
+    if len(content) > MAX_AUDIO_BYTES:
+        raise HTTPException(413, "音檔不可超過 25MB（約 20 分鐘以內的錄音）")
+    if not content:
+        raise HTTPException(422, "音檔是空的，請重新錄音")
+    LIBRARY_UPLOADS.mkdir(parents=True, exist_ok=True)
+    name = f"{uuid.uuid4().hex}{ext}"
+    (LIBRARY_UPLOADS / name).write_bytes(content)
+    audio_path = f"library/{name}"
+    return {"audio_path": audio_path, "audio_url": f"/uploads/{audio_path}"}
+
+
 @router.post("/analyze")
-def analyze_image(body: AnalyzeIn):
-    """AI 整理圖片，只回傳建議，不自動儲存。"""
-    path = _resolve_upload(body.image_path)
-    mime = next((m for m, ext in ALLOWED_TYPES.items() if path.suffix == ext), "image/png")
-    suggestion, meta = ai.analyze_figure(path.read_bytes(), mime, body.hint)
-    return {"suggestion": suggestion, "ai_meta": meta}
+def analyze(body: AnalyzeIn):
+    """AI 整理內容，只回傳建議，不自動儲存。"""
+    transcript = ""
+    try:
+        if body.mode == "image":
+            path = _resolve_upload(body.image_path)
+            mime = next((m for m, ext in ALLOWED_TYPES.items() if path.suffix == ext), "image/png")
+            suggestion, meta = ai.analyze_figure(path.read_bytes(), mime)
+        elif body.mode == "text":
+            if not body.text.strip():
+                raise HTTPException(422, "請先輸入筆記內容")
+            suggestion, meta = ai.analyze_text(body.text)
+        else:
+            path = _resolve_upload(body.audio_path)
+            text, meta = ai.transcribe(path)
+            if text is None:
+                return {
+                    "suggestion": {}, "transcript": "", "ai_meta": meta,
+                    "message": "語音辨識尚未設定（需要 AZURE_OPENAI_TRANSCRIBE_DEPLOYMENT），請手動輸入內容。",
+                }
+            transcript = text.strip()
+            if not transcript:
+                raise HTTPException(422, "沒有辨識到語音內容，請確認麥克風或音檔")
+            suggestion, meta = ai.analyze_text(transcript, spoken=True)
+    except OpenAIError as error:
+        raise HTTPException(502, f"AI 服務錯誤：{getattr(error, 'message', str(error))[:200]}")
+
+    message = "" if meta["mode"] == "azure" else "示範模式：尚未設定 Azure OpenAI，請手動輸入內容。"
+    return {"suggestion": suggestion, "transcript": transcript, "ai_meta": meta, "message": message}
 
 
 @router.get("")
@@ -155,12 +222,17 @@ def get_item(item_id: int):
 
 
 def _validate(data: LibraryItemIn) -> None:
+    """來源為選填；各類型只檢查必要的內容是否存在。"""
     if data.kind == "figure":
         if not data.image_path:
-            raise HTTPException(422, "圖表筆記需要上傳圖片")
-        if not (data.source_title.strip() or data.source_url.strip()):
-            raise HTTPException(422, "請填寫來源（標題或連結至少一項）")
+            raise HTTPException(422, "圖片筆記需要上傳圖片")
         _resolve_upload(data.image_path)
+    elif data.kind == "voice":
+        if not data.audio_path:
+            raise HTTPException(422, "語音筆記需要錄音或上傳音檔")
+        _resolve_upload(data.audio_path)
+    elif data.kind == "note" and not (data.note.strip() or data.extracted_text.strip()):
+        raise HTTPException(422, "請輸入筆記內容")
 
 
 @router.post("", status_code=201)
@@ -172,13 +244,14 @@ def create_item(data: LibraryItemIn):
         cur = con.execute(
             """INSERT INTO library_items
                (kind, title, topic, tags, note, source_title, source_url, source_year, image_path,
-                extracted_text, ai_summary, ai_meta, ref_type, ref_id, embedding, created_at, updated_at)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                audio_path, extracted_text, ai_summary, ai_meta, ref_type, ref_id, embedding,
+                created_at, updated_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (
                 data.kind, data.title.strip(), data.topic.strip(),
                 json.dumps([t.strip() for t in data.tags if t.strip()], ensure_ascii=False),
                 data.note, data.source_title.strip(), data.source_url.strip(), data.source_year.strip(),
-                data.image_path, data.extracted_text, data.ai_summary,
+                data.image_path, data.audio_path, data.extracted_text, data.ai_summary,
                 json.dumps(data.ai_meta, ensure_ascii=False), data.ref_type, data.ref_id,
                 json.dumps(vector) if vector else "", ts, ts,
             ),
@@ -195,13 +268,13 @@ def update_item(item_id: int, data: LibraryItemIn):
     with app_db() as con:
         con.execute(
             """UPDATE library_items SET kind=?, title=?, topic=?, tags=?, note=?, source_title=?,
-               source_url=?, source_year=?, image_path=?, extracted_text=?, ai_summary=?, ai_meta=?,
+               source_url=?, source_year=?, image_path=?, audio_path=?, extracted_text=?, ai_summary=?, ai_meta=?,
                ref_type=?, ref_id=?, embedding=?, updated_at=? WHERE id=?""",
             (
                 data.kind, data.title.strip(), data.topic.strip(),
                 json.dumps([t.strip() for t in data.tags if t.strip()], ensure_ascii=False),
                 data.note, data.source_title.strip(), data.source_url.strip(), data.source_year.strip(),
-                data.image_path, data.extracted_text, data.ai_summary,
+                data.image_path, data.audio_path, data.extracted_text, data.ai_summary,
                 json.dumps(data.ai_meta, ensure_ascii=False), data.ref_type, data.ref_id,
                 json.dumps(vector) if vector else "", now(), item_id,
             ),
@@ -214,6 +287,6 @@ def delete_item(item_id: int):
     item = get_item(item_id)
     with app_db() as con:
         con.execute("DELETE FROM library_items WHERE id = ?", (item_id,))
-    if item["image_path"]:
-        path = UPLOAD_DIR / item["image_path"]
-        path.unlink(missing_ok=True)
+    for key in ("image_path", "audio_path"):
+        if item[key]:
+            (UPLOAD_DIR / item[key]).unlink(missing_ok=True)

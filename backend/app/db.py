@@ -11,7 +11,7 @@ from .config import APP_DB, DRUG_DB
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS library_items (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    kind            TEXT NOT NULL DEFAULT 'figure',   -- figure | drug | education | note
+    kind            TEXT NOT NULL DEFAULT 'figure',   -- figure（圖片）| note（文字）| voice（語音）| drug | education
     title           TEXT NOT NULL,
     topic           TEXT NOT NULL DEFAULT '',
     tags            TEXT NOT NULL DEFAULT '[]',       -- JSON array
@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS library_items (
     source_url      TEXT NOT NULL DEFAULT '',
     source_year     TEXT NOT NULL DEFAULT '',
     image_path      TEXT NOT NULL DEFAULT '',
+    audio_path      TEXT NOT NULL DEFAULT '',
     extracted_text  TEXT NOT NULL DEFAULT '',
     ai_summary      TEXT NOT NULL DEFAULT '',
     ai_meta         TEXT NOT NULL DEFAULT '{}',       -- JSON: model, mode, generated_at
@@ -36,10 +37,20 @@ def now() -> str:
     return datetime.now().isoformat(timespec="seconds")
 
 
+# 既有資料庫補欄位：(資料表, 欄位, 定義)
+MIGRATIONS = [
+    ("library_items", "audio_path", "TEXT NOT NULL DEFAULT ''"),
+]
+
+
 def init_app_db() -> None:
     APP_DB.parent.mkdir(parents=True, exist_ok=True)
     with app_db() as con:
         con.executescript(SCHEMA)
+        for table, column, definition in MIGRATIONS:
+            columns = {row["name"] for row in con.execute(f"PRAGMA table_info({table})")}
+            if column not in columns:
+                con.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
 
 @contextmanager

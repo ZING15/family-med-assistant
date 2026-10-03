@@ -42,9 +42,9 @@
               <div>
                 <p class="eyebrow">圖像學習庫</p>
                 <h1>需要時，馬上找回那張圖</h1>
-                <p class="view-sub">收藏期刊圖表、藥品卡與衛教單；用關鍵字或一句話搜尋。</p>
+                <p class="view-sub">用圖片、文字或語音收藏學到的東西；用關鍵字或一句話搜尋。</p>
               </div>
-              <button class="primary-button" id="addLibraryButton" type="button">＋ 新增圖表</button>
+              <button class="primary-button" id="addLibraryButton" type="button">＋ 新增筆記</button>
             </div>
 
             <form class="library-search" id="librarySearchForm" role="search">
@@ -60,7 +60,9 @@
             <div class="filter-row">
               <div class="kind-tabs" role="tablist" aria-label="類型">
                 <button type="button" class="chip active" data-kind="">全部</button>
-                <button type="button" class="chip" data-kind="figure">期刊圖表</button>
+                <button type="button" class="chip" data-kind="figure">圖片</button>
+                <button type="button" class="chip" data-kind="note">文字</button>
+                <button type="button" class="chip" data-kind="voice">語音</button>
                 <button type="button" class="chip" data-kind="drug">藥品卡</button>
                 <button type="button" class="chip" data-kind="education">衛教單</button>
               </div>
@@ -72,7 +74,7 @@
             <div class="empty-state" id="libraryEmpty" hidden>
               <span>▧</span>
               <h3>還沒有收藏</h3>
-              <p>把常用的期刊圖表截圖上傳，AI 會幫你辨識文字並建議標籤。</p>
+              <p>上傳圖表截圖、寫下重點或錄一段語音，AI 會幫你整理標題、標籤與摘要。</p>
             </div>
           </section>
 
@@ -89,50 +91,95 @@
       </main>
     </div>
 
-    <!-- 新增／編輯學習筆記 -->
+    <!-- 新增／編輯學習筆記：選擇方式 → AI 處理 → 確認編輯 -->
     <dialog id="libraryDialog" class="app-dialog wide-dialog">
       <form id="libraryForm" novalidate>
         <div class="dialog-head">
-          <div><p class="eyebrow">圖像學習庫</p><h2 id="libraryDialogTitle">新增圖表</h2></div>
+          <div><p class="eyebrow">學習庫</p><h2 id="libraryDialogTitle">新增筆記</h2></div>
           <button class="close-button" type="button" data-close aria-label="關閉">×</button>
         </div>
 
-        <div class="library-form-grid">
-          <div class="upload-column">
-            <label class="dropzone" id="dropzone">
-              <input id="libraryImage" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
-              <img id="libraryPreview" alt="" hidden />
-              <span id="dropzoneHint">點擊或拖曳圖片到這裡<br /><small>JPG／PNG／WebP，10MB 以內</small></span>
-            </label>
-            <button class="secondary-button ai-button" id="analyzeButton" type="button" disabled>✦ AI 辨識並建議</button>
-            <p class="ai-note" id="analyzeNote">AI 只整理圖中文字與標籤，不做判讀。</p>
+        <!-- 步驟 1：選擇方式並提供內容 -->
+        <section id="stepInput" class="step">
+          <div class="mode-tabs" role="tablist" aria-label="新增方式">
+            <button type="button" class="mode-tab active" data-mode="image" role="tab"><span>▧</span>圖片</button>
+            <button type="button" class="mode-tab" data-mode="text" role="tab"><span>✎</span>文字</button>
+            <button type="button" class="mode-tab" data-mode="voice" role="tab"><span>◉</span>語音</button>
           </div>
 
-          <div class="field-column">
-            <label>標題<input id="fTitle" required maxlength="120" /></label>
-            <label>主題<input id="fTopic" placeholder="例：腸胃科／出血評估" /></label>
-            <label>標籤（以逗號分隔）<input id="fTags" placeholder="例：GI bleeding, Glasgow-Blatchford" /></label>
-            <fieldset class="source-fields">
-              <legend>來源 <em>必填一項</em></legend>
-              <label>期刊／文章名稱<input id="fSourceTitle" placeholder="例：NEJM 2024; Upper GI bleeding review" /></label>
-              <div class="two-col">
-                <label>連結<input id="fSourceUrl" type="url" placeholder="https://" /></label>
-                <label>年份<input id="fSourceYear" inputmode="numeric" maxlength="4" /></label>
-              </div>
-            </fieldset>
-            <label>AI 摘要<textarea id="fSummary" rows="2" placeholder="可由 AI 建議，醫師可修改"></textarea></label>
-            <label>我的註記<textarea id="fNote" rows="3" placeholder="臨床上怎麼用、注意什麼"></textarea></label>
-            <details class="extracted">
-              <summary>圖中文字（供搜尋用）</summary>
-              <textarea id="fExtracted" rows="4"></textarea>
-            </details>
+          <div class="mode-panel" data-panel="image">
+            <label class="dropzone" id="dropzone">
+              <input id="libraryImage" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
+              <span class="dropzone-icon">▧</span>
+              <b>點擊或拖曳圖片到這裡</b>
+              <small>期刊圖表、評估量表或 OpenEvidence 截圖；JPG／PNG／WebP，10MB 以內</small>
+            </label>
+            <p class="ai-note">上傳後 AI 會辨識圖中文字、建議標題與標籤，並帶入看得到的期刊來源。</p>
           </div>
-        </div>
+
+          <div class="mode-panel" data-panel="text" hidden>
+            <label class="sr-only" for="textInput">筆記內容</label>
+            <textarea id="textInput" rows="9" placeholder="寫下今天學到的重點，例如：&#10;Glasgow-Blatchford score ≥ 1 建議住院評估；0 分可考慮門診追蹤。&#10;參考：Lancet 2017"></textarea>
+            <button class="primary-button full-button" id="textSubmit" type="button">送出，讓 AI 整理</button>
+          </div>
+
+          <div class="mode-panel" data-panel="voice" hidden>
+            <div class="recorder">
+              <button class="record-button" id="recordButton" type="button" aria-label="開始錄音"><span></span></button>
+              <div>
+                <b id="recordStatus">按下開始錄音</b>
+                <span class="record-timer" id="recordTimer">00:00</span>
+              </div>
+            </div>
+            <div class="or-divider"><span>或</span></div>
+            <label class="secondary-button full-button file-button">
+              上傳錄音檔
+              <input id="audioFile" type="file" accept="audio/*,.m4a,.webm" hidden />
+            </label>
+            <p class="ai-note">錄音結束或選好檔案後會自動送出，AI 轉成逐字稿並整理重點。支援 mp3、m4a、wav、webm，25MB 以內。</p>
+          </div>
+
+          <p class="notice">請勿輸入病人姓名、病歷號等可識別資訊。</p>
+        </section>
+
+        <!-- 步驟 2：AI 處理中 -->
+        <section id="stepLoading" class="step loading-step" hidden>
+          <div class="spinner" aria-hidden="true"></div>
+          <b id="loadingText">AI 辨識中…</b>
+          <p>通常需要 5–20 秒</p>
+        </section>
+
+        <!-- 步驟 3：確認與編輯 -->
+        <section id="stepReview" class="step" hidden>
+          <p class="ai-result" id="aiResult"></p>
+          <div class="library-form-grid" id="reviewGrid">
+            <div class="preview-column" id="reviewPreview"></div>
+            <div class="field-column">
+              <label>標題<input id="fTitle" required maxlength="120" /></label>
+              <div class="two-col even">
+                <label>主題<input id="fTopic" placeholder="例：皮膚科／蟲咬" /></label>
+                <label>標籤（以逗號分隔）<input id="fTags" /></label>
+              </div>
+              <label>摘要<textarea id="fSummary" rows="2"></textarea></label>
+              <label><span id="contentLabel">內容</span><textarea id="fContent" rows="6"></textarea></label>
+              <fieldset class="source-fields">
+                <legend>來源 <em>選填，AI 會帶入圖文中出現的期刊資訊</em></legend>
+                <label>期刊／文章名稱<input id="fSourceTitle" placeholder="例：AFP 2022; Medical Entomology" /></label>
+                <div class="two-col">
+                  <label>連結或 DOI<input id="fSourceUrl" type="url" placeholder="https://" /></label>
+                  <label>年份<input id="fSourceYear" inputmode="numeric" maxlength="4" /></label>
+                </div>
+              </fieldset>
+              <label id="noteField">我的註記<textarea id="fNote" rows="2" placeholder="臨床上怎麼用、注意什麼"></textarea></label>
+            </div>
+          </div>
+        </section>
 
         <p class="form-error" id="libraryFormError" role="alert"></p>
         <div class="dialog-actions">
+          <button class="secondary-button back-button" id="backButton" type="button" hidden>← 重新選擇</button>
           <button class="secondary-button" type="button" data-close>取消</button>
-          <button class="primary-button" id="librarySaveButton" type="submit">儲存</button>
+          <button class="primary-button" id="librarySaveButton" type="submit" hidden>儲存</button>
         </div>
       </form>
     </dialog>
