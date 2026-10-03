@@ -89,18 +89,35 @@ def form_group(form: str) -> str:
 
 # ---------- 病灶偵測 ----------
 
+def _normalize(text: str) -> str:
+    """「痠」「酸」混用很常見（肌肉痠痛／酸痛），比對前統一成「酸」。"""
+    return text.lower().replace("痠", "酸")
+
+
+def _excluded(text: str, index: int, length: int, phrases: list[str]) -> bool:
+    """命中的位置若落在較長的排除詞裡（例：「骨頭痛」中的「頭痛」），就不算。"""
+    for phrase in phrases:
+        phrase = _normalize(phrase)
+        start = 0
+        while (pos := text.find(phrase, start)) != -1:
+            if pos <= index and index + length <= pos + len(phrase):
+                return True
+            start = pos + 1
+    return False
+
+
 def detect_keywords(text: str) -> list[dict]:
     """以關鍵字比對病灶；關鍵字前方 4 字內有否定詞（無、否認…）時不算。"""
     found = []
-    lowered = text.lower()
+    lowered = _normalize(text)
     for cond in conditions():
         for alias in cond["aliases"]:
-            needle = alias.lower()
+            needle = _normalize(alias)
             start = 0
             hit = None
             while (index := lowered.find(needle, start)) != -1:
                 before = lowered[max(0, index - 4):index]
-                if not NEGATION.search(before):
+                if not NEGATION.search(before) and not _excluded(lowered, index, len(needle), cond.get("exclude", [])):
                     hit = alias
                     break
                 start = index + len(needle)

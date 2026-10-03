@@ -801,3 +801,8 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .drug-products { overflow-x: auto; }
 .drug-products table { min-width: 760px; }
 .drug-products td:nth-child(2), .drug-products td:nth-child(3), .drug-products th { white-space: nowrap; }
+/* 推薦列表可用滑鼠拖曳捲動 */
+@media (hover: hover) and (pointer: fine) { .rec-rail { cursor: grab; } }
+.rec-rail.dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+.rec-rail.dragging .rec-card { pointer-events: none; }
+.rec-rail img { -webkit-user-drag: none; user-select: none; }

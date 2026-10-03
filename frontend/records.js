@@ -20,13 +20,11 @@ const rxName = (p) => p.display_name || drugLabel(p.name_en);
 // 健保支付價：顯示到小數點後兩位，去掉多餘的 0
 const money = (n) => `${Number(n).toFixed(2).replace(/\.?0+$/, '')} 元`;
 
-// 推薦卡與搜尋結果：一個成分底下有幾個健保給付品項、支付價範圍
+// 推薦卡：一個成分底下有幾個健保給付品項（支付價在藥品卡與開藥區才顯示）
 function nhiSummaryHtml(nhi, total) {
   if (!nhi) return `<span class="rec-meta">市售 ${total} 個品項</span>`;
   if (!nhi.covered_products) return `<span class="rec-meta no-nhi">無健保給付品項・市售 ${total} 個</span>`;
-  const range = nhi.price_min === nhi.price_max ? money(nhi.price_min) : `${money(nhi.price_min).replace(' 元', '')}–${money(nhi.price_max)}`;
-  return `<span class="rec-meta"><b class="nhi-tag">健保</b>${nhi.covered_products}／${total} 個品項給付</span>
-    ${nhi.unit ? `<span class="rec-meta">每${escapeHtml(nhi.unit)} ${range}</span>` : ''}`;
+  return `<span class="rec-meta"><b class="nhi-tag">健保</b>${nhi.covered_products}／${total} 個品項給付</span>`;
 }
 
 // 開藥區：這個品項的健保代碼與支付價
@@ -499,6 +497,40 @@ function updateRailNav(rail) {
   wrap.classList.toggle('at-start', rail.scrollLeft <= 4);
   wrap.classList.toggle('at-end', rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4);
 }
+// 滑鼠拖曳捲動橫向列表（觸控本來就能滑；拖曳後放開不觸發卡片點擊）
+let railDrag = null;
+$('#recRows').addEventListener('pointerdown', (event) => {
+  const rail = event.target.closest('.rec-rail');
+  if (!rail || event.pointerType !== 'mouse' || event.button !== 0 || event.target.closest('.rec-menu')) return;
+  railDrag = { rail, x: event.clientX, left: rail.scrollLeft, moved: false, id: event.pointerId };
+});
+document.addEventListener('pointermove', (event) => {
+  if (!railDrag || event.pointerId !== railDrag.id) return;
+  const dx = event.clientX - railDrag.x;
+  if (!railDrag.moved && Math.abs(dx) < 6) return;
+  if (!railDrag.moved) {
+    railDrag.moved = true;
+    railDrag.rail.classList.add('dragging');
+    railDrag.rail.setPointerCapture(event.pointerId);
+  }
+  railDrag.rail.scrollLeft = railDrag.left - dx;
+});
+document.addEventListener('pointerup', () => {
+  if (!railDrag) return;
+  const { rail, moved } = railDrag;
+  railDrag = null;
+  if (!moved) return;
+  rail.classList.remove('dragging');
+  // 拖曳結束的那次 click 不算點擊；若瀏覽器沒有送出 click，下一輪就移除，避免吃掉之後真正的點擊
+  const swallow = (e) => { e.stopPropagation(); e.preventDefault(); };
+  rail.addEventListener('click', swallow, { capture: true, once: true });
+  setTimeout(() => rail.removeEventListener('click', swallow, { capture: true }), 0);
+});
+// 避免拖到外觀圖時觸發瀏覽器原生的圖片拖放
+$('#recRows').addEventListener('dragstart', (event) => {
+  if (event.target.closest('.rec-rail')) event.preventDefault();
+});
+
 $('#recRows').addEventListener('scroll', (event) => {
   if (event.target.classList?.contains('rec-rail')) updateRailNav(event.target);
 }, true);
