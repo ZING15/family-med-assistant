@@ -51,7 +51,7 @@ class AzureSettings:
     image_api_key = env("AZURE_OPENAI_IMAGE_API_KEY") or api_key
     image_api_version = env("AZURE_OPENAI_IMAGE_API_VERSION", "2025-04-01-preview")
     image_deployment = env("AZURE_OPENAI_IMAGE_DEPLOYMENT")
-    # gpt-image 系列：low / medium / high；開發用 low，簡報時可改 medium
+    # 只對 gpt-image 系列有效：low / medium / high；MAI-Image 不使用
     image_quality = env("AZURE_OPENAI_IMAGE_QUALITY", "low")
 
 

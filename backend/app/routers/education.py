@@ -15,10 +15,10 @@ import uuid
 from urllib.parse import urlparse
 
 from fastapi import APIRouter, HTTPException, Response
-from openai import NotFoundError, OpenAIError
+from openai import OpenAIError
 from pydantic import BaseModel, Field
 
-from ..ai import ai
+from ..ai import ImageGenerationError, ai
 from ..config import UPLOAD_DIR, azure
 from ..db import app_db, now
 
@@ -179,9 +179,15 @@ def create_image(sheet_id: int, regenerate: bool = False):
     scene = sheet["content"].get("image_scene") or "an elderly person resting at home with a cup of warm water"
     try:
         data, meta = ai.education_image(scene)
-    except NotFoundError:
-        raise HTTPException(503, f"Azure 上找不到生圖模型部署「{azure.image_deployment}」。請到 Azure AI Foundry 部署 gpt-image-1-mini，"
-                                 "部署名稱要和 .env 的 AZURE_OPENAI_IMAGE_DEPLOYMENT 相同")
+    except ImageGenerationError as error:
+        messages = {
+            404: f"Azure 上找不到生圖模型部署「{azure.image_deployment}」，請確認 Foundry 的部署名稱和 .env 的 AZURE_OPENAI_IMAGE_DEPLOYMENT 相同",
+            429: "生圖太頻繁，已達每分鐘上限，請等一分鐘再試",
+            400: "生圖要求被拒絕，可能是插圖描述觸發內容安全過濾，請修改後再試",
+            401: "生圖模型的金鑰無效，請確認 .env 的金鑰設定",
+        }
+        raise HTTPException(503 if error.status != 429 else 429,
+                            messages.get(error.status, f"AI 生圖錯誤（{error.status}）：{str(error)[:160]}"))
     except OpenAIError as error:
         raise HTTPException(502, f"AI 生圖錯誤：{getattr(error, 'message', str(error))[:200]}")
     if data is None:

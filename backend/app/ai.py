@@ -18,8 +18,10 @@ import urllib.error
 import urllib.request
 import uuid
 from datetime import datetime
+from urllib.parse import urlparse
 from pathlib import Path
 
+import openai
 from openai import AzureOpenAI
 from opencc import OpenCC
 
@@ -32,6 +34,14 @@ SPEECH_FORMATS = {".wav", ".mp3", ".flac"}
 
 class TranscriptionError(RuntimeError):
     pass
+
+
+class ImageGenerationError(RuntimeError):
+    """生圖失敗；status 為 HTTP 狀態碼（404 找不到部署、429 太頻繁…），供 API 轉成白話訊息。"""
+
+    def __init__(self, status: int, message: str):
+        super().__init__(message)
+        self.status = status
 
 
 def _meta(mode: str, model: str = "") -> dict:
@@ -257,7 +267,7 @@ class AIService:
             "A warm, gentle flat illustration for a patient health-education leaflet for elderly people in Taiwan. "
             f"Scene: {scene}. "
             "Style: soft hand-drawn flat shapes, calm muted palette of cream paper, sage green, soft blue and warm peach, "
-            "rounded friendly forms, plenty of empty space, simple background. "
+            "rounded friendly forms, a balanced composition with the subject filling the center of the frame, simple uncluttered background. "
             "Strictly no text, no letters, no numbers, no logos, no pills, tablets, capsules or medicine packaging, "
             "no syringes or medical devices, no realistic or detailed faces."
         )
@@ -324,16 +334,48 @@ class AIService:
         return response.data[0].embedding
 
     # ---- 圖片生成 ----
+    # 兩種 API：gpt-image 系列走 Azure OpenAI 的 images.generate；
+    # Microsoft MAI-Image 系列走 Foundry 的 /mai/v1/images/generations（以寬高指定尺寸，不支援 quality）
     def generate_image(self, prompt: str, size: str = "1024x1024") -> tuple[bytes | None, dict]:
         if not self.image_ready:
             return None, _meta("demo")
-        response = self._image.images.generate(
-            model=azure.image_deployment, prompt=prompt, size=size, quality=azure.image_quality, n=1
-        )
+        if azure.image_deployment.lower().startswith("mai-"):
+            return self._mai_image(prompt, size)
+        try:
+            response = self._image.images.generate(
+                model=azure.image_deployment, prompt=prompt, size=size, quality=azure.image_quality, n=1
+            )
+        except openai.APIStatusError as error:
+            raise ImageGenerationError(error.status_code, getattr(error, "message", str(error))) from error
         item = response.data[0]
         if getattr(item, "b64_json", None):
             return base64.b64decode(item.b64_json), _meta("azure", azure.image_deployment)
         return None, _meta("azure", azure.image_deployment)
+
+    def _mai_image(self, prompt: str, size: str) -> tuple[bytes | None, dict]:
+        width, height = (int(x) for x in size.split("x"))
+        # MAI-Image-2.5 單張上限 1,048,576 像素（約 1024×1024）；2.6 為 2,359,296。兩邊都至少 768
+        limit = 1_048_576 if "2.5" in azure.image_deployment else 2_359_296
+        if width * height > limit:
+            scale = (limit / (width * height)) ** 0.5
+            width, height = max(768, int(width * scale) // 16 * 16), max(768, int(height * scale) // 16 * 16)
+        parsed = urlparse(azure.image_endpoint)
+        url = f"{parsed.scheme}://{parsed.netloc}/mai/v1/images/generations"
+        body = json.dumps({"model": azure.image_deployment, "prompt": prompt, "width": width, "height": height}).encode()
+        request = urllib.request.Request(
+            url, data=body, method="POST",
+            headers={"Content-Type": "application/json", "api-key": azure.image_api_key},
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=180) as response:
+                result = json.loads(response.read())
+        except urllib.error.HTTPError as error:
+            raise ImageGenerationError(error.code, error.read().decode("utf-8", "replace")[:300]) from error
+        except urllib.error.URLError as error:
+            raise ImageGenerationError(502, str(error.reason)) from error
+        images = [d["b64_json"] for d in result.get("data", []) if d.get("b64_json")]
+        meta = _meta("azure", azure.image_deployment) | {"size": f"{width}x{height}"}
+        return (base64.b64decode(images[0]) if images else None), meta
 
 
 def _ffmpeg_path() -> str | None:
