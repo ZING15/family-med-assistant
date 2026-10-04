@@ -305,6 +305,20 @@
     </dialog>
 
     <!-- 藥品資訊卡 -->
+    <!-- 看全部：同一病灶的所有推薦，可直接採用、排除、查看 -->
+    <dialog id="rowDialog" class="app-dialog wide-dialog row-dialog" aria-labelledby="rowDialogTitle">
+      <div class="dialog-body">
+        <div class="dialog-head">
+          <div>
+            <h2 id="rowDialogTitle" tabindex="-1"></h2>
+            <p class="dialog-meta" id="rowDialogMeta"></p>
+          </div>
+          <button class="close-button" type="button" data-close aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+        </div>
+        <div class="row-grid" id="rowDialogGrid"></div>
+      </div>
+    </dialog>
+
     <dialog id="drugDialog" class="app-dialog wide-dialog" aria-labelledby="drugTitle">
       <div class="dialog-body" id="drugBody"></div>
     </dialog>

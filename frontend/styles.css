@@ -835,13 +835,6 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .nhi-tag { border: 1px solid #c9d1d7; background: transparent; color: var(--ink-2); font-weight: 600; }
 .nhi-tag.self-pay { border-style: dashed; border-color: #d3cbbd; background: transparent; color: var(--muted); }
 
-/* 每排先看前 3 個；其餘收在「其他 n 個」 */
-.rec-more-tile { display: grid; align-content: center; justify-items: start; gap: 4px; min-height: 180px; padding: 18px; border: 1px dashed #cdc5b6; border-radius: var(--radius); background: transparent; color: var(--ink); text-align: left; scroll-snap-align: start; transition: border-color .2s, background .2s; }
-.rec-more-tile:hover { border-color: var(--accent); background: var(--accent-soft); }
-.rec-more-tile .icon { width: 18px; height: 18px; color: var(--accent); }
-.rec-more-tile b { font-size: 15px; }
-.rec-more-tile span { color: var(--muted); font-size: 12px; }
-.rec-more-tile.quiet { min-height: 0; align-self: center; border-style: solid; border-color: transparent; color: var(--accent); }
 
 /* 病灶列可收起 */
 .rec-row-toggle { display: inline-flex; align-items: baseline; gap: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; }
@@ -870,8 +863,6 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 /* 列表改用 flex：卡片固定寬度，「其他 n 個」較窄，前 3 張旁邊就看得到 */
 .rec-rail { display: flex; --card-w: 176px; }
 .rec-rail > .rec-card { flex: 0 0 var(--card-w); }
-.rec-more-tile { flex: 0 0 128px; }
-.rec-more-tile.quiet { flex-basis: auto; }
 @media (min-width: 861px) and (max-width: 1180px) { .rec-rail { --card-w: 164px; } }
 @media (max-width: 640px) { .rec-rail { --card-w: 168px; } }
 /* 提示訊息：寬度依內容、不被置中定位壓窄；多行時改用圓角矩形；手機放在浮動按鈕上方 */
@@ -879,3 +870,17 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .toast.has-action { border-radius: 16px; }
 @media (max-width: 640px) { .toast { bottom: calc(150px + env(safe-area-inset-bottom)); } }
 .drug-components { margin: 8px 0 0; color: var(--ink-2); font-size: 13px; line-height: 1.55; }
+
+/* 病灶列標題右側：候選數＋看全部 */
+.rec-row-side { display: flex; align-items: baseline; gap: 4px 10px; flex-wrap: wrap; justify-content: flex-end; }
+.rec-row-side > span { color: var(--faint); font-size: 12px; }
+.rec-row-side .link-button { padding: 4px 8px; font-weight: 600; }
+
+/* 看全部彈窗：所有推薦排成格狀，一次查看與操作 */
+.row-dialog { width: min(1080px, calc(100% - 32px)); }
+.row-dialog .dialog-head h2 { margin: 0; font-family: var(--serif); font-size: 24px; }
+.row-dialog .dialog-head h2:focus { outline: 0; }
+.row-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(188px, 1fr)); gap: 16px; margin-top: 20px; }
+.row-grid .rec-card { animation: none; }
+.row-grid .rec-card:hover { transform: none; }
+@media (max-width: 640px) { .row-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }

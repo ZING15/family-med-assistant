@@ -52,7 +52,7 @@ const rx = {
   record: null,
   recs: { rows: [], excluded: [] },
   railActive: {},      // 每排目前可用 Tab 進入的卡片（roving tabindex）
-  expanded: {},        // 每排是否展開「其他 n 個」
+  dialogCondition: '', // 「看全部」彈窗目前顯示的病灶
   collapsed: {},       // 每排是否收起
   riskSig: '',         // 目前病史風險（變動時才重新取推薦）
   removedCache: {},    // 本次移除的病灶，供「復原」還原原本的來源
@@ -94,7 +94,6 @@ async function openRecord(id) {
   rx.record = await api(`/api/records/${id}`);
   rx.railActive = {};
   rx.removedCache = {};
-  rx.expanded = {};
   rx.collapsed = {};
   $('#pCode').value = rx.record.patient_code;
   $('#pAge').value = rx.record.age;
@@ -469,9 +468,7 @@ function renderRecommendations() {
       rx.collapsed[cond] = Boolean(rx.catalog.conditions.find((c) => c.name === cond)?.chronic && CONTROLLED.test(text));
     }
     const collapsed = rx.collapsed[cond];
-    const expanded = rx.expanded[cond] || row.items.length <= TOP_N + 1;
-    const items = expanded ? row.items : row.items.slice(0, TOP_N);
-    const rest = row.items.length - items.length;
+    const { items } = row;
     const activeAtc = items.some((i) => i.atc_code === rx.railActive[cond]) ? rx.railActive[cond] : items[0]?.atc_code;
     const railId = `rail-${rowIndex}`;
     return `
@@ -479,7 +476,10 @@ function renderRecommendations() {
         <div class="rec-row-head" style="${hueStyle(cond)}">
           <h3><button type="button" class="rec-row-toggle" data-toggle-row="${escapeHtml(cond)}" aria-expanded="${!collapsed}" aria-controls="${railId}">
             ${icon('chevron-down')}<span class="because">因為</span>${escapeHtml(cond)}</button></h3>
-          <span>${collapsed ? `已收起・${row.items.length} 個` : `前 ${row.items.length} 名・共 ${row.total} 個候選`}</span>
+          <div class="rec-row-side">
+            <span>${collapsed ? `已收起・${items.length} 個` : `前 ${items.length} 名・共 ${row.total} 個候選`}</span>
+            ${items.length ? `<button type="button" class="link-button" data-view-all="${escapeHtml(cond)}" aria-haspopup="dialog">看全部 ${items.length} 個</button>` : ''}
+          </div>
         </div>
         <div id="${railId}" ${collapsed ? 'hidden' : ''}>
         ${items.length
@@ -487,8 +487,6 @@ function renderRecommendations() {
               <button type="button" class="rail-nav prev" data-rail-nav="-1" tabindex="-1" aria-hidden="true">${icon('arrow-left')}</button>
               <div class="rec-rail" role="group" aria-label="因為${escapeHtml(cond)}的推薦，用左右方向鍵切換藥品">
                 ${items.map((item) => recCardHtml(item, cond, item.atc_code === activeAtc)).join('')}
-                ${rest > 0 ? `<button type="button" class="rec-more-tile" data-expand-row="${escapeHtml(cond)}">${icon('plus')}<b>其他 ${rest} 個</b><span>同病灶的其他候選</span></button>` : ''}
-                ${rx.expanded[cond] ? `<button type="button" class="rec-more-tile quiet" data-collapse-rest="${escapeHtml(cond)}"><b>只看前 ${TOP_N} 個</b></button>` : ''}
               </div>
               <button type="button" class="rail-nav next" data-rail-nav="1" tabindex="-1" aria-hidden="true">${icon('arrow-right')}</button>
             </div>`
@@ -497,6 +495,7 @@ function renderRecommendations() {
       </section>`;
   }).join('');
   $('#recRows').innerHTML = rows;
+  if (rowDialog.open) renderRowDialog();
   requestAnimationFrame(() => $$('#recRows .rec-rail').forEach(updateRailNav));
 
   const excluded = rx.recs.excluded;
@@ -515,7 +514,7 @@ function renderRecommendations() {
 
 // 採用／移除只更新卡片狀態，不重繪整排（避免外觀圖重新淡入、焦點跑掉）
 function syncAdoptState() {
-  $$('#recRows .rec-card').forEach((card) => {
+  $$('.rec-card').forEach((card) => {
     const on = inPrescription(card.dataset.atc);
     card.classList.toggle('adopted', on);
     const button = card.querySelector('.adopt-button');
@@ -575,17 +574,26 @@ $('#recRows').addEventListener('scroll', (event) => {
 }, true);
 
 // 選單：焦點離開（例如按 Tab）就關閉
-$('#recRows').addEventListener('focusout', (event) => {
+function closeMenuOnFocusLeave(event) {
   const menu = event.target.closest('.rec-menu');
   if (!menu || menu.hidden) return;
   const next = event.relatedTarget;
   if (next && (menu.contains(next) || next === menu.closest('.rec-card').querySelector('[data-more]'))) return;
   closeMenus();
+}
+$('#recRows').addEventListener('focusout', closeMenuOnFocusLeave);
+$('#rowDialog').addEventListener('focusout', closeMenuOnFocusLeave);
+// 彈窗裡的選單也能用上下鍵移動
+$('#rowDialog').addEventListener('keydown', (event) => {
+  const menu = event.target.closest('.rec-menu');
+  if (!menu || !['ArrowDown', 'ArrowUp'].includes(event.key)) return;
+  event.preventDefault();
+  const items = $$('button', menu);
+  items[(items.indexOf(event.target) + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length].focus();
 });
 
 // 鍵盤：每排只佔一個 Tab 停駐點，左右方向鍵切換卡片；選單內上下鍵移動
 const CARD_CONTROLS = ['.rec-open', '.adopt-button', '.rec-more'];
-const TOP_N = 3;   // 每排先顯示前 3 個，其餘收進「其他 n 個」
 $('#recRows').addEventListener('keydown', (event) => {
   const menu = event.target.closest('.rec-menu');
   if (menu && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
@@ -621,22 +629,19 @@ $('#recRows').addEventListener('click', async (event) => {
     $(`#recRows [data-toggle-row="${CSS.escape(cond)}"]`)?.focus();
     return;
   }
-  const expand = event.target.closest('[data-expand-row], [data-collapse-rest]');
-  if (expand) {
-    const cond = expand.dataset.expandRow || expand.dataset.collapseRest;
-    rx.expanded[cond] = Boolean(expand.dataset.expandRow);
-    renderRecommendations();
-    // 展開後焦點移到第 4 張卡，收合後回到這排第一張
-    const cards = $$(`#recRows .rec-card[data-condition="${CSS.escape(cond)}"]`);
-    (rx.expanded[cond] ? cards[TOP_N] : cards[0])?.querySelector('.rec-open')?.focus({ preventScroll: true });
-    return;
-  }
+  const viewAll = event.target.closest('[data-view-all]');
+  if (viewAll) return openRowDialog(viewAll.dataset.viewAll);
   const nav = event.target.closest('[data-rail-nav]');
   if (nav) {
     const rail = nav.parentElement.querySelector('.rec-rail');
     rail.scrollBy({ left: Number(nav.dataset.railNav) * rail.clientWidth * 0.85, behavior: 'smooth' });
     return;
   }
+  handleCardClick(event);
+});
+
+// 推薦卡上的動作（列表與「看全部」彈窗共用）
+async function handleCardClick(event) {
   const card = event.target.closest('.rec-card');
   if (!card) return;
   const atc = card.dataset.atc;
@@ -684,6 +689,37 @@ $('#recRows').addEventListener('click', async (event) => {
     closeMenus();
     return saveDrugToLibrary(atc, condition);
   }
+}
+
+/* ---------- 看全部：一次查看與操作同一病灶的所有推薦 ---------- */
+
+const rowDialog = $('#rowDialog');
+
+function openRowDialog(condition) {
+  rx.dialogCondition = condition;
+  renderRowDialog();
+  rowDialog.showModal();
+  $('#rowDialogTitle').focus();
+}
+
+function renderRowDialog() {
+  const row = rx.recs.rows.find((r) => r.condition === rx.dialogCondition);
+  if (!row) { rowDialog.close(); return; }
+  $('#rowDialogTitle').innerHTML = `<span class="because">因為</span>${escapeHtml(row.condition)}`;
+  $('#rowDialogMeta').textContent = `前 ${row.items.length} 名・共 ${row.total} 個候選；依病灶對照表、你的採用紀錄與市售品項數排序`;
+  $('#rowDialogGrid').style.cssText = hueStyle(row.condition);
+  $('#rowDialogGrid').innerHTML = row.items.length
+    ? row.items.map((item) => recCardHtml(item, row.condition, true)).join('')
+    : '<p class="muted-text">這個病灶目前沒有可推薦的藥品（可能都已被過敏或你的回饋排除）</p>';
+}
+
+rowDialog.addEventListener('click', (event) => {
+  if (event.target === rowDialog || event.target.closest('[data-close]')) return rowDialog.close();
+  handleCardClick(event);
+});
+// 選單開著時按 Esc 只關選單，不關彈窗
+rowDialog.addEventListener('cancel', (event) => {
+  if ($$('.rec-menu', rowDialog).some((m) => !m.hidden)) event.preventDefault();
 });
 
 async function restoreNever(condition, atc) {
