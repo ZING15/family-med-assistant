@@ -870,6 +870,14 @@ $('#traySafety').addEventListener('click', (event) => {
   box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   $('#excludedSummary').focus({ preventScroll: true });
 });
+// 產生衛教單：先把尚未儲存的修改存好，再帶著病灶與本次處方到衛教單頁
+$('#makeEducation').addEventListener('click', async () => {
+  if (!rx.record?.conditions.length) return showToast('請先寫主訴或新增病灶，再產生衛教單');
+  clearTimeout(saveTimer);
+  await saveRecord();
+  createSheetFromRecord(rx.record.id);
+});
+
 $('#trayJump').addEventListener('click', () => {
   $('#rxSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
   $('#rxSection .rx-product, #rxDrugSearch')?.focus({ preventScroll: true });

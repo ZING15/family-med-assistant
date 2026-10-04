@@ -422,6 +422,7 @@ def delete_item(item_id: int):
     item = get_item(item_id)
     with app_db() as con:
         con.execute("DELETE FROM library_items WHERE id = ?", (item_id,))
+    # 只刪學習庫自己上傳的檔案；藥品卡的 TFDA 連結、衛教單的插圖由各自功能管理
     for key in ("image_path", "audio_path"):
-        if item[key] and not item[key].startswith("https://"):
+        if item[key] and item[key].startswith("library/"):
             (UPLOAD_DIR / item[key]).unlink(missing_ok=True)

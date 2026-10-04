@@ -884,3 +884,118 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .row-grid .rec-card { animation: none; }
 .row-grid .rec-card:hover { transform: none; }
 @media (max-width: 640px) { .row-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
+
+/* ---------- 衛教單（F-08／F-09） ---------- */
+.edu-hero { margin-bottom: 28px; }
+.edu-new { display: flex; align-items: center; gap: 10px; }
+.edu-new select { min-width: 200px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font: inherit; font-size: 15px; }
+.tray-head-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px 6px; }
+
+.edu-layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 32px; align-items: start; }
+.edu-list { position: sticky; top: 24px; }
+#eduList { display: grid; gap: 6px; }
+.edu-list-title { margin: 0 0 6px; font-family: var(--serif); font-size: 17px; }
+.edu-list-item { display: grid; gap: 2px; padding: 12px 14px 12px 18px; border-radius: 12px; color: var(--ink); text-decoration: none; position: relative; transition: background .2s; }
+.edu-list-item::before { content: ""; position: absolute; left: 6px; top: 18px; width: 6px; height: 6px; border-radius: 50%; background: hsl(var(--hue) 40% 52%); }
+.edu-list-item:hover { background: rgba(255, 255, 255, .7); }
+.edu-list-item.active { background: var(--surface); box-shadow: var(--shadow-rest); }
+.edu-list-item b { font-size: 15px; line-height: 1.4; }
+.edu-list-item span { color: var(--ink-2); font-size: 13px; }
+.edu-list-item small { display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-size: 12px; }
+.edu-list-item small .icon { width: 12px; height: 12px; color: var(--ok); }
+.edu-list-empty { margin: 0; font-size: 13px; line-height: 1.6; }
+
+.edu-empty, .edu-generating { display: grid; justify-items: center; gap: 10px; padding: 72px 24px; border: 1px dashed #d6cfc1; border-radius: var(--radius); color: var(--muted); text-align: center; }
+.edu-empty h2 { margin: 6px 0 0; color: var(--ink); font-family: var(--serif); font-size: 22px; }
+.edu-empty p { max-width: 46ch; margin: 0; line-height: 1.7; }
+.edu-empty .empty-mark .icon { width: 40px; height: 40px; color: #c8bfae; }
+.edu-generating b { color: var(--ink); font-size: 16px; }
+
+/* 工具列：狀態、產生圖、確認、交付 */
+.edu-toolbar { display: grid; gap: 10px; margin-bottom: 18px; }
+.edu-status { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; color: var(--ink-2); font-size: 14px; font-weight: 600; }
+.edu-status .icon { width: 16px; height: 16px; }
+.edu-status.ok { color: var(--ok); }
+.edu-status span { color: var(--muted); font-size: 12px; font-weight: 500; }
+.edu-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.edu-confirm { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 14px; font-weight: 600; cursor: pointer; }
+.edu-confirm input { width: 18px; height: 18px; accent-color: var(--ok); }
+.edu-confirm:has(input:checked) { border-color: #9fcabd; background: var(--ok-soft); color: var(--ok); }
+.edu-delete { display: grid; place-items: center; width: 42px; height: 42px; margin-left: auto; border: 0; border-radius: 50%; background: none; color: var(--muted); }
+.edu-delete .icon { width: 18px; height: 18px; }
+.edu-delete:hover, .edu-delete.confirming { background: #fbe9e5; color: var(--danger); }
+.edu-hint { margin: 0; color: var(--muted); font-size: 13px; }
+
+/* 衛教單本體：給長輩看的紙本，大字、高對比、圖片優先 */
+.edu-sheet { max-width: 780px; padding: 44px 48px 32px; border-radius: 18px; background: #fff; color: #17222a; box-shadow: var(--shadow-rest), 0 30px 60px -40px rgba(22, 35, 44, .35); font-size: 20px; line-height: 1.75; }
+.edu-sheet-head { margin-bottom: 22px; }
+.edu-sheet-topics { margin: 0 0 6px; color: hsl(var(--hue) 35% 32%); font-size: 15px; font-weight: 700; letter-spacing: .04em; }
+.edu-sheet-head h2 { margin: 0; font-family: var(--serif); font-size: 34px; line-height: 1.3; }
+.edu-figure { margin: 0 0 28px; overflow: hidden; border-radius: 14px; background: linear-gradient(140deg, hsl(var(--hue) 30% 96%), hsl(var(--hue) 26% 90%)); aspect-ratio: 3 / 2; }
+.edu-figure img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.edu-figure-empty { display: grid; place-items: center; align-content: center; gap: 12px; height: 100%; padding: 24px; color: var(--muted); font-size: 15px; line-height: 1.6; text-align: center; }
+.edu-figure-empty .icon { width: 34px; height: 34px; color: hsl(var(--hue) 25% 60%); }
+.edu-block { margin-top: 26px; }
+.edu-block h3 { margin: 0 0 10px; padding-bottom: 8px; border-bottom: 2px solid hsl(var(--hue) 30% 88%); font-family: var(--serif); font-size: 25px; }
+.edu-block > p { margin: 0; }
+.edu-points { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.edu-points li { position: relative; display: flex; align-items: flex-start; gap: 6px; padding-left: 26px; }
+.edu-points li::before { content: ""; position: absolute; left: 4px; top: .7em; width: 10px; height: 10px; border-radius: 50%; background: hsl(var(--hue) 40% 52%); }
+.edu-warn h3 { color: #8c3a29; border-bottom-color: #f2d4cc; }
+.edu-warn .edu-points li::before { background: var(--danger); }
+.edu-meds { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.edu-med { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 18px; align-items: start; padding: 16px; border-radius: 14px; background: #faf8f4; }
+.edu-med-photo { display: grid; place-items: center; width: 104px; height: 104px; overflow: hidden; border-radius: 12px; background: #fff; }
+.edu-med-photo img { width: 100%; height: 100%; object-fit: contain; }
+.edu-med-photo .icon { width: 30px; height: 30px; color: var(--mark); }
+.edu-med-body p { margin: 0; }
+.edu-med-name { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.edu-med-name b { font-size: 24px; }
+.edu-med-name small { color: var(--muted); font-size: 15px; }
+.edu-med-purpose { color: #2c3a44; }
+.edu-med-schedule { display: inline-flex; align-items: center; gap: 8px; margin-top: 6px !important; padding: 4px 14px 4px 10px; border-radius: 999px; background: hsl(var(--hue) 35% 93%); color: #17222a; font-weight: 700; }
+.edu-med-schedule .icon { width: 18px; height: 18px; color: hsl(var(--hue) 40% 38%); }
+.edu-med-tip { margin-top: 6px !important; color: #4a5660; font-size: 18px; }
+.edu-note { margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+.edu-sheet-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; margin-top: 34px; padding-top: 14px; border-top: 1px solid #ece8e0; color: var(--muted); font-size: 13px; }
+
+/* 可直接修改的文字：滑過或聚焦時才顯示外框 */
+.edu-edit { border-radius: 6px; outline: 0; transition: background .15s, box-shadow .15s; }
+.edu-edit:hover { background: #f7f4ee; }
+.edu-edit:focus { background: #fffbea; box-shadow: 0 0 0 2px #ead9a6; }
+.edu-edit:empty::before { content: attr(data-placeholder); color: #a3acb2; }
+.edu-remove { flex: none; display: grid; place-items: center; width: 32px; height: 32px; margin-left: auto; border: 0; border-radius: 50%; background: none; color: var(--faint); opacity: 0; transition: opacity .15s; }
+.edu-points li:hover .edu-remove, .edu-remove:focus-visible { opacity: 1; }
+.edu-remove:hover { background: #fbe9e5; color: var(--danger); }
+.edu-remove .icon { width: 15px; height: 15px; }
+.edu-add { margin-top: 8px; }
+.edu-sheet.exporting .edu-edit:empty { display: none; }
+
+@media (max-width: 1080px) {
+  .edu-layout { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .edu-list { position: static; }
+  #eduList { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
+  .edu-list-title { display: none; }
+  .edu-list-item { flex: 0 0 220px; background: rgba(255, 255, 255, .6); }
+}
+@media (max-width: 640px) {
+  .edu-new { flex-direction: column; align-items: stretch; }
+  .edu-new select { min-width: 0; width: 100%; }
+  .edu-sheet { padding: 26px 20px 22px; font-size: 18px; }
+  .edu-sheet-head h2 { font-size: 27px; }
+  .edu-block h3 { font-size: 22px; }
+  .edu-med { grid-template-columns: 76px minmax(0, 1fr); gap: 12px; padding: 12px; }
+  .edu-med-photo { width: 76px; height: 76px; }
+  .edu-med-name b { font-size: 21px; }
+  .edu-remove { opacity: 1; }
+  .edu-delete { margin-left: 0; }
+}
+.edu-med.no-photo { grid-template-columns: minmax(0, 1fr); }
+.edu-med-schedule { display: flex; width: fit-content; max-width: 100%; align-items: flex-start; line-height: 1.5; padding-top: 6px; padding-bottom: 6px; }
+.edu-med-schedule .icon { flex: none; margin-top: .2em; }
+.edu-sheet .icon { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* 匯出圖片：沒有衛教圖時不留空白框 */
+.edu-sheet.exporting .edu-figure.empty { display: none; }
+/* 匯出前先移除編輯用的按鈕，讓版面重新排列；排程膠囊不換行（轉圖時字寬略有差異） */
+.edu-sheet.exporting .edu-ui { display: none; }
+.edu-sheet.exporting .edu-med-schedule .edu-edit { white-space: nowrap; }

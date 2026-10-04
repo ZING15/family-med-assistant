@@ -172,7 +172,10 @@
                 <section class="recs-tray" id="recsTray" aria-labelledby="trayTitle">
                   <div class="tray-head">
                     <h2 id="trayTitle" tabindex="-1">本次處方 <small id="trayCount"></small></h2>
-                    <button type="button" class="link-button" id="trayJump">到開藥區調整品項</button>
+                    <div class="tray-head-actions">
+                      <button type="button" class="link-button" id="trayJump">到開藥區調整品項</button>
+                      <button type="button" class="link-button" id="makeEducation"><svg class="icon" aria-hidden="true"><use href="#i-file-heart"/></svg>產生衛教單</button>
+                    </div>
                   </div>
                   <div class="tray-list" id="trayList"></div>
                   <div class="tray-safety" id="traySafety"></div>
@@ -195,9 +198,26 @@
             </div>
           </section>
 
-          <!-- F-08／F-09 衛教單（開發中） -->
+          <!-- F-08／F-09 衛教單：AI 草稿 → 醫師編輯 → 衛教圖 → 醫師確認後才能交付 -->
           <section class="view" id="view-education" data-title="衛教單" hidden>
-            <header class="library-hero"><div><h1>衛教單</h1><p class="hero-meta">中文衛教單與 AI 衛教圖，預計 10/7 完成。</p></div></header>
+            <header class="library-hero edu-hero">
+              <div>
+                <h1>衛教單</h1>
+                <p class="hero-meta">把看診重點變成長輩看得懂的圖文衛教。AI 寫草稿，醫師修改、確認後才能交給病人。練習資料，非臨床建議。</p>
+              </div>
+              <form class="edu-new" id="eduNewForm">
+                <label class="sr-only" for="eduTopic">衛教主題</label>
+                <select id="eduTopic"><option value="">選擇主題…</option></select>
+                <button class="primary-button add-button" type="submit"><svg class="icon" aria-hidden="true"><use href="#i-sparkles"/></svg>產生主題衛教</button>
+              </form>
+            </header>
+            <div class="edu-layout">
+              <nav class="edu-list" aria-label="我的衛教單">
+                <h2 class="edu-list-title">我的衛教單</h2>
+                <div id="eduList"></div>
+              </nav>
+              <div class="edu-main" id="eduMain"></div>
+            </div>
           </section>
         </div>
       </main>
@@ -342,5 +362,6 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="app.js"></script>
     <script src="records.js"></script>
+    <script src="education.js"></script>
   </body>
 </html>

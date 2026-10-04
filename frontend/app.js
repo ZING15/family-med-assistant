@@ -117,6 +117,7 @@ function showView() {
   document.title = `${$(`#view-${view}`).dataset.title}・新手家醫看診助手`;
   if (view === 'library') syncLibraryFromHash();
   if (view === 'records' && typeof loadRecordsView === 'function') loadRecordsView();
+  if (view === 'education' && typeof loadEducationView === 'function') loadEducationView();
 }
 
 // 學習庫狀態寫在網址：#library?topic=… 或 #library?q=…，可用上一頁返回

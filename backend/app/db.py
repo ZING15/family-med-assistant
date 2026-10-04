@@ -58,6 +58,22 @@ CREATE TABLE IF NOT EXISTS drug_feedback (
 );
 CREATE INDEX IF NOT EXISTS idx_feedback ON drug_feedback(condition, atc_code, action);
 
+-- 衛教單（F-08／F-09）：AI 草稿經醫師編輯、確認後才能下載或存到學習庫
+CREATE TABLE IF NOT EXISTS education_sheets (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    record_id    INTEGER,                              -- 從病歷產生時對應的練習病歷；主題衛教為空
+    topic        TEXT NOT NULL DEFAULT '',             -- 病灶名稱（多個以、分隔）
+    title        TEXT NOT NULL DEFAULT '',
+    content      TEXT NOT NULL DEFAULT '{}',           -- JSON：about、medicines、care、warnings、image_scene
+    image_path   TEXT NOT NULL DEFAULT '',             -- AI 衛教圖（uploads/education/），產生一次後重複使用
+    image_meta   TEXT NOT NULL DEFAULT '{}',
+    ai_meta      TEXT NOT NULL DEFAULT '{}',
+    confirmed    INTEGER NOT NULL DEFAULT 0,           -- 醫師已確認
+    confirmed_at TEXT NOT NULL DEFAULT '',
+    created_at   TEXT NOT NULL,
+    updated_at   TEXT NOT NULL
+);
+
 -- AI 產生的藥品白話簡介，每個成分只產生一次
 CREATE TABLE IF NOT EXISTS drug_summaries (
     atc_code     TEXT PRIMARY KEY,

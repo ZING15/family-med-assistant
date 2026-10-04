@@ -225,6 +225,44 @@ class AIService:
         )
         return self.chat_json(system, user, max_tokens=1200)
 
+    # ---- 衛教單 ----
+    def education_draft(self, topics: list[str], medicines: list[dict], audience: str = "") -> tuple[dict | None, dict]:
+        """產生長輩看得懂的衛教單草稿。用藥的頻率與天數由醫師決定，AI 不得更改或補充劑量。"""
+        system = (
+            "你協助台灣的家醫科醫師，為病人（多為長輩）寫中文衛教單草稿，醫師會再修改確認。"
+            "用國小程度的白話繁體中文，短句、親切、具體，不用醫學術語（必要時加白話解釋）。"
+            "不寫任何劑量數字（毫克、顆數）、不改變醫師開立的頻率與天數、不做診斷或保證療效。"
+            "回傳 JSON：{"
+            "\"title\": 衛教單標題(15字內，例：感冒咳嗽的居家照顧), "
+            "\"about\": 2-3句說明這是什麼問題、通常會怎麼好轉, "
+            "\"medicines\": [對每個輸入藥品回傳 {\"atc_code\": 原樣帶回, \"name_zh\": 台灣常用中文藥名, "
+            "\"purpose\": 一句白話用途(15字內，例：止咳、讓喉嚨比較舒服), \"tip\": 一句服用提醒(飯前或飯後、常見副作用如想睡，20字內)}], "
+            "\"care\": 3-5點在家照顧的做法(每點20字內), "
+            "\"warnings\": 3-4點出現時要馬上回診或就醫的情況(每點20字內), "
+            "\"image_scene\": 一句英文，描述一個適合當衛教插圖的溫暖生活場景(長輩在家照顧自己，例如喝溫水、休息)，不要出現藥品、文字或醫療器材}"
+        )
+        lines = [f"病灶／主題：{'、'.join(topics)}"]
+        if audience:
+            lines.append(f"病人：{audience}")
+        if medicines:
+            lines.append("醫師開立的藥品（頻率與天數由醫師決定，只需寫用途與提醒）：")
+            lines += [f"- atc_code={m['atc_code']}；{m.get('name', '')}；類別：{m.get('class_zh', '')}" for m in medicines]
+        else:
+            lines.append("這份是一般衛教，沒有開立藥品，medicines 回傳空陣列。")
+        return self.chat_json(system, "\n".join(lines), max_tokens=2500)
+
+    def education_image(self, scene: str) -> tuple[bytes | None, dict]:
+        """衛教插圖：不含文字與藥品，中文說明由網頁疊加。"""
+        prompt = (
+            "A warm, gentle flat illustration for a patient health-education leaflet for elderly people in Taiwan. "
+            f"Scene: {scene}. "
+            "Style: soft hand-drawn flat shapes, calm muted palette of cream paper, sage green, soft blue and warm peach, "
+            "rounded friendly forms, plenty of empty space, simple background. "
+            "Strictly no text, no letters, no numbers, no logos, no pills, tablets, capsules or medicine packaging, "
+            "no syringes or medical devices, no realistic or detailed faces."
+        )
+        return self.generate_image(prompt, size="1536x1024")
+
     # ---- 語音轉文字 ----
     def transcribe(self, audio_path: Path) -> tuple[str | None, dict]:
         if self._transcribe is not None:
