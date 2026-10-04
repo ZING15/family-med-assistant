@@ -2,7 +2,8 @@
 F-03～F-06 病灶偵測與用藥推薦。
 
 推薦分數 = 類別優先（對照表中越前面越常用） + 常見首選成分加分 + 醫師回饋（曾在此病灶採用加分）
-         + 市售品項數（TFDA 有效許可證數，代表可取得性） + 有外觀圖小幅加分
+         + 市售品項數（TFDA 有效許可證數，代表可取得性）
+病史風險（risk_flags.json）只在卡片加提醒，不影響排序、不排除。
 排除：過敏原對應的 ATC 類別、醫師標記「此病灶不再推薦」、本次病歷「這次不用」。
 """
 
@@ -11,6 +12,7 @@ from __future__ import annotations
 import json
 import math
 import re
+from collections import Counter
 from functools import lru_cache
 from pathlib import Path
 
@@ -49,6 +51,11 @@ def allergens() -> list[dict]:
 
 
 @lru_cache
+def risk_flags() -> list[dict]:
+    return json.loads((DATA_DIR / "risk_flags.json").read_text(encoding="utf-8"))["flags"]
+
+
+@lru_cache
 def atc_labels() -> dict:
     return json.loads((DATA_DIR / "atc_classes.json").read_text(encoding="utf-8"))
 
@@ -70,13 +77,38 @@ def display_name(atc: str, name_en: str) -> str:
     lowered = name_en.lower().strip()
     if lowered in ("combinations", "various combinations"):
         return f"{class_zh(atc) or '其他'}複方"
+    if lowered == "various":
+        return f"{class_zh(atc) or '其他藥品'}（多成分）"
     for suffix, label in ((", combinations with psycholeptics", " 複方（含鎮靜成分）"),
                           (", combinations excl. psycholeptics", " 複方"), (", combinations", " 複方")):
         if lowered.endswith(suffix):
             return name_en[: -len(suffix)] + label
-    if name_en.isupper():
-        return name_en.capitalize()
-    return name_en
+    name = name_en.capitalize() if name_en.isupper() else name_en
+    # 同一成分常有口服與外用等不同給藥途徑（例：diclofenac），把途徑寫進名稱
+    route = next((label for prefix, label in ROUTES if atc.startswith(prefix)), "")
+    return f"{name} {route}" if route else name
+
+
+# ATC 前綴 → 給藥途徑
+ROUTES = [("M02", "外用"), ("D", "外用"), ("S01", "眼用"), ("S02", "耳用"), ("R01A", "鼻用"),
+          ("R03A", "吸入"), ("R03B", "吸入"), ("A01", "口內用"), ("G01", "陰道用"), ("R02", "含片")]
+SALTS = {"HCL", "HYDROCHLORIDE", "MALEATE", "HYDROBROMIDE", "HBR", "ANHYDROUS", "DEHYDRATE", "DIHYDRATE",
+         "MONOHYDRATE", "TRIHYDRATE", "MONONITRATE", "NITRATE", "CITRATE", "SULFATE", "SULPHATE", "PHOSPHATE",
+         "TARTRATE", "BITARTRATE", "BESYLATE", "MESYLATE", "FUMARATE", "SUCCINATE", "ACETATE", "SODIUM",
+         "POTASSIUM", "BROMIDE", "CHLORIDE", "MICRONIZED", "USP", "BP"}
+
+
+def ingredient_name(raw: str) -> str:
+    """TFDA 成分欄位轉成簡短學名：去掉括號註記與鹽類（ACETAMINOPHEN (EQ TO PARACETAMOL) → paracetamol）。"""
+    text = raw.strip()
+    eq = re.search(r"\(EQ\.? TO ([^)]+)\)", text, re.IGNORECASE)
+    if eq:
+        text = eq.group(1)
+    text = re.sub(r"\(.*?\)", "", text).strip()
+    words = text.split()
+    while len(words) > 1 and words[-1].upper().strip(".,") in SALTS:
+        words.pop()
+    return " ".join(words).lower()
 
 
 def condition_by_name(name: str) -> dict | None:
@@ -165,7 +197,7 @@ def concepts_for_prefix(prefix: str) -> tuple[dict, ...]:
     with drug_db() as con:
         rows = con.execute(
             f"""SELECT atc_main, atc_main_name_en, ahfs_main_name_zh, ahfs_confidence, drug_category, dosage_form,
-                       image_url, name_zh, indication, license_no
+                       image_url, name_zh, indication, license_no, ingredients
                 FROM products
                 WHERE is_active = 1 AND license_type LIKE '製%' AND atc_main LIKE ?
                   AND drug_category IN ({_category_sql()})""",
@@ -176,8 +208,11 @@ def concepts_for_prefix(prefix: str) -> tuple[dict, ...]:
         c = grouped.setdefault(r["atc_main"], {
             "atc_code": r["atc_main"], "name_en": r["atc_main_name_en"], "class_zh": "",
             "product_count": 0, "categories": set(), "forms": {}, "image_url": "", "sample_name": "",
-            "indication": "", "licenses": [],
+            "indication": "", "licenses": [], "_ingredients": Counter(),
         })
+        parts = [p for p in (r["ingredients"] or "").split(";;") if p.strip()]
+        if len(parts) > 1:
+            c["_ingredients"].update({ingredient_name(p) for p in parts})
         c["product_count"] += 1
         c["licenses"].append(r["license_no"])
         c["categories"].add(CATEGORIES[r["drug_category"]])
@@ -201,6 +236,8 @@ def concepts_for_prefix(prefix: str) -> tuple[dict, ...]:
         c["class_zh"] = c["class_zh"] or class_by_l4.get(c["atc_code"][:5], "")
         c["categories"] = sorted(c["categories"])
         c["nhi"] = nhi.summarize(c.pop("licenses"))
+        # 複方：列出最常出現的成分（各市售品項配方不同，取前 4 個）
+        c["components"] = [name for name, _ in c.pop("_ingredients").most_common(4)]
         c["forms"] = [{"group": g, "label": FORM_LABEL[g], "count": n}
                       for g, n in sorted(c["forms"].items(), key=lambda kv: -kv[1])]
         result.append(c)
@@ -230,6 +267,12 @@ def concept_detail(atc: str) -> dict | None:
         ).fetchall()
     data = dict(concept)
     data["display_name"] = display_name(atc, data["name_en"])
+    if any(w in data["name_en"].lower() for w in ("combination", "various", "cold preparations")):
+        counts = Counter(name for p in products for name in
+                         {ingredient_name(x) for x in (p["ingredients"] or "").split(";;") if x.strip()})
+        data["components"] = [name for name, _ in counts.most_common(6)]
+    else:
+        data["components"] = []
     data["class_zh"] = class_zh(atc, data["ahfs_main_name_zh"] or "")
     data["products"] = [dict(p) | {"category": CATEGORIES[p["drug_category"]], "form_group": form_group(p["dosage_form"] or ""),
                                    "nhi": nhi.for_license(p["license_no"])}
@@ -299,8 +342,33 @@ def diversify(items: list[dict], penalty: float = 0.9) -> list[dict]:
     return picked
 
 
-def recommend(condition_names: list[str], allergy_ids: list[str], dismissed: list[dict]) -> dict:
+def detect_risks(text: str, age: str = "") -> list[dict]:
+    """從病史與年齡找出需要提醒的風險（否定句「無胃出血」不算）。"""
+    lowered = _normalize(text)
+    found = []
+    for flag in risk_flags():
+        if "min_age" in flag:
+            years = int(age) if str(age).strip().isdigit() else 0
+            if years >= flag["min_age"]:
+                found.append({"id": flag["id"], "label": flag["label"], "matched": f"{years} 歲",
+                              "message": flag["message"].format(age=years), "atc": flag["atc"]})
+            continue
+        for keyword in flag["keywords"]:
+            needle = _normalize(keyword)
+            index = lowered.find(needle)
+            while index != -1 and NEGATION.search(lowered[max(0, index - 4):index]):
+                index = lowered.find(needle, index + len(needle))
+            if index != -1:
+                found.append({"id": flag["id"], "label": flag["label"], "matched": keyword,
+                              "message": flag["message"].format(matched=keyword), "atc": flag["atc"]})
+                break
+    return found
+
+
+def recommend(condition_names: list[str], allergy_ids: list[str], dismissed: list[dict],
+              text: str = "", age: str = "") -> dict:
     adopt, adopt_any, never = _feedback()
+    risks = detect_risks(text, age)
     rules = allergy_rules(allergy_ids)
     dismissed_keys = {(d.get("condition"), d.get("atc")) for d in dismissed}
     rows, excluded = [], []
@@ -326,32 +394,34 @@ def recommend(condition_names: list[str], allergy_ids: list[str], dismissed: lis
             key = (name, code)
             allergy_reason, class_warning = allergy_hit(code, rules)
             if allergy_reason:
-                excluded.append({"condition": name, "atc_code": code, "name_en": display_name(code, c["name_en"]), "reason": "allergy", "label": f"過敏：{allergy_reason}"})
+                excluded.append({"condition": name, "atc_code": code, "name_en": display_name(code, c["name_en"]), "class_zh": class_zh(code, c["class_zh"]), "reason": "allergy", "label": f"過敏：{allergy_reason}"})
                 continue
             if key in never:
-                excluded.append({"condition": name, "atc_code": code, "name_en": display_name(code, c["name_en"]), "reason": "never", "label": "你標記此病灶不再推薦"})
+                excluded.append({"condition": name, "atc_code": code, "name_en": display_name(code, c["name_en"]), "class_zh": class_zh(code, c["class_zh"]), "reason": "never", "label": "你標記此病灶不再推薦"})
                 continue
             if key in dismissed_keys:
-                excluded.append({"condition": name, "atc_code": code, "name_en": display_name(code, c["name_en"]), "reason": "dismissed", "label": "本次病歷：這次不用"})
+                excluded.append({"condition": name, "atc_code": code, "name_en": display_name(code, c["name_en"]), "class_zh": class_zh(code, c["class_zh"]), "reason": "dismissed", "label": "本次病歷：這次不用"})
                 continue
             here, anywhere = adopt.get(key, 0), adopt_any.get(code, 0)
-            combination = "combination" in c["name_en"].lower()
+            # 複方：ATC 名稱為 combinations／various，或「其他感冒製劑」這類多成分類別
+            combination = any(w in c["name_en"].lower() for w in ("combination", "various", "cold preparations"))
             preferred = any(code.startswith(f) for f in first_line)
             score = (3 * c["_priority"] + (1.5 if preferred else 0) + 2 * here + 0.5 * (anywhere - here)
-                     + math.log10(c["product_count"] + 1) + (0.2 if c["image_url"] else 0)
+                     + math.log10(c["product_count"] + 1)
                      - (0.6 if combination else 0))  # 單方優先於複方
             reasons = []
             if here:
                 reasons.append(f"你在此病灶採用過 {here} 次")
             elif anywhere:
                 reasons.append(f"你在其他病灶採用過 {anywhere} 次")
-            if combination:
-                reasons.append("複方製劑")
+
             items.append({
                 "atc_code": code, "name_en": c["name_en"], "display_name": display_name(code, c["name_en"]),
                 "class_zh": class_zh(code, c["class_zh"]), "preferred": preferred,
                 "product_count": c["product_count"], "categories": c["categories"], "forms": c["forms"],
                 "image_url": c["image_url"], "sample_name": c["sample_name"], "score": round(score, 3), "nhi": c["nhi"],
+                "components": c["components"] if combination else [], "is_combination": combination,
+                "risks": [r["message"] for r in risks if any(code.startswith(p) for p in r["atc"])],
                 "reasons": reasons, "warning": class_warning, "adopted_here": here, "_prefix": c["_prefix"],
             })
         ranked = diversify(items)
@@ -359,4 +429,5 @@ def recommend(condition_names: list[str], allergy_ids: list[str], dismissed: lis
             item.pop("_prefix", None)
         rows.append({"condition": name, "icd10": cond["icd10"], "items": ranked[:ROW_LIMIT], "total": len(items)})
 
-    return {"rows": rows, "excluded": excluded}
+    return {"rows": rows, "excluded": excluded,
+            "risks": [{"id": r["id"], "label": r["label"], "matched": r["matched"]} for r in risks]}

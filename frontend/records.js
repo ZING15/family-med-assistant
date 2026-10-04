@@ -22,12 +22,17 @@ const rxName = (p) => p.display_name || drugLabel(p.name_en);
 // 健保支付價：顯示到小數點後兩位，去掉多餘的 0
 const money = (n) => `${Number(n).toFixed(2).replace(/\.?0+$/, '')} 元`;
 
-// 推薦卡：一個成分底下有幾個健保給付品項（支付價在藥品卡與開藥區才顯示）
-function nhiSummaryHtml(nhi, total) {
-  if (!nhi) return `<span class="rec-meta">市售 ${total} 個品項</span>`;
-  if (!nhi.covered_products) return `<span class="rec-meta no-nhi">無健保給付品項・市售 ${total} 個</span>`;
-  return `<span class="rec-meta"><b class="nhi-tag">健保</b>${nhi.covered_products}／${total} 個品項給付</span>`;
+// 推薦卡：只標示有沒有健保給付品項，品項數與支付價在藥品卡、開藥區才顯示
+function nhiTagHtml(nhi) {
+  if (!nhi) return '';
+  return nhi.covered_products ? '<b class="nhi-tag">健保</b>' : '<b class="nhi-tag self-pay">無健保品項</b>';
 }
+
+// 推薦卡劑型：取市售品項最多的兩種（例：錠劑／膠囊・外用），也能區分同成分的不同途徑
+const formsText = (forms) => (forms || []).slice(0, 2).map((f) => f.label).join('・');
+
+// 慢性病且病歷寫「控制中、穩定、規則服藥」時，預設收起那一排
+const CONTROLLED = /控制(中|良好|穩定)|穩定|規則服藥|持續服藥/;
 
 // 開藥區：這個品項的健保代碼與支付價
 function rxNhiHtml(p) {
@@ -47,6 +52,9 @@ const rx = {
   record: null,
   recs: { rows: [], excluded: [] },
   railActive: {},      // 每排目前可用 Tab 進入的卡片（roving tabindex）
+  expanded: {},        // 每排是否展開「其他 n 個」
+  collapsed: {},       // 每排是否收起
+  riskSig: '',         // 目前病史風險（變動時才重新取推薦）
   removedCache: {},    // 本次移除的病灶，供「復原」還原原本的來源
   loaded: false,
 };
@@ -86,6 +94,8 @@ async function openRecord(id) {
   rx.record = await api(`/api/records/${id}`);
   rx.railActive = {};
   rx.removedCache = {};
+  rx.expanded = {};
+  rx.collapsed = {};
   $('#pCode').value = rx.record.patient_code;
   $('#pAge').value = rx.record.age;
   $('#pSex').value = rx.record.sex;
@@ -139,6 +149,12 @@ async function saveRecord() {
 }
 
 ['#pCode', '#pAge', '#pSex'].forEach((sel) => $(sel).addEventListener('input', scheduleSave));
+// 年齡影響「65 歲以上」的提醒
+let ageTimer;
+$('#pAge').addEventListener('input', () => {
+  clearTimeout(ageTimer);
+  ageTimer = setTimeout(refreshRecommendations, 600);
+});
 ['#rChief', '#rHistory', '#rAssessment'].forEach((sel) => $(sel).addEventListener('input', () => {
   scheduleSave();
   clearTimeout(detectTimer);
@@ -260,8 +276,10 @@ bindDrugSearch($('#allergyDrugSearch'), $('#allergyDrugResults'), (atc, name, di
 
 async function detectConditions() {
   const text = [$('#rChief').value, $('#rHistory').value, $('#rAssessment').value].join('\n');
-  const { conditions } = await api('/api/detect', jsonBody({ text }));
-  mergeConditions(conditions, 'keyword');
+  const { conditions, risks } = await api('/api/detect', jsonBody({ text }));
+  const changed = mergeConditions(conditions, 'keyword');
+  // 病灶沒變但病史風險變了（例如補上「曾胃出血」），也要重新標示卡片提醒
+  if (!changed && (risks || []).join() !== rx.riskSig) refreshRecommendations();
 }
 
 // 關鍵字結果會整批更新；AI 與手動加入的保留；醫師移除過的不再自動加回
@@ -278,6 +296,7 @@ function mergeConditions(found, source) {
     scheduleSave();
     refreshRecommendations();
   }
+  return changed;
 }
 
 function renderConditions() {
@@ -360,7 +379,7 @@ $('#aiDetectButton').addEventListener('click', async () => {
     const added = rx.record.conditions.length - before;
     const other = $('#aiOther');
     other.hidden = !result.other.length;
-    other.textContent = result.other.length ? `AI 另外看到：${result.other.join('、')}（不在推薦對照表中）` : '';
+    other.textContent = result.other.length ? `AI 另外看到：${result.other.join('、')}（這些病灶目前沒有推薦清單）` : '';
     showToast(added ? `AI 新增 ${added} 個病灶` : 'AI 沒有找到其他病灶');
   } catch (error) {
     showToast(error.message);
@@ -377,7 +396,7 @@ async function refreshRecommendations() {
   if (!r) return;
   const box = $('#recRows');
   if (!r.conditions.length) {
-    rx.recs = { rows: [], excluded: [] };
+    rx.recs = { rows: [], excluded: [], risks: [] };
     box.innerHTML = `<div class="recs-empty"><div class="empty-mark">${icon('pill')}</div>
       <p>寫下主訴與病史後，這裡會依每個病灶列出推薦藥品。</p></div>`;
     $('#excludedBox').hidden = true;
@@ -387,7 +406,9 @@ async function refreshRecommendations() {
   try {
     rx.recs = await api('/api/recommendations', jsonBody({
       conditions: r.conditions.map((c) => c.name), allergies: r.allergies, dismissed: r.dismissed,
+      text: [$('#rChief').value, $('#rHistory').value, $('#rAssessment').value].join('\n'), age: $('#pAge').value.trim(),
     }));
+    rx.riskSig = (rx.recs.risks || []).map((x) => x.id).join();
     renderRecommendations();
     const total = rx.recs.rows.reduce((n, row) => n + row.items.length, 0);
     $('#recsStatus').textContent = `推薦已更新：${rx.recs.rows.length} 個病灶，共 ${total} 個藥品`;
@@ -408,8 +429,12 @@ function recCardHtml(item, condition, active) {
     : `<span class="pill-glyph" aria-hidden="true">${escapeHtml(glyph)}</span>`;
   const adopted = inPrescription(item.atc_code);
   const tab = active ? '0' : '-1';
-  const reasons = item.reasons.slice(0, 2)
-    .map((text) => `<span class="rec-reason ${text.startsWith('你') ? 'mine' : ''}">${escapeHtml(text)}</span>`).join('');
+  const reasons = item.reasons.slice(0, 1)
+    .map((text) => `<span class="rec-reason mine">${escapeHtml(text)}</span>`).join('');
+  // 過敏同類警示與病史風險都只提醒、不排除
+  const warnings = [item.warning, ...(item.risks || [])].filter(Boolean);
+  const components = item.is_combination && item.components?.length
+    ? `<span class="rec-components">成分：${item.components.slice(0, 3).map(escapeHtml).join('、')}${item.components.length > 3 ? ' 等' : ''}</span>` : '';
   return `
     <article class="rec-card ${adopted ? 'adopted' : ''}" style="${hueStyle(item.class_zh || item.atc_code.slice(0, 4))}" data-atc="${item.atc_code}" data-condition="${escapeHtml(condition)}">
       <button type="button" class="rec-open" data-open-drug="${item.atc_code}" tabindex="${tab}">
@@ -417,9 +442,10 @@ function recCardHtml(item, condition, active) {
         <span class="rec-body">
           <b>${escapeHtml(name)}</b>
           <span class="rec-class">${escapeHtml(item.class_zh || '未分類')}</span>
+          ${components}
           ${reasons ? `<span class="rec-reasons">${reasons}</span>` : ''}
-          ${item.warning ? `<span class="rec-warning">${icon('triangle-alert')}${escapeHtml(item.warning)}</span>` : ''}
-          ${nhiSummaryHtml(item.nhi, item.product_count)}
+          ${warnings.length ? `<span class="rec-warning">${icon('triangle-alert')}<span>${escapeHtml(warnings[0])}</span></span>` : ''}
+          <span class="rec-meta">${nhiTagHtml(item.nhi)}${escapeHtml(formsText(item.forms))}</span>
           <span class="sr-only">，查看詳細資料</span>
         </span>
       </button>
@@ -436,24 +462,38 @@ function recCardHtml(item, condition, active) {
 }
 
 function renderRecommendations() {
+  const text = [$('#rChief').value, $('#rHistory').value, $('#rAssessment').value].join('\n');
   const rows = rx.recs.rows.map((row, rowIndex) => {
-    const { items } = row;
-    const activeAtc = items.some((i) => i.atc_code === rx.railActive[row.condition]) ? rx.railActive[row.condition] : items[0]?.atc_code;
+    const cond = row.condition;
+    if (rx.collapsed[cond] === undefined) {
+      rx.collapsed[cond] = Boolean(rx.catalog.conditions.find((c) => c.name === cond)?.chronic && CONTROLLED.test(text));
+    }
+    const collapsed = rx.collapsed[cond];
+    const expanded = rx.expanded[cond] || row.items.length <= TOP_N + 1;
+    const items = expanded ? row.items : row.items.slice(0, TOP_N);
+    const rest = row.items.length - items.length;
+    const activeAtc = items.some((i) => i.atc_code === rx.railActive[cond]) ? rx.railActive[cond] : items[0]?.atc_code;
+    const railId = `rail-${rowIndex}`;
     return `
-      <section class="rec-row" style="animation-delay:${rowIndex * 60}ms">
-        <div class="rec-row-head" style="${hueStyle(row.condition)}">
-          <h3><span class="because">因為</span>${escapeHtml(row.condition)}</h3>
-          <span>${items.length} 個推薦${row.total > row.items.length ? `・共 ${row.total} 個候選` : ''}</span>
+      <section class="rec-row ${collapsed ? 'collapsed' : ''}" style="animation-delay:${rowIndex * 60}ms">
+        <div class="rec-row-head" style="${hueStyle(cond)}">
+          <h3><button type="button" class="rec-row-toggle" data-toggle-row="${escapeHtml(cond)}" aria-expanded="${!collapsed}" aria-controls="${railId}">
+            ${icon('chevron-down')}<span class="because">因為</span>${escapeHtml(cond)}</button></h3>
+          <span>${collapsed ? `已收起・${row.items.length} 個` : `前 ${row.items.length} 名・共 ${row.total} 個候選`}</span>
         </div>
+        <div id="${railId}" ${collapsed ? 'hidden' : ''}>
         ${items.length
           ? `<div class="rail-wrap at-start">
               <button type="button" class="rail-nav prev" data-rail-nav="-1" tabindex="-1" aria-hidden="true">${icon('arrow-left')}</button>
-              <div class="rec-rail" role="group" aria-label="因為${escapeHtml(row.condition)}的推薦，用左右方向鍵切換藥品">
-                ${items.map((item) => recCardHtml(item, row.condition, item.atc_code === activeAtc)).join('')}
+              <div class="rec-rail" role="group" aria-label="因為${escapeHtml(cond)}的推薦，用左右方向鍵切換藥品">
+                ${items.map((item) => recCardHtml(item, cond, item.atc_code === activeAtc)).join('')}
+                ${rest > 0 ? `<button type="button" class="rec-more-tile" data-expand-row="${escapeHtml(cond)}">${icon('plus')}<b>其他 ${rest} 個</b><span>同病灶的其他候選</span></button>` : ''}
+                ${rx.expanded[cond] ? `<button type="button" class="rec-more-tile quiet" data-collapse-rest="${escapeHtml(cond)}"><b>只看前 ${TOP_N} 個</b></button>` : ''}
               </div>
               <button type="button" class="rail-nav next" data-rail-nav="1" tabindex="-1" aria-hidden="true">${icon('arrow-right')}</button>
             </div>`
           : '<p class="muted-text rec-none">這個病灶目前沒有可推薦的藥品（可能都已被過敏或你的回饋排除）</p>'}
+        </div>
       </section>`;
   }).join('');
   $('#recRows').innerHTML = rows;
@@ -466,7 +506,7 @@ function renderRecommendations() {
   const parts = [counts.allergy && `過敏 ${counts.allergy}`, counts.never && `不再推薦 ${counts.never}`, counts.dismissed && `這次不用 ${counts.dismissed}`].filter(Boolean);
   $('#excludedSummary').textContent = `已排除 ${excluded.length} 個${parts.length ? `（${parts.join('、')}）` : ''}`;
   $('#excludedList').innerHTML = excluded.map((e) => `
-    <li><span class="excluded-name">${escapeHtml(e.name_en)}</span><span class="excluded-why ${e.reason}">${escapeHtml(e.label)}・${escapeHtml(e.condition)}</span>
+    <li><span class="excluded-name">${escapeHtml(e.name_en)}</span>${e.class_zh ? `<span class="excluded-class">${escapeHtml(e.class_zh)}</span>` : ''}<span class="excluded-why ${e.reason}">${escapeHtml(e.label)}・${escapeHtml(e.condition)}</span>
       ${e.reason === 'never' ? `<button type="button" class="link-button" data-restore-never="${e.atc_code}" data-condition="${escapeHtml(e.condition)}">復原</button>` : ''}
       ${e.reason === 'dismissed' ? `<button type="button" class="link-button" data-restore-dismiss="${e.atc_code}" data-condition="${escapeHtml(e.condition)}">復原</button>` : ''}
     </li>`).join('');
@@ -534,8 +574,18 @@ $('#recRows').addEventListener('scroll', (event) => {
   if (event.target.classList?.contains('rec-rail')) updateRailNav(event.target);
 }, true);
 
+// 選單：焦點離開（例如按 Tab）就關閉
+$('#recRows').addEventListener('focusout', (event) => {
+  const menu = event.target.closest('.rec-menu');
+  if (!menu || menu.hidden) return;
+  const next = event.relatedTarget;
+  if (next && (menu.contains(next) || next === menu.closest('.rec-card').querySelector('[data-more]'))) return;
+  closeMenus();
+});
+
 // 鍵盤：每排只佔一個 Tab 停駐點，左右方向鍵切換卡片；選單內上下鍵移動
 const CARD_CONTROLS = ['.rec-open', '.adopt-button', '.rec-more'];
+const TOP_N = 3;   // 每排先顯示前 3 個，其餘收進「其他 n 個」
 $('#recRows').addEventListener('keydown', (event) => {
   const menu = event.target.closest('.rec-menu');
   if (menu && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
@@ -563,6 +613,24 @@ $('#recRows').addEventListener('keydown', (event) => {
 });
 
 $('#recRows').addEventListener('click', async (event) => {
+  const toggle = event.target.closest('[data-toggle-row]');
+  if (toggle) {
+    const cond = toggle.dataset.toggleRow;
+    rx.collapsed[cond] = !rx.collapsed[cond];
+    renderRecommendations();
+    $(`#recRows [data-toggle-row="${CSS.escape(cond)}"]`)?.focus();
+    return;
+  }
+  const expand = event.target.closest('[data-expand-row], [data-collapse-rest]');
+  if (expand) {
+    const cond = expand.dataset.expandRow || expand.dataset.collapseRest;
+    rx.expanded[cond] = Boolean(expand.dataset.expandRow);
+    renderRecommendations();
+    // 展開後焦點移到第 4 張卡，收合後回到這排第一張
+    const cards = $$(`#recRows .rec-card[data-condition="${CSS.escape(cond)}"]`);
+    (rx.expanded[cond] ? cards[TOP_N] : cards[0])?.querySelector('.rec-open')?.focus({ preventScroll: true });
+    return;
+  }
   const nav = event.target.closest('[data-rail-nav]');
   if (nav) {
     const rail = nav.parentElement.querySelector('.rec-rail');
@@ -600,6 +668,7 @@ $('#recRows').addEventListener('click', async (event) => {
     if (!never.classList.contains('confirming')) {
       never.classList.add('confirming');
       never.textContent = '再按一次確認：之後不再推薦';
+      $('#recsStatus').textContent = `再按一次確認：之後「${condition}」不再推薦 ${name}`;
       setTimeout(() => {
         if (!never.isConnected) return;
         never.classList.remove('confirming');
@@ -657,15 +726,40 @@ function renderTray() {
       </div>`).join('')
     : '<p class="tray-empty">還沒有採用藥品。按下卡片上的「採用」，藥品會出現在這裡，頻率與天數由你決定。</p>';
 
+  // 安全資訊只寫系統真的做了什麼：過敏會排除；病史風險只在卡片提醒；其他禁忌由醫師確認
   const allergies = rx.record.allergies.map(allergyLabel);
   const blocked = new Set(rx.recs.excluded.filter((e) => e.reason === 'allergy').map((e) => e.atc_code)).size;
+  const risks = rx.recs.risks || [];
   $('#traySafety').classList.toggle('has-allergy', allergies.length > 0);
-  $('#traySafety').innerHTML = allergies.length
-    ? `${icon('shield-alert')}<span>過敏：<b>${allergies.map(escapeHtml).join('、')}</b>。${blocked
-      ? `已從推薦排除 ${blocked} 個藥品 <button type="button" class="link-button" data-show-excluded>查看</button>`
-      : '目前的推薦中沒有相關藥品。'}</span>`
-    : `${icon('shield-alert')}<span>無已知過敏。若病人有過敏，請在左側「新增過敏」，推薦會自動排除。</span>`;
+  $('#traySafety').innerHTML = `${icon('shield-alert')}<div>
+    <p>${allergies.length
+      ? `過敏：<b>${allergies.map(escapeHtml).join('、')}</b>。${blocked
+        ? `已從推薦排除 ${blocked} 個藥品 <button type="button" class="link-button" data-show-excluded>查看</button>`
+        : '目前的推薦中沒有相關藥品。'}`
+      : '無已知過敏。若病人有過敏，請在「新增過敏」加入，推薦會自動排除。'}</p>
+    ${risks.length ? `<p class="safety-risk">病史風險：<b>${risks.map((r) => escapeHtml(r.label)).join('、')}</b>。相關藥品卡片已加上提醒，未排除。</p>` : ''}
+    <p class="safety-scope">系統只依過敏排除藥品；病史中的其他禁忌請自行確認。</p>
+  </div>`;
+  updateTrayFab();
 }
+
+// 單欄版面（窄螢幕）時，本次處方不在畫面上就顯示浮動按鈕，點一下回到本次處方
+let trayVisible = true;
+function updateTrayFab() {
+  const count = rx.record?.prescriptions.length || 0;
+  const fab = $('#trayFab');
+  fab.hidden = !count || trayVisible || !matchMedia('(max-width: 860px)').matches;
+  fab.querySelector('span').textContent = `本次處方 ${count} 項`;
+}
+new IntersectionObserver(([entry]) => {
+  trayVisible = entry.isIntersecting;
+  updateTrayFab();
+}).observe($('#recsTray'));
+matchMedia('(max-width: 860px)').addEventListener('change', updateTrayFab);
+$('#trayFab').addEventListener('click', () => {
+  $('#recsTray').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  $('#trayTitle').focus({ preventScroll: true });
+});
 
 function doseHtml(p) {
   const name = escapeHtml(rxName(p));
@@ -815,7 +909,7 @@ function renderPrescriptions() {
       <button type="button" class="rx-remove" data-remove-rx="${i}" aria-label="移除 ${escapeHtml(rxName(p))}">${icon('x')}</button>
       <div class="product-picker" hidden></div>
     </div>`).join('')
-    : '<p class="rx-empty">從右側推薦按「採用」，或用下方搜尋加入藥品。劑量與頻率由醫師決定。</p>';
+    : '<p class="rx-empty">從推薦藥品按「採用」，或用下方搜尋加入藥品。劑量與頻率由醫師決定。</p>';
   renderTray();
 }
 
@@ -869,10 +963,11 @@ async function openDrug(atc, condition = '') {
   body.innerHTML = `
     <div class="dialog-head">
       <div><h2 id="drugTitle" tabindex="-1">${escapeHtml(d.display_name || drugLabel(d.name_en))} <span class="drug-zh" id="drugZh">${escapeHtml(d.summary?.name_zh || '')}</span></h2>
-        <p class="dialog-meta"><span>${icon('pill')}${escapeHtml(d.class_zh || d.ahfs_main_name_zh || '藥品資訊')}</span><span>ATC ${escapeHtml(atc)}</span></p></div>
+        <p class="dialog-meta"><span>${icon('pill')}${escapeHtml(d.class_zh || d.ahfs_main_name_zh || '藥品資訊')}</span><span>ATC ${escapeHtml(atc)}</span></p>
+        ${d.components?.length ? `<p class="drug-components">常見成分（各品項配方不同）：${d.components.map(escapeHtml).join('、')}</p>` : ''}</div>
       <button class="close-button" type="button" data-close aria-label="關閉">${icon('x')}</button>
     </div>
-    ${pictured.length ? `<div class="drug-gallery">${pictured.map((p) => `<figure><img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name_zh)}" referrerpolicy="no-referrer" /><figcaption>${escapeHtml(p.name_zh)}</figcaption></figure>`).join('')}</div>` : ''}
+    ${pictured.length ? `<div class="drug-gallery">${pictured.map((p) => `<figure><img src="${escapeHtml(p.image_url)}" alt="" referrerpolicy="no-referrer" /><figcaption>${escapeHtml(p.name_zh)}</figcaption></figure>`).join('')}</div>` : ''}
     <section class="drug-summary" id="drugSummary">${summaryHtml(d.summary, d.summary_meta)}</section>
     <section class="drug-facts">
       <div><span>藥理分類</span><b>${escapeHtml(d.class_zh || d.ahfs_main_name_zh || '—')}</b></div>

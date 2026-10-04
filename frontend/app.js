@@ -22,20 +22,55 @@ const toast = $('#toast');
 let toastTimer;
 let aiStatus = { chat: false, vision: false, embedding: false, transcribe: false, image: false };
 
-// action：{ label, run }，例如「復原」；有動作時多停留幾秒讓人來得及按
-function showToast(message, action = null) {
-  toast.innerHTML = `<span>${escapeHtml(message)}</span>${action ? `<button type="button">${escapeHtml(action.label)}</button>` : ''}`;
-  toast.classList.toggle('has-action', Boolean(action));
-  if (action) {
-    toast.querySelector('button').addEventListener('click', () => {
-      toast.classList.remove('show');
-      action.run();
-    }, { once: true });
-  }
-  toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), action ? 6000 : 2600);
+// action：{ label, run }，例如「復原」。有動作時停留 10 秒，滑鼠移上去或聚焦時暫停倒數，
+// 也可以用 Ctrl+Z／⌘Z 執行（焦點在輸入欄位時不攔截，保留文字的復原）
+const UNDO_KEY = /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘Z' : 'Ctrl+Z';
+let toastAction = null;
+let toastDeadline = 0;
+let toastRemaining = 0;
+
+function hideToast() {
+  toast.classList.remove('show');
+  toastAction = null;
 }
+
+function startToastTimer(ms) {
+  clearTimeout(toastTimer);
+  toastRemaining = ms;
+  toastDeadline = Date.now() + ms;
+  toastTimer = setTimeout(hideToast, ms);
+}
+
+function runToastAction() {
+  const run = toastAction?.run;
+  hideToast();
+  run?.();
+}
+
+function showToast(message, action = null) {
+  toastAction = action;
+  toast.innerHTML = `<span>${escapeHtml(message)}</span>${action
+    ? `<button type="button" aria-label="${escapeHtml(action.label)}（${UNDO_KEY}）">${escapeHtml(action.label)}<kbd>${UNDO_KEY}</kbd></button>` : ''}`;
+  toast.classList.toggle('has-action', Boolean(action));
+  toast.querySelector('button')?.addEventListener('click', runToastAction, { once: true });
+  toast.classList.add('show');
+  startToastTimer(action ? 10000 : 2600);
+}
+
+['mouseenter', 'focusin'].forEach((type) => toast.addEventListener(type, () => {
+  clearTimeout(toastTimer);
+  toastRemaining = Math.max(toastDeadline - Date.now(), 0);
+}));
+['mouseleave', 'focusout'].forEach((type) => toast.addEventListener(type, () => {
+  if (toast.classList.contains('show')) startToastTimer(Math.max(toastRemaining, 2000));
+}));
+document.addEventListener('keydown', (event) => {
+  if (!toastAction || !toast.classList.contains('show')) return;
+  if (!(event.ctrlKey || event.metaKey) || event.shiftKey || event.key.toLowerCase() !== 'z') return;
+  if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+  event.preventDefault();
+  runToastAction();
+});
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>'"]/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));

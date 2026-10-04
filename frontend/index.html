@@ -125,7 +125,7 @@
                         <p class="pop-title">常見過敏原</p>
                         <div class="allergen-options" id="allergenOptions"></div>
                         <p class="pop-title">或搜尋個別藥品</p>
-                        <input id="allergyDrugSearch" placeholder="例：amoxicillin、普拿疼" autocomplete="off" />
+                        <input id="allergyDrugSearch" placeholder="例：amoxicillin、普拿疼" autocomplete="off" aria-label="搜尋過敏的個別藥品" />
                         <div class="search-results" id="allergyDrugResults"></div>
                       </div>
                     </div>
@@ -161,28 +161,28 @@
                   </div>
                   <div class="rx-list" id="rxList"></div>
                   <div class="rx-search">
-                    <input id="rxDrugSearch" placeholder="搜尋藥品加入（成分或商品名）" autocomplete="off" />
+                    <input id="rxDrugSearch" placeholder="搜尋藥品加入（成分或商品名）" autocomplete="off" aria-label="搜尋藥品加入開藥區" />
                     <div class="search-results" id="rxDrugResults"></div>
                   </div>
                 </section>
               </div>
 
-              <aside class="rx-recs" aria-label="推薦藥品">
-                <div class="recs-head">
-                  <div>
-                    <h2>推薦藥品</h2>
-                    <p>依病灶與你的採用紀錄排序，點卡片看詳細資料</p>
-                  </div>
-                </div>
+              <aside class="rx-recs" aria-label="本次處方與推薦藥品">
                 <!-- 本次處方與過敏排除：採用的結果與安全資訊固定在推薦上方 -->
                 <section class="recs-tray" id="recsTray" aria-labelledby="trayTitle">
                   <div class="tray-head">
-                    <h3 id="trayTitle">本次處方 <small id="trayCount"></small></h3>
+                    <h2 id="trayTitle" tabindex="-1">本次處方 <small id="trayCount"></small></h2>
                     <button type="button" class="link-button" id="trayJump">到開藥區調整品項</button>
                   </div>
                   <div class="tray-list" id="trayList"></div>
-                  <p class="tray-safety" id="traySafety"></p>
+                  <div class="tray-safety" id="traySafety"></div>
                 </section>
+                <div class="recs-head">
+                  <div>
+                    <h2>推薦藥品</h2>
+                    <p>依病灶對照表、你的採用紀錄與市售品項數排序；點卡片看詳細資料</p>
+                  </div>
+                </div>
                 <p class="sr-only" id="recsStatus" role="status" aria-live="polite"></p>
                 <div id="recRows"></div>
                 <details class="excluded" id="excludedBox" hidden>
@@ -190,6 +190,8 @@
                   <ul id="excludedList"></ul>
                 </details>
               </aside>
+              <!-- 窄螢幕單欄時，本次處方不在畫面上就顯示這個按鈕 -->
+              <button type="button" class="tray-fab" id="trayFab" hidden><svg class="icon" aria-hidden="true"><use href="#i-clipboard-pen"/></svg><span></span></button>
             </div>
           </section>
 

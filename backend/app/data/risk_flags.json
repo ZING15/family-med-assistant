@@ -1,0 +1,40 @@
+{
+  "_note": "練習用病史風險對照表：病史出現關鍵字（或年齡條件）時，在相關 ATC 類別的推薦卡加上提醒。只提醒、不排除，由醫師判斷。內容依一般用藥常識整理，待受訪醫師檢視。",
+  "flags": [
+    {
+      "id": "gi_bleed",
+      "label": "腸胃道出血／潰瘍",
+      "keywords": ["胃出血", "消化道出血", "腸胃道出血", "胃潰瘍", "十二指腸潰瘍", "消化性潰瘍", "解黑便", "黑便", "GI bleeding", "peptic ulcer"],
+      "atc": ["M01A", "N02BA", "B01AC", "H02AB"],
+      "message": "病史提到「{matched}」，NSAID、阿斯匹靈、抗血小板與類固醇請留意"
+    },
+    {
+      "id": "renal",
+      "label": "腎功能不佳",
+      "keywords": ["腎功能不佳", "腎功能異常", "腎功能差", "慢性腎病", "腎臟病", "腎衰竭", "洗腎", "透析", "CKD"],
+      "atc": ["M01A", "A10BA02", "J01XE01", "A10BK"],
+      "message": "病史提到「{matched}」，NSAID、metformin、nitrofurantoin、SGLT2 抑制劑請依腎功能評估"
+    },
+    {
+      "id": "liver",
+      "label": "肝功能不佳",
+      "keywords": ["肝硬化", "肝功能異常", "肝功能不佳", "肝衰竭", "酒精性肝"],
+      "atc": ["N02BE01", "N02BE51", "C10AA"],
+      "message": "病史提到「{matched}」，acetaminophen 劑量與 statin 請留意肝功能"
+    },
+    {
+      "id": "pregnancy",
+      "label": "懷孕",
+      "keywords": ["懷孕", "孕婦", "妊娠", "pregnant", "pregnancy"],
+      "atc": ["M01A", "C09A", "C09C", "C10AA", "J01AA", "J01MA"],
+      "message": "病史提到「{matched}」，此類藥物於懷孕期間須特別評估"
+    },
+    {
+      "id": "elderly",
+      "label": "65 歲以上",
+      "min_age": 65,
+      "atc": ["N05BA", "N05CD", "N05CF", "R06AA", "R06AB", "R06AD", "R06AE", "M03BX", "A04AD"],
+      "message": "病人 {age} 歲，鎮靜、苯二氮平類與第一代抗組織胺易致跌倒或嗜睡，請留意"
+    }
+  ]
+}

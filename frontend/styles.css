@@ -428,7 +428,7 @@ main { flex: 1; min-width: 0; }
 .field-label { margin-right: 4px; color: var(--ink-2); font-size: 13px; font-weight: 600; }
 .allergy-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .allergy-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 6px 4px 12px; border-radius: 999px; background: #fbe9e5; color: var(--danger); font-size: 13px; font-weight: 600; }
-.allergy-chip button, .condition-chip button { width: 24px; height: 24px; border: 0; border-radius: 50%; background: none; color: inherit; font-size: 15px; line-height: 1; opacity: .6; }
+.allergy-chip button, .condition-chip button { width: 32px; height: 32px; margin: -4px -4px -4px 0; border: 0; border-radius: 50%; background: none; color: inherit; font-size: 15px; line-height: 1; opacity: .6; }
 .allergy-chip button:hover, .condition-chip button:hover { opacity: 1; background: rgba(0, 0, 0, .06); }
 .allergy-add { position: relative; margin-left: auto; }
 .chip-button { padding: 6px 12px; border: 1px dashed #cfc7b9; border-radius: 999px; background: none; color: var(--ink-2); font-size: 13px; }
@@ -569,7 +569,7 @@ main { flex: 1; min-width: 0; }
 .drug-links a:hover { text-decoration: underline; }
 .drug-source { margin: 14px 0 0; color: var(--faint); font-size: 12px; }
 
-@media (max-width: 1180px) { .rx-layout { grid-template-columns: 1fr; } .rx-recs { position: static; max-height: none; overflow: visible; } }
+@media (max-width: 860px) { .rx-layout { grid-template-columns: 1fr; } .rx-recs { position: static; max-height: none; overflow: visible; } }
 @media (max-width: 640px) {
   .rx-switcher { flex-direction: column; align-items: stretch; }
   .rx-switcher select { max-width: none; }
@@ -585,7 +585,7 @@ main { flex: 1; min-width: 0; }
 .rec-cover img, .rx-thumb img, .drug-gallery img, .product-picker img { opacity: 0; transition: opacity .4s var(--ease); }
 .rec-cover img.loaded, .rx-thumb img.loaded, .drug-gallery img.loaded, .product-picker img.loaded { opacity: 1; }
 .rx-editor, .rx-recs { min-width: 0; }
-@media (max-width: 1180px) { .rx-layout { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 860px) { .rx-layout { grid-template-columns: minmax(0, 1fr); } }
 
 
 /* ==========================================================
@@ -718,8 +718,9 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 /* 本次處方：採用的結果與過敏排除固定在推薦上方 */
 .recs-tray { margin-bottom: 22px; padding: 16px 18px; border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow-rest); }
 .tray-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-.tray-head h3 { margin: 0; font-family: var(--serif); font-size: 17px; }
-.tray-head h3 small { margin-left: 6px; color: var(--muted); font-family: var(--sans); font-size: 13px; font-weight: 500; }
+.tray-head h2 { margin: 0; font-family: var(--serif); font-size: 17px; }
+.tray-head h2:focus { outline: 0; }
+.tray-head h2 small { margin-left: 6px; color: var(--muted); font-family: var(--sans); font-size: 13px; font-weight: 500; }
 .tray-list { display: grid; }
 .tray-item { display: grid; grid-template-columns: minmax(0, 1fr) auto 32px; align-items: center; gap: 4px 10px; padding: 10px 0; border-bottom: 1px solid var(--line-2); }
 .tray-item:last-child { border-bottom: 0; }
@@ -737,7 +738,7 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .tray-safety .link-button { padding: 0 4px; font-size: 13px; }
 .rx-hint { display: inline-flex; align-items: center; gap: 4px; }
 .rx-hint .icon { width: 13px; height: 13px; }
-@media (min-width: 1181px) {
+@media (min-width: 861px) {
   .recs-tray { position: sticky; top: 0; z-index: 4; }
   .recs-tray .tray-list { max-height: 34vh; overflow: auto; scrollbar-width: thin; }
 }
@@ -800,3 +801,81 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .rec-rail.dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
 .rec-rail.dragging .rec-card { pointer-events: none; }
 .rec-rail img { -webkit-user-drag: none; user-select: none; }
+
+/* ---------- critique 2026-10-04 修正 ---------- */
+
+/* 中等寬度（並排視窗、筆電）：側欄改成圖示、病歷與推薦維持左右兩欄，採用結果留在畫面內 */
+@media (min-width: 641px) and (max-width: 1180px) {
+  .sidebar { flex-basis: 76px; padding: 24px 12px; }
+  .brand { justify-content: center; padding: 0 0 28px; }
+  .brand-text, .nav-item em, .privacy-note { display: none; }
+  .nav-item { justify-content: center; padding: 12px; }
+  .sidebar-foot { padding: 0; justify-items: center; }
+  .ai-status { font-size: 0; padding: 6px; }
+  .ai-status::before { margin: 0; }
+  .content { padding: 40px 28px 80px; }
+}
+@media (min-width: 861px) and (max-width: 1180px) {
+  .rx-layout { grid-template-columns: minmax(320px, 5fr) minmax(0, 6fr); gap: 24px; }
+  .rec-rail { grid-auto-columns: 176px; }
+}
+.add-button { flex: none; white-space: nowrap; }
+@media (max-width: 640px) {
+  .rx-switcher { flex-wrap: nowrap; }
+  .rx-switcher select, #recordSelect { width: 100%; min-width: 0; }
+}
+
+/* 推薦卡：成分、劑型與健保在同一行資訊；病史風險為琥珀提醒 */
+.rec-components { color: var(--ink-2); font-size: 12px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rec-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 0; }
+.rec-warning { padding: 6px 8px; margin-top: 2px; border-radius: 8px; background: var(--warn-soft); line-height: 1.45; }
+.rec-warning span { min-width: 0; }
+
+/* 健保標籤：中性墨水外框，綠色保留給「已採用／已確認」 */
+.nhi-tag { border: 1px solid #c9d1d7; background: transparent; color: var(--ink-2); font-weight: 600; }
+.nhi-tag.self-pay { border-style: dashed; border-color: #d3cbbd; background: transparent; color: var(--muted); }
+
+/* 每排先看前 3 個；其餘收在「其他 n 個」 */
+.rec-more-tile { display: grid; align-content: center; justify-items: start; gap: 4px; min-height: 180px; padding: 18px; border: 1px dashed #cdc5b6; border-radius: var(--radius); background: transparent; color: var(--ink); text-align: left; scroll-snap-align: start; transition: border-color .2s, background .2s; }
+.rec-more-tile:hover { border-color: var(--accent); background: var(--accent-soft); }
+.rec-more-tile .icon { width: 18px; height: 18px; color: var(--accent); }
+.rec-more-tile b { font-size: 15px; }
+.rec-more-tile span { color: var(--muted); font-size: 12px; }
+.rec-more-tile.quiet { min-height: 0; align-self: center; border-style: solid; border-color: transparent; color: var(--accent); }
+
+/* 病灶列可收起 */
+.rec-row-toggle { display: inline-flex; align-items: baseline; gap: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; }
+.rec-row-toggle .icon { width: 16px; height: 16px; margin-right: 6px; color: var(--muted); align-self: center; transition: transform .25s var(--ease); }
+.rec-row.collapsed .rec-row-toggle .icon { transform: rotate(-90deg); }
+.rec-row.collapsed { margin-bottom: 14px; }
+.rec-row-head h3::before { display: none; }
+.rec-row-toggle .because::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 10px; border-radius: 50%; background: hsl(var(--hue) 40% 52%); vertical-align: 1px; }
+
+/* 安全資訊：過敏、病史風險、系統能力範圍各一行 */
+.tray-safety div { display: grid; gap: 4px; }
+.tray-safety p { margin: 0; }
+.tray-safety .safety-risk b { color: var(--warn); }
+.tray-safety .safety-scope { color: var(--muted); font-size: 12px; }
+
+/* 窄螢幕：回到本次處方 */
+.tray-fab { position: fixed; right: 16px; bottom: calc(92px + env(safe-area-inset-bottom)); z-index: 30; display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font-size: 14px; font-weight: 600; box-shadow: var(--shadow); }
+.tray-fab[hidden] { display: none; }
+.tray-fab .icon { width: 17px; height: 17px; }
+@media (min-width: 641px) { .tray-fab { bottom: 28px; } }
+
+/* 被排除清單補上類別；藥品卡外部連結加大點擊區 */
+.excluded-class { color: var(--ink-2); font-size: 12px; }
+.drug-links a { display: inline-flex; align-items: center; min-height: 32px; }
+.toast kbd { margin-left: 8px; padding: 1px 6px; border-radius: 6px; background: rgba(255, 255, 255, .16); font: inherit; font-size: 12px; opacity: .85; }
+/* 列表改用 flex：卡片固定寬度，「其他 n 個」較窄，前 3 張旁邊就看得到 */
+.rec-rail { display: flex; --card-w: 176px; }
+.rec-rail > .rec-card { flex: 0 0 var(--card-w); }
+.rec-more-tile { flex: 0 0 128px; }
+.rec-more-tile.quiet { flex-basis: auto; }
+@media (min-width: 861px) and (max-width: 1180px) { .rec-rail { --card-w: 164px; } }
+@media (max-width: 640px) { .rec-rail { --card-w: 168px; } }
+/* 提示訊息：寬度依內容、不被置中定位壓窄；多行時改用圓角矩形；手機放在浮動按鈕上方 */
+.toast { width: max-content; max-width: min(560px, calc(100vw - 32px)); line-height: 1.5; }
+.toast.has-action { border-radius: 16px; }
+@media (max-width: 640px) { .toast { bottom: calc(150px + env(safe-area-inset-bottom)); } }
+.drug-components { margin: 8px 0 0; color: var(--ink-2); font-size: 13px; line-height: 1.55; }

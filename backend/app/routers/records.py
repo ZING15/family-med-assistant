@@ -60,6 +60,8 @@ class RecommendIn(BaseModel):
     conditions: list[str]
     allergies: list[str] = []
     dismissed: list[dict] = []
+    text: str = ""   # 主訴＋病史＋評估，用來找病史風險（胃出血、腎功能…）
+    age: str = ""
 
 
 class FeedbackIn(BaseModel):
@@ -167,7 +169,8 @@ def delete_record(record_id: int):
 
 @router.post("/detect")
 def detect(body: TextIn):
-    return {"conditions": rec.detect_keywords(body.text)}
+    return {"conditions": rec.detect_keywords(body.text),
+            "risks": [r["id"] for r in rec.detect_risks(body.text)]}
 
 
 @router.post("/detect/ai")
@@ -193,7 +196,7 @@ def detect_ai(body: TextIn):
 
 @router.post("/recommendations")
 def recommendations(body: RecommendIn):
-    return rec.recommend(body.conditions, body.allergies, body.dismissed)
+    return rec.recommend(body.conditions, body.allergies, body.dismissed, body.text, body.age)
 
 
 @router.post("/feedback", status_code=201)
