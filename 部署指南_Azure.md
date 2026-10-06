@@ -30,7 +30,7 @@
 | 主機 | Azure App Service（Linux）＋ Oryx 自動建置（依 `requirements.txt` 安裝套件） |
 | 後端執行 | Uvicorn 執行 FastAPI，單一程序（SQLite 不適合多程序同時寫入） |
 | 資料 | SQLite，放在 App Service 的持久磁碟 `/home/data` |
-| 語音轉檔 | `imageio-ffmpeg` 套件內附的 ffmpeg（雲端主機沒有系統 ffmpeg） |
+| 語音轉文字 | Azure Speech 快速轉錄（預設模型），直接接受瀏覽器錄音，不需要 ffmpeg |
 | 存取控制 | HTTP Basic 驗證（`APP_PASSWORD`），瀏覽器會跳出登入框 |
 | 金鑰管理 | App Service 應用程式設定；`.env` 不會被上傳 |
 

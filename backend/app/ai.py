@@ -285,21 +285,27 @@ class AIService:
                 )
             return _to_traditional(response.text), _meta("azure", azure.transcribe_deployment)
         if azure.speech_model and azure.speech_endpoint and azure.speech_api_key:
-            return _to_traditional(self._speech_transcribe(audio_path)), _meta("azure", azure.speech_model)
+            model = azure.speech_model if azure.speech_model.lower().startswith("mai-") else f"Azure Speech（{azure.speech_locale}）"
+            return _to_traditional(self._speech_transcribe(audio_path)), _meta("azure", model)
         return None, _meta("demo")
 
     def _speech_transcribe(self, audio_path: Path) -> str:
-        """Azure Speech 快速轉錄 API（enhancedMode 指定 MAI-Transcribe 模型）。"""
+        """Azure Speech 快速轉錄 API。預設模型直接收 webm／m4a；指定 MAI-Transcribe 時改用 enhancedMode，需先轉成 WAV。"""
+        mai = azure.speech_model.lower().startswith("mai-")
         with tempfile.TemporaryDirectory() as tmp:
-            path = audio_path if audio_path.suffix in SPEECH_FORMATS else _convert_to_wav(audio_path, Path(tmp))
-            definition = {
-                "enhancedMode": {
-                    "enabled": True,
-                    "model": azure.speech_model,
-                    # clean：去除「嗯、呃」等贅字，適合整理成筆記
-                    "modelOptions": {"transcribeStyle": "clean"},
+            if mai:
+                path = audio_path if audio_path.suffix in SPEECH_FORMATS else _convert_to_wav(audio_path, Path(tmp))
+                definition = {
+                    "enhancedMode": {
+                        "enabled": True,
+                        "model": azure.speech_model,
+                        # clean：去除「嗯、呃」等贅字，適合整理成筆記
+                        "modelOptions": {"transcribeStyle": "clean"},
+                    }
                 }
-            }
+            else:
+                path = audio_path
+                definition = {"locales": [azure.speech_locale]}
             boundary = uuid.uuid4().hex
             body = (
                 f'--{boundary}\r\nContent-Disposition: form-data; name="audio"; filename="{path.name}"\r\n'
@@ -391,7 +397,7 @@ def _ffmpeg_path() -> str | None:
 
 
 def _convert_to_wav(source: Path, folder: Path) -> Path:
-    """瀏覽器錄音多為 webm／m4a，MAI-Transcribe 只收 WAV／MP3／FLAC，以 ffmpeg 轉成 16kHz 單聲道 WAV。"""
+    """瀏覽器錄音多為 webm／m4a，MAI-Transcribe 只收 WAV／MP3／FLAC，以 ffmpeg 轉成 16kHz 單聲道 WAV（預設模型不需要）。"""
     ffmpeg = _ffmpeg_path()
     if not ffmpeg:
         raise TranscriptionError("伺服器需要 ffmpeg 才能轉換這個音檔格式（brew install ffmpeg，或 pip install imageio-ffmpeg）")

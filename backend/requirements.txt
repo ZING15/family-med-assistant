@@ -4,4 +4,3 @@ python-multipart>=0.0.9
 python-dotenv>=1.0
 openai>=1.50
 opencc-python-reimplemented>=0.1.7
-imageio-ffmpeg>=0.5

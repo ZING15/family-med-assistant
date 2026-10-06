@@ -26,7 +26,7 @@
 
 ## 啟動
 
-需要 Python 3.13 與 ffmpeg（語音筆記轉檔用：`brew install ffmpeg`）。
+需要 Python 3.13。語音筆記使用 Azure Speech 預設模型，直接接受瀏覽器錄音格式，不需要 ffmpeg。
 
 ```bash
 python3 -m venv backend/.venv

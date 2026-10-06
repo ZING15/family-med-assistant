@@ -38,8 +38,10 @@ class AzureSettings:
     # 圖片辨識可另用較強的模型（中文表格 OCR 品質差異大）；未設定時沿用對話模型
     vision_deployment = env("AZURE_OPENAI_VISION_DEPLOYMENT") or chat_deployment
     # 語音轉文字，二擇一：
-    # 1. Azure Speech 快速轉錄 + MAI-Transcribe（不需部署，用同一個 Foundry 資源的金鑰）
+    # 1. Azure Speech 快速轉錄（不需部署，用同一個 Foundry 資源的金鑰）
+    #    azure-speech：預設模型，直接接受瀏覽器錄音的 webm／m4a；MAI-Transcribe-2：需 ffmpeg 轉 WAV
     speech_model = env("AZURE_SPEECH_MODEL")
+    speech_locale = env("AZURE_SPEECH_LOCALE", "zh-TW")
     speech_endpoint = env("AZURE_SPEECH_ENDPOINT") or endpoint
     speech_api_key = env("AZURE_SPEECH_API_KEY") or api_key
     speech_api_version = env("AZURE_SPEECH_API_VERSION", "2025-10-15")
