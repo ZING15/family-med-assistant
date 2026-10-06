@@ -10,6 +10,7 @@ backend/.venv/
 __pycache__/
 data/app.sqlite
 data/uploads/
+data/backup/
 
 # Not published: interview transcripts (real people)
 參考資料/

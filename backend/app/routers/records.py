@@ -19,21 +19,33 @@ JSON_FIELDS = ("allergies", "conditions", "removed_conditions", "dismissed", "pr
 SEED_RECORDS = [
     {
         "patient_code": "練習-001", "age": "35", "sex": "女", "allergies": [],
-        "chief_complaint": "咳嗽兩週，有痰，夜間較嚴重",
-        "history": "兩週前感冒後持續咳嗽，痰白色，無發燒、無喘。偶爾打噴嚏、流鼻水，春天容易鼻子過敏。不抽菸。",
+        "chief_complaint": "咳嗽兩週，有痰，晚上咳得比較厲害",
+        "history": "兩週前感冒後持續咳嗽，痰白色，無發燒、無喘。早上常打噴嚏、流鼻水，春天容易鼻子過敏。不抽菸。",
         "assessment": "感冒後咳嗽，合併過敏性鼻炎",
     },
     {
-        "patient_code": "練習-002", "age": "62", "sex": "男", "allergies": ["penicillin", "nsaid"],
-        "chief_complaint": "喉嚨痛三天，吞嚥疼痛",
-        "history": "三天前開始喉嚨痛，昨天開始發燒 38.5 度，無咳嗽。高血壓病史十年，規則服藥。曾對 penicillin 起疹子，吃止痛藥曾胃出血。",
+        "patient_code": "練習-002", "age": "68", "sex": "男", "allergies": ["penicillin"],
+        "chief_complaint": "喉嚨痛三天，吞東西會痛",
+        "history": "三天前開始喉嚨痛，昨天開始發燒 38.5 度，無咳嗽。高血壓十年，規則服藥。曾對 penicillin 起疹子；三年前吃止痛藥後胃出血住院。",
         "assessment": "急性咽喉炎；高血壓控制中",
     },
     {
-        "patient_code": "練習-003", "age": "8", "sex": "男", "allergies": [],
-        "chief_complaint": "全身起紅疹、很癢，一天",
-        "history": "昨晚吃海鮮後全身出現風疹塊，抓了會更多，無喘、無嘴唇腫。過去有異位性皮膚炎。",
-        "assessment": "急性蕁麻疹",
+        "patient_code": "練習-003", "age": "29", "sex": "女", "allergies": ["sulfonamide"],
+        "chief_complaint": "小便會痛、頻尿兩天",
+        "history": "兩天前開始解尿灼熱、頻尿、下腹悶痛，無發燒、無腰痛。目前懷孕 16 週。對磺胺類藥物過敏。",
+        "assessment": "疑似膀胱炎（尿路感染），懷孕中",
+    },
+    {
+        "patient_code": "練習-004", "age": "55", "sex": "男", "allergies": [],
+        "chief_complaint": "右腳大拇趾紅腫熱痛，一天",
+        "history": "昨晚喝酒、吃火鍋後，半夜右腳大拇趾突然劇痛、紅腫，無外傷。第二型糖尿病五年，慢性腎病第三期，過去有痛風發作兩次。",
+        "assessment": "急性痛風發作；第二型糖尿病；慢性腎病",
+    },
+    {
+        "patient_code": "練習-005", "age": "74", "sex": "女", "allergies": ["benzodiazepine"],
+        "chief_complaint": "睡不好一個月，早上起床會頭暈",
+        "history": "近一個月入睡困難、半夜容易醒，白天沒精神。早上起床時會天旋地轉約一分鐘。高血脂服藥中。曾吃安眠藥後跌倒。",
+        "assessment": "失眠；眩暈待查；高血脂",
     },
 ]
 
@@ -95,7 +107,7 @@ def _insert(con, data: dict) -> int:
 
 
 def seed_records() -> None:
-    """第一次啟動時建立 3 筆練習病歷。"""
+    """第一次啟動時建立 5 筆練習病歷。"""
     with app_db() as con:
         if con.execute("SELECT COUNT(*) FROM records").fetchone()[0]:
             return
