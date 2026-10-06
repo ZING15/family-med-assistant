@@ -39,14 +39,15 @@ CREATE TABLE IF NOT EXISTS records (
     allergies       TEXT NOT NULL DEFAULT '[]',        -- JSON：過敏原 id 或 "atc:<code>"（個別藥品）
     chief_complaint TEXT NOT NULL DEFAULT '',
     history         TEXT NOT NULL DEFAULT '',
-    assessment      TEXT NOT NULL DEFAULT '',
-    conditions      TEXT NOT NULL DEFAULT '[]',        -- JSON：問題清單（POMR）[{name, source: keyword|semantic|ai|manual|voice, icd10, assessment, plan, custom}]
+    assessment      TEXT NOT NULL DEFAULT '',          -- A：統整評估（可用 #1、#2 對應問題清單）
+    plan            TEXT NOT NULL DEFAULT '',          -- P：統整治療計畫
+    conditions      TEXT NOT NULL DEFAULT '[]',        -- JSON：問題清單 [{name, source: keyword|semantic|ai|manual|voice, icd10, custom}]
     removed_conditions TEXT NOT NULL DEFAULT '[]',     -- JSON：醫師手動移除、不再自動偵測的病灶
     dismissed       TEXT NOT NULL DEFAULT '[]',        -- JSON：這次不用 [{condition, atc}]
     prescriptions   TEXT NOT NULL DEFAULT '[]',        -- JSON：開藥區（每項的 condition 對應問題清單）
     visit_date      TEXT NOT NULL DEFAULT '',          -- 就診日期（醫師法第 12 條必載）
-    vitals          TEXT NOT NULL DEFAULT '{}',        -- JSON：O 的生命徵象 bp、hr、bt、rr、spo2
-    exam            TEXT NOT NULL DEFAULT '',          -- O：身體檢查與檢驗結果
+    vitals          TEXT NOT NULL DEFAULT '{}',        -- 舊版的生命徵象欄位，已併入 exam，不再使用
+    exam            TEXT NOT NULL DEFAULT '',          -- O：身體檢查與檢驗結果（含量測到的生命徵象）
     ai_plan         TEXT NOT NULL DEFAULT '{}',        -- JSON：AI 參考計畫（醫師寫完可對照，預設遮蔽）
     english_note    TEXT NOT NULL DEFAULT '',          -- 完成病歷時產生的英文 SOAP
     completed_at    TEXT NOT NULL DEFAULT '',
@@ -103,6 +104,7 @@ MIGRATIONS = [
     ("records", "ai_plan", "TEXT NOT NULL DEFAULT '{}'"),
     ("records", "english_note", "TEXT NOT NULL DEFAULT ''"),
     ("records", "completed_at", "TEXT NOT NULL DEFAULT ''"),
+    ("records", "plan", "TEXT NOT NULL DEFAULT ''"),
 ]
 
 

@@ -22,62 +22,52 @@ JSON_FIELDS = ("allergies", "conditions", "removed_conditions", "dismissed", "pr
 OBJECT_FIELDS = {"vitals", "ai_plan"}
 VITAL_KEYS = ("bp", "hr", "bt", "rr", "spo2")
 
-# 練習病歷（Modified POMR）：S 主訴＋現病史、O 生命徵象＋身體檢查、每個問題各自的 A／P
+# 練習病歷（SOAP）：S 主訴＋現病史、O 身體檢查與檢驗、A 問題清單＋統整評估、P 統整治療計畫
 SEED_RECORDS = [
     {
         "patient_code": "練習-001", "age": "35", "sex": "女", "allergies": [],
         "chief_complaint": "咳嗽兩週，有痰，晚上咳得比較厲害",
         "history": "兩週前感冒後持續咳嗽，痰白色，「晚上躺下就一直咳」。無發燒、無喘。早上常打噴嚏、流鼻水，春天容易鼻子過敏。不抽菸。",
-        "vitals": {"bp": "118/76", "hr": "82", "bt": "36.8", "rr": "16", "spo2": "98"},
-        "exam": "咽部輕度紅，無扁桃腺腫大；鼻黏膜蒼白水腫；雙側肺音清，無喘鳴。",
-        "problems": {
-            "咳嗽": ("感冒後咳嗽，無發燒、痰白、肺音清，傾向病毒感染後咳嗽，不像細菌性肺炎", "症狀治療止咳化痰；兩週後未改善或出現發燒、喘再回診"),
-            "過敏性鼻炎": ("季節性症狀，鼻黏膜蒼白水腫，可能加重夜間咳嗽", "口服抗組織胺；衛教避開過敏原"),
-        },
+        "exam": "BP 118/76 mmHg, HR 82/min, BT 36.8°C, RR 16/min, SpO2 98%。咽部輕度紅，無扁桃腺腫大；鼻黏膜蒼白水腫；雙側肺音清，無喘鳴。",
+        "problems": ["咳嗽", "過敏性鼻炎"],
+        "assessment": "#1 咳嗽：感冒後咳嗽，無發燒、痰白、肺音清，傾向病毒感染後咳嗽，不像細菌性肺炎\n#2 過敏性鼻炎：季節性症狀，鼻黏膜蒼白水腫，可能加重夜間咳嗽",
+        "plan": "#1 咳嗽：症狀治療止咳化痰；兩週後未改善或出現發燒、喘再回診\n#2 過敏性鼻炎：口服抗組織胺；衛教避開過敏原",
     },
     {
         "patient_code": "練習-002", "age": "68", "sex": "男", "allergies": ["penicillin"],
         "chief_complaint": "喉嚨痛三天，吞東西會痛",
         "history": "三天前開始喉嚨痛，昨天開始發燒，「吞口水都會痛」，無咳嗽。高血壓十年，規則服藥。曾對 penicillin 起疹子；三年前吃止痛藥後胃出血住院。",
-        "vitals": {"bp": "146/88", "hr": "96", "bt": "38.5", "rr": "18", "spo2": "97"},
-        "exam": "扁桃腺腫大有白色滲出物，前頸淋巴結腫大壓痛；無咳嗽。",
-        "problems": {
-            "扁桃腺炎／咽喉炎": ("發燒、扁桃腺滲出、頸部淋巴結腫大、無咳嗽，Centor 分數高，疑似細菌性", "Penicillin 過敏，需選替代抗生素；避免 NSAID（胃出血史）"),
-            "高血壓": ("目前 146/88，發燒疼痛時偏高，平時控制可", "續原降壓藥；感染好轉後再量血壓"),
-        },
+        "exam": "BP 146/88 mmHg, HR 96/min, BT 38.5°C, RR 18/min, SpO2 97%。扁桃腺腫大有白色滲出物，前頸淋巴結腫大壓痛；無咳嗽。",
+        "problems": ["扁桃腺炎／咽喉炎", "高血壓"],
+        "assessment": "#1 扁桃腺炎／咽喉炎：發燒、扁桃腺滲出、頸部淋巴結腫大、無咳嗽，Centor 分數高，疑似細菌性\n#2 高血壓：目前 146/88，發燒疼痛時偏高，平時控制可",
+        "plan": "#1 扁桃腺炎／咽喉炎：Penicillin 過敏，需選替代抗生素；避免 NSAID（胃出血史）\n#2 高血壓：續原降壓藥；感染好轉後再量血壓",
     },
     {
         "patient_code": "練習-003", "age": "29", "sex": "女", "allergies": ["sulfonamide"],
         "chief_complaint": "小便會痛、頻尿兩天",
         "history": "兩天前開始解尿灼熱、頻尿、下腹悶痛，無發燒、無腰痛。目前懷孕 16 週。對磺胺類藥物過敏。",
-        "vitals": {"bp": "112/70", "hr": "88", "bt": "37.0", "rr": "16", "spo2": "99"},
-        "exam": "恥骨上輕壓痛，無肋脊角叩痛。尿液試紙：白血球酯酶陽性、亞硝酸鹽陽性。",
-        "problems": {
-            "尿路感染": ("懷孕中的急性膀胱炎，無發燒、無腰痛，暫無腎盂腎炎徵象", "懷孕安全的抗生素（避開磺胺類）；送尿液培養"),
-        },
+        "exam": "BP 112/70 mmHg, HR 88/min, BT 37.0°C, RR 16/min, SpO2 99%。恥骨上輕壓痛，無肋脊角叩痛。尿液試紙：白血球酯酶陽性、亞硝酸鹽陽性。",
+        "problems": ["尿路感染"],
+        "assessment": "#1 尿路感染：懷孕中的急性膀胱炎，無發燒、無腰痛，暫無腎盂腎炎徵象",
+        "plan": "#1 尿路感染：懷孕安全的抗生素（避開磺胺類）；送尿液培養",
     },
     {
         "patient_code": "練習-004", "age": "55", "sex": "男", "allergies": [],
         "chief_complaint": "右腳大拇趾紅腫熱痛，一天",
         "history": "昨晚喝酒、吃火鍋後，半夜右腳大拇趾突然劇痛、紅腫，「被子碰到都痛」，無外傷。第二型糖尿病五年，慢性腎病第三期，過去有痛風發作兩次。",
-        "vitals": {"bp": "138/86", "hr": "84", "bt": "37.2", "rr": "16", "spo2": "98"},
-        "exam": "右第一蹠趾關節紅腫熱，壓痛明顯，活動受限；皮膚無傷口。",
-        "problems": {
-            "痛風": ("典型急性痛風發作（第三次），慢性腎病限制 NSAID 使用", "急性期止痛消炎，避開 NSAID；抽血尿酸、腎功能"),
-            "第二型糖尿病": ("五年病史，本次未測血糖", "續原降血糖藥，依腎功能調整；安排 HbA1c"),
-        },
+        "exam": "BP 138/86 mmHg, HR 84/min, BT 37.2°C, RR 16/min, SpO2 98%。右第一蹠趾關節紅腫熱，壓痛明顯，活動受限；皮膚無傷口。",
+        "problems": ["痛風", "第二型糖尿病"],
+        "assessment": "#1 痛風：典型急性痛風發作（第三次），慢性腎病限制 NSAID 使用\n#2 第二型糖尿病：五年病史，本次未測血糖",
+        "plan": "#1 痛風：急性期止痛消炎，避開 NSAID；抽血尿酸、腎功能\n#2 第二型糖尿病：續原降血糖藥，依腎功能調整；安排 HbA1c",
     },
     {
         "patient_code": "練習-005", "age": "74", "sex": "女", "allergies": ["benzodiazepine"],
         "chief_complaint": "睡不好一個月，早上起床會頭暈",
         "history": "近一個月入睡困難、半夜容易醒，白天沒精神。早上起床時「天旋地轉」約一分鐘。高血脂服藥中。曾吃安眠藥後跌倒。",
-        "vitals": {"bp": "128/78", "hr": "72", "bt": "36.5", "rr": "14", "spo2": "97"},
-        "exam": "神經學檢查無局部缺損；Dix-Hallpike 右側陽性。",
-        "problems": {
-            "失眠": ("入睡困難與易醒一個月，年長、曾服安眠藥跌倒", "睡眠衛生衛教優先；避免 benzodiazepine"),
-            "眩暈": ("姿勢改變誘發、持續短、Dix-Hallpike 陽性，疑良性陣發性姿勢性眩暈", "耳石復位術；防跌衛教"),
-            "高血脂": ("服藥中，控制情形待抽血確認", "續原藥，安排血脂追蹤"),
-        },
+        "exam": "BP 128/78 mmHg, HR 72/min, BT 36.5°C, RR 14/min, SpO2 97%。神經學檢查無局部缺損；Dix-Hallpike 右側陽性。",
+        "problems": ["失眠", "眩暈", "高血脂"],
+        "assessment": "#1 失眠：入睡困難與易醒一個月，年長、曾服安眠藥跌倒\n#2 眩暈：姿勢改變誘發、持續短、Dix-Hallpike 陽性，疑良性陣發性姿勢性眩暈\n#3 高血脂：服藥中，控制情形待抽血確認",
+        "plan": "#1 失眠：睡眠衛生衛教優先；避免 benzodiazepine\n#2 眩暈：耳石復位術；防跌衛教\n#3 高血脂：續原藥，安排血脂追蹤",
     },
 ]
 
@@ -93,6 +83,7 @@ class RecordIn(BaseModel):
     vitals: dict = {}
     exam: str = ""
     assessment: str = ""
+    plan: str = ""
     conditions: list[dict] = []
     removed_conditions: list[str] = []
     dismissed: list[dict] = []
@@ -137,13 +128,13 @@ def _insert(con, data: dict) -> int:
     ts = now()
     cur = con.execute(
         """INSERT INTO records (patient_code, age, sex, visit_date, allergies, chief_complaint, history, vitals, exam,
-           assessment, conditions, removed_conditions, dismissed, prescriptions, created_at, updated_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+           assessment, plan, conditions, removed_conditions, dismissed, prescriptions, created_at, updated_at)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (data.get("patient_code", ""), data.get("age", ""), data.get("sex", ""), data.get("visit_date", ts[:10]),
          json.dumps(data.get("allergies", []), ensure_ascii=False),
          data.get("chief_complaint", ""), data.get("history", ""),
          json.dumps(_vitals(data.get("vitals", {})), ensure_ascii=False), data.get("exam", ""),
-         data.get("assessment", ""),
+         data.get("assessment", ""), data.get("plan", ""),
          json.dumps(data.get("conditions", []), ensure_ascii=False),
          json.dumps(data.get("removed_conditions", []), ensure_ascii=False),
          json.dumps(data.get("dismissed", []), ensure_ascii=False),
@@ -152,25 +143,42 @@ def _insert(con, data: dict) -> int:
     return cur.lastrowid
 
 
+def _vitals_text(vitals: dict) -> str:
+    units = {"bp": ("BP", " mmHg"), "hr": ("HR", "/min"), "bt": ("BT", "°C"), "rr": ("RR", "/min"), "spo2": ("SpO2", "%")}
+    return ", ".join(f"{units[k][0]} {vitals[k]}{units[k][1]}" for k in units if vitals.get(k))
+
+
 def seed_records() -> None:
-    """第一次啟動時建立 5 筆練習病歷；舊版只有一段「評估」的病歷，把評估移到第一個問題的 A。"""
+    """第一次啟動時建立 5 筆練習病歷，並把舊格式的病歷轉成目前的格式：
+    生命徵象併入身體檢查（門診不另外填）；各問題的 A／P 統整成整份病歷的一段評估與一段計畫。"""
     with app_db() as con:
         if not con.execute("SELECT COUNT(*) FROM records").fetchone()[0]:
             for record in SEED_RECORDS:
-                problems = record["problems"]
-                text = " ".join([record["chief_complaint"], record["history"], record["exam"], *(a for a, _ in problems.values())])
-                found = rec.detect_keywords(text)
-                conditions = [c | {"assessment": problems[c["name"]][0], "plan": problems[c["name"]][1]}
-                              for c in found if c["name"] in problems]
+                text = " ".join([record["chief_complaint"], record["history"], record["exam"], record["assessment"]])
+                found = {c["name"]: c for c in rec.detect_keywords(text)}
+                conditions = [found.get(name) or {"name": name, "source": "manual", "icd10": (rec.condition_by_name(name) or {}).get("icd10", "")}
+                              for name in record["problems"]]
                 fields = {k: v for k, v in record.items() if k != "problems"}
                 _insert(con, fields | {"conditions": conditions,
-                                       "removed_conditions": [c["name"] for c in found if c["name"] not in problems]})
-        for row in con.execute("SELECT id, assessment, conditions FROM records WHERE assessment != ''").fetchall():
+                                       "removed_conditions": [n for n in found if n not in record["problems"]]})
+        for row in con.execute("SELECT * FROM records").fetchall():
+            vitals = json.loads(row["vitals"] or "{}")
             conditions = json.loads(row["conditions"] or "[]")
-            if conditions and not any(c.get("assessment") for c in conditions):
-                conditions[0]["assessment"] = row["assessment"]
-                con.execute("UPDATE records SET conditions = ?, assessment = '' WHERE id = ?",
-                            (json.dumps(conditions, ensure_ascii=False), row["id"]))
+            per_problem = [c for c in conditions if c.get("assessment") or c.get("plan")]
+            if not any(vitals.values()) and not per_problem:
+                continue
+            exam = row["exam"]
+            if any(vitals.values()):
+                exam = f"{_vitals_text(vitals)}。{exam}".strip("。") if exam else _vitals_text(vitals)
+            numbered = {c["name"]: i for i, c in enumerate(conditions, 1)}
+            merge = lambda key, current: current or "\n".join(
+                f"#{numbered[c['name']]} {c['name']}：{c[key]}" for c in per_problem if c.get(key))
+            assessment, plan = merge("assessment", row["assessment"]), merge("plan", row["plan"])
+            for c in conditions:
+                c.pop("assessment", None)
+                c.pop("plan", None)
+            con.execute("UPDATE records SET exam=?, vitals='{}', assessment=?, plan=?, conditions=? WHERE id=?",
+                        (exam, assessment, plan, json.dumps(conditions, ensure_ascii=False), row["id"]))
 
 
 # ---------- 對照資料 ----------
@@ -215,11 +223,11 @@ def update_record(record_id: int, data: RecordIn):
     with app_db() as con:
         con.execute(
             """UPDATE records SET patient_code=?, age=?, sex=?, visit_date=?, allergies=?, chief_complaint=?, history=?,
-               vitals=?, exam=?, assessment=?, conditions=?, removed_conditions=?, dismissed=?, prescriptions=?, updated_at=?
+               vitals=?, exam=?, assessment=?, plan=?, conditions=?, removed_conditions=?, dismissed=?, prescriptions=?, updated_at=?
                WHERE id=?""",
             (data.patient_code, data.age, data.sex, data.visit_date, json.dumps(data.allergies, ensure_ascii=False),
              data.chief_complaint, data.history, json.dumps(_vitals(data.vitals), ensure_ascii=False), data.exam,
-             data.assessment,
+             data.assessment, data.plan,
              json.dumps(data.conditions, ensure_ascii=False),
              json.dumps(data.removed_conditions, ensure_ascii=False),
              json.dumps(data.dismissed, ensure_ascii=False),
@@ -276,24 +284,40 @@ def detect_semantic(body: SemanticIn):
 # ---------- SOAP：語音、AI 參考計畫、完成與英文版 ----------
 
 def _chart(record: dict) -> dict:
-    """整理給 AI 的病歷內容（Modified POMR），處方依問題歸類。"""
+    """整理給 AI 的病歷內容（SOAP：問題清單＋統整的 A、P）。"""
     allergy_names = {a["id"]: a["name"] for a in rec.allergens()}
-    rx_by_problem: dict[str, list[str]] = {}
-    for p in record["prescriptions"]:
-        line = " ".join(x for x in (p.get("display_name") or p.get("name_en", ""), p.get("frequency", ""),
-                                    f"{p['days']} days" if p.get("days") else "") if x)
-        rx_by_problem.setdefault(p.get("condition") or "", []).append(line)
     return {
         "visit_date": record["visit_date"], "patient_code": record["patient_code"],
         "age": record["age"], "sex": record["sex"],
         "allergies": [allergy_names.get(a, a.removeprefix("atc:")) for a in record["allergies"]],
         "S": {"chief_complaint": record["chief_complaint"], "history": record["history"]},
-        "O": {"vitals": record["vitals"], "exam": record["exam"]},
-        "problems": [{"no": i, "name": c["name"], "icd10_cm": c.get("icd10", ""), "A": c.get("assessment", ""),
-                      "P": c.get("plan", ""), "prescriptions": rx_by_problem.get(c["name"], [])}
-                     for i, c in enumerate(record["conditions"], 1)],
-        "other_prescriptions": rx_by_problem.get("", []),
+        "O": {"exam": record["exam"]},
+        "A": {"problems": [{"no": i, "name": c["name"], "icd10_cm": c.get("icd10", "")}
+                           for i, c in enumerate(record["conditions"], 1)],
+              "assessment": record["assessment"]},
+        "P": {"plan": record["plan"],
+              "prescriptions": [" ".join(x for x in (p.get("display_name") or p.get("name_en", ""), p.get("frequency", ""),
+                                                      f"{p['days']} days" if p.get("days") else "") if x)
+                                for p in record["prescriptions"]]},
     }
+
+
+# 英文版第一行由程式產生（不交給 AI，避免捏造年齡、性別或過敏）
+ALLERGEN_EN = {
+    "penicillin": "penicillins", "cephalosporin": "cephalosporins", "sulfonamide": "sulfonamides",
+    "macrolide": "macrolides", "fluoroquinolone": "fluoroquinolones", "tetracycline": "tetracyclines",
+    "nsaid": "NSAIDs", "aspirin": "aspirin", "acetaminophen": "acetaminophen", "opioid": "opioids (incl. codeine)",
+    "acei": "ACE inhibitors", "benzodiazepine": "benzodiazepines", "sulfonylurea": "sulfonylureas",
+    "corticosteroid": "corticosteroids",
+}
+SEX_EN = {"女": "F", "男": "M", "其他": "other"}
+
+
+def _english_header(record: dict) -> str:
+    allergies = [ALLERGEN_EN.get(a) or (rec.drug_name(a[4:]) if a.startswith("atc:") else a) for a in record["allergies"]]
+    who = " ".join(x for x in (f"{record['age']} y/o" if record["age"] else "", SEX_EN.get(record["sex"], "")) if x)
+    parts = [record["visit_date"], record["patient_code"], who, f"Allergy: {', '.join(allergies) if allergies else 'NKDA'}"]
+    return " | ".join(p for p in parts if p)
 
 
 def _ai_error(error: OpenAIError) -> HTTPException:
@@ -333,23 +357,22 @@ async def voice_to_soap(file: UploadFile = File(...)):
         raise HTTPException(503, "需要設定 Azure OpenAI 才能把逐字稿整理成 SOAP")
     problems = []
     for item in soap.get("problems", []):
-        name = str(item.get("name", "")).strip()[:40]
+        name = str(item.get("name", "") if isinstance(item, dict) else item).strip()[:40]
         if not name:
             continue
         cond = rec.condition_by_name(name)
         if not cond:  # AI 沒用清單名稱時，再用關鍵字對一次（例：急性扁桃腺炎 → 扁桃腺炎／咽喉炎）
             hits = rec.detect_keywords(name)
             cond = rec.condition_by_name(hits[0]["name"]) if len(hits) == 1 else None
-        if cond and any(p["name"] == cond["name"] for p in problems):
+        if any(p["name"] == (cond["name"] if cond else name) for p in problems):
             continue
-        problems.append({"name": cond["name"] if cond else name, "icd10": cond["icd10"] if cond else "",
-                         "custom": cond is None, "assessment": str(item.get("assessment", "")),
-                         "plan": str(item.get("plan", ""))})
+        problems.append({"name": cond["name"] if cond else name, "icd10": cond["icd10"] if cond else "", "custom": cond is None})
     return {
         "transcript": transcript,
         "soap": {
             "chief_complaint": str(soap.get("chief_complaint", "")), "history": str(soap.get("history", "")),
-            "vitals": _vitals(soap.get("vitals") or {}), "exam": str(soap.get("exam", "")), "problems": problems,
+            "exam": str(soap.get("exam", "")), "problems": problems,
+            "assessment": str(soap.get("assessment", "")), "plan": str(soap.get("plan", "")),
         },
         "ai_meta": meta,
     }
@@ -357,7 +380,7 @@ async def voice_to_soap(file: UploadFile = File(...)):
 
 @router.post("/records/{record_id}/ai-plan")
 def ai_plan(record_id: int):
-    """AI 參考計畫：依目前的 S、O、各問題的 A 產生，存起來供醫師對照（前端預設遮蔽）。"""
+    """AI 參考計畫：依目前的 S、O、問題清單與 A 產生一份統整計畫，存起來供醫師對照（前端預設遮蔽）。"""
     record = get_record(record_id)
     if not record["conditions"]:
         raise HTTPException(422, "請先建立至少一個問題，AI 才能依問題寫計畫")
@@ -368,9 +391,7 @@ def ai_plan(record_id: int):
     if result is None:
         raise HTTPException(503, "需要設定 Azure OpenAI 才能產生 AI 計畫")
     keys = ("diagnostic", "therapeutic", "educational", "follow_up", "consult")
-    plan = {
-        "problems": [{"name": str(p.get("name", ""))} | {k: str(p.get(k, "")) for k in keys}
-                     for p in result.get("problems", []) if isinstance(p, dict)],
+    plan = {k: str(result.get(k, "")) for k in keys} | {
         "basis": [c["name"] for c in record["conditions"]],
         "model": meta["model"], "generated_at": meta["generated_at"],
     }
@@ -392,9 +413,10 @@ def complete_record(record_id: int):
     if result is None:
         raise HTTPException(503, "需要設定 Azure OpenAI 才能產生英文版")
     stamp = now()
+    note = f"{_english_header(record)}\n{str(result.get('note', '')).strip()}"
     with app_db() as con:
         con.execute("UPDATE records SET english_note = ?, completed_at = ?, updated_at = ? WHERE id = ?",
-                    (str(result.get("note", "")).strip(), stamp, stamp, record_id))
+                    (note, stamp, stamp, record_id))
     return get_record(record_id)
 
 

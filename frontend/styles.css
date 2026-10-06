@@ -410,7 +410,6 @@ main { flex: 1; min-width: 0; }
   background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%; background-size: 5px 5px; background-repeat: no-repeat;
 }
 .rx-layout { display: grid; grid-template-columns: minmax(380px, 5fr) minmax(0, 7fr); gap: 32px; align-items: start; }
-.rx-editor { display: grid; gap: 16px; }
 .rx-card { padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
 .rx-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
 .rx-card-head h3 { margin: 0; font-family: var(--serif); font-size: 18px; }
@@ -585,7 +584,6 @@ main { flex: 1; min-width: 0; }
 }
 .rec-cover img, .rx-thumb img, .drug-gallery img, .product-picker img { opacity: 0; transition: opacity .4s var(--ease); }
 .rec-cover img.loaded, .rx-thumb img.loaded, .drug-gallery img.loaded, .product-picker img.loaded { opacity: 1; }
-.rx-editor, .rx-recs { min-width: 0; }
 @media (max-width: 860px) { .rx-layout { grid-template-columns: minmax(0, 1fr); } }
 
 
@@ -716,21 +714,6 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .restore-chip:hover { border-color: var(--accent); }
 
 /* 本次處方：採用的結果與過敏排除固定在推薦上方 */
-.recs-tray { margin-bottom: 22px; padding: 16px 18px; border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow-rest); }
-.tray-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-.tray-head h2 { margin: 0; font-family: var(--serif); font-size: 17px; }
-.tray-head h2:focus { outline: 0; }
-.tray-head h2 small { margin-left: 6px; color: var(--muted); font-family: var(--sans); font-size: 13px; font-weight: 500; }
-.tray-list { display: grid; }
-.tray-item { display: grid; grid-template-columns: minmax(0, 1fr) auto 32px; align-items: center; gap: 4px 10px; padding: 10px 0; border-bottom: 1px solid var(--line-2); }
-.tray-item:last-child { border-bottom: 0; }
-.tray-name { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; min-width: 0; }
-.tray-name b { font-size: 14px; overflow-wrap: anywhere; }
-.tray-item .rx-dose select { padding: 6px 8px; font-size: 13px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); }
-.tray-item .rx-remove { width: 32px; height: 32px; }
-.tray-hints { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 2px 12px; }
-.tray-hints:empty { display: none; }
-.tray-empty { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
 .tray-safety { display: flex; align-items: flex-start; gap: 8px; margin: 12px 0 0; padding: 10px 12px; border-radius: 12px; background: var(--paper); color: var(--ink-2); font-size: 13px; line-height: 1.55; }
 .tray-safety .icon { flex: none; width: 16px; height: 16px; margin-top: 2px; color: var(--muted); }
 .tray-safety.has-allergy { background: #fbe9e5; }
@@ -739,8 +722,6 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .rx-hint { display: inline-flex; align-items: center; gap: 4px; }
 .rx-hint .icon { width: 13px; height: 13px; }
 @media (min-width: 861px) {
-  .recs-tray { position: sticky; top: 0; z-index: 4; }
-  .recs-tray .tray-list { max-height: 34vh; overflow: auto; scrollbar-width: thin; }
 }
 
 /* 推薦卡：理由與市售資訊分開；不再推薦需要確認 */
@@ -776,8 +757,6 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .rec-menu button { padding: 7px 12px; line-height: 1.45; }
 @media (max-width: 640px) { .rx-switcher select { flex: none; } }
 @media (max-width: 640px) {
-  .tray-item { grid-template-columns: minmax(0, 1fr) 32px; }
-  .tray-item .rx-dose { grid-column: 1 / -1; grid-row: 2; }
   .rec-row-head { flex-wrap: wrap; }
 }
 
@@ -889,7 +868,6 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .edu-hero { margin-bottom: 28px; }
 .edu-new { display: flex; align-items: center; gap: 10px; }
 .edu-new select { min-width: 200px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font: inherit; font-size: 15px; }
-.tray-head-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px 6px; }
 
 .edu-layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 32px; align-items: start; }
 .edu-list { position: sticky; top: 24px; }
@@ -1028,38 +1006,34 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .problems-card .rx-card-head { align-items: flex-start; }
 .problem-tools { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px; }
 
-/* O：生命徵象 */
-.vitals-row { display: grid; grid-template-columns: 1.5fr repeat(4, minmax(0, 1fr)); gap: 8px; }
-.vitals-row label { gap: 4px; min-width: 0; }
-.vital-name { display: flex; align-items: baseline; gap: 4px; font-family: var(--sans) !important; font-size: 12px !important; font-weight: 700; color: var(--ink-2) !important; }
-.vital-name small { color: var(--faint); font-size: 10px; font-weight: 500; }
-.rx-card .vitals-row input { min-width: 0; padding-left: 10px; padding-right: 8px; font-variant-numeric: tabular-nums; }
-
-/* A/P：問題清單 */
-.problem-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
-.problem { padding: 14px 14px 12px; border: 1px solid var(--line); border-left: 4px solid hsl(var(--hue) 45% 62%); border-radius: var(--radius-sm); background: hsl(var(--hue) 40% 98.5%); }
-.problem-head { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; margin-bottom: 10px; }
+/* A/P：問題清單（精簡列）＋統整的評估與計畫 */
+.field-title { margin: 4px 0 8px; color: var(--ink-2); font-size: 13px; font-weight: 700; }
+.problem-list { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.problem { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; padding: 6px 6px 6px 12px; border: 1px solid var(--line); border-left: 4px solid hsl(var(--hue) 45% 62%); border-radius: var(--radius-sm); background: hsl(var(--hue) 40% 98.5%); }
 .problem-no { color: hsl(var(--hue) 35% 34%); font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.problem-head b { font-family: var(--serif); font-size: 16px; }
-.problem-head small { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
-.problem-head em { padding: 1px 8px; border-radius: 999px; background: #fff; color: var(--muted); font-size: 11px; font-style: normal; font-weight: 600; }
-.problem-head em.no-recs { background: var(--warn-soft); color: var(--warn); }
+.problem b { font-family: var(--serif); font-size: 15px; }
+.problem small { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.problem em { padding: 1px 8px; border-radius: 999px; background: #fff; color: var(--muted); font-size: 11px; font-style: normal; font-weight: 600; }
+.problem em.no-recs { background: var(--warn-soft); color: var(--warn); }
 .problem-move { display: inline-flex; margin-left: auto; }
-.problem-move button, .problem-remove { display: inline-grid; place-items: center; width: 30px; height: 30px; border: 0; border-radius: 50%; background: none; color: var(--muted); }
-.problem-move button .icon { transform: rotate(90deg); }
-.problem-move button:hover:not(:disabled), .problem-remove:hover { background: rgba(0, 0, 0, .06); color: var(--ink); }
+.problem-move button { display: inline-grid; place-items: center; width: 30px; height: 30px; border: 0; border-radius: 50%; background: none; color: var(--muted); }
+.problem-move button:not(.problem-remove) .icon { transform: rotate(90deg); }
+.problem-move button:hover:not(:disabled) { background: rgba(0, 0, 0, .06); color: var(--ink); }
 .problem-move button:disabled { opacity: .3; cursor: default; }
-.rx-card .problem-field { grid-template-columns: 28px 1fr; align-items: start; gap: 8px; margin-top: 8px; }
-.problem-field > span { padding-top: 9px; color: hsl(var(--hue) 35% 34%); font-size: 13px; font-weight: 700; text-align: center; }
-.problem-field textarea { background: #fff; }
-.problem-rx { display: flex; gap: 8px; margin: 10px 0 0 36px; color: var(--ink-2); font-size: 13px; line-height: 1.6; }
-.problem-rx > span:first-child { flex: none; color: var(--faint); font-weight: 600; }
-.problem-empty { padding: 18px; border: 1px dashed #d6cfc1; border-radius: var(--radius-sm); color: var(--muted); font-size: 14px; text-align: center; }
+.problem-empty { padding: 14px; border: 1px dashed #d6cfc1; border-radius: var(--radius-sm); color: var(--muted); font-size: 14px; text-align: center; }
+.rx-card .ap-field { margin-top: 16px; }
+.ap-field > span { display: flex; align-items: center; gap: 8px; color: var(--ink); font-family: var(--serif); font-size: 15px; }
+.ap-field > span b { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 12px; }
+.plan-rx { display: flex; gap: 8px; margin: 8px 0 0; color: var(--ink-2); font-size: 13px; line-height: 1.6; }
+.plan-rx > span:first-child { flex: none; color: var(--faint); font-weight: 600; }
 
 /* AI 參考計畫：預設模糊遮住，醫師寫完再偷看 */
-.ai-plan { position: relative; margin: 10px 0 0 36px; padding: 10px 12px; border: 1px dashed #c7d3dd; border-radius: var(--radius-sm); background: #fff; }
+.ai-plan { margin-top: 12px; padding: 10px 12px; border: 1px dashed #c7d3dd; border-radius: var(--radius-sm); background: #fff; }
 .ai-plan-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--accent); font-size: 12px; font-weight: 700; }
-.ai-plan-head > span { display: inline-flex; align-items: center; gap: 5px; }
+.ai-plan-head > span:first-child { display: inline-flex; align-items: center; gap: 5px; }
+.ai-plan-head em { margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); font-size: 11px; font-style: normal; }
+.ai-plan-actions { display: inline-flex; gap: 2px; }
+.ai-plan-hint { margin: 4px 0 0; color: var(--faint); font-size: 12px; }
 .ai-plan-body { display: grid; gap: 4px; margin: 8px 0 0; filter: blur(5px); opacity: .55; user-select: none; transition: filter .3s var(--ease), opacity .3s var(--ease); }
 .ai-plan.shown .ai-plan-body { filter: none; opacity: 1; user-select: text; }
 .ai-plan-body div { display: grid; grid-template-columns: 36px 1fr; gap: 6px; font-size: 13px; line-height: 1.6; }
@@ -1079,11 +1053,37 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .rx-card .custom-problem input { flex: 1; min-width: 0; padding: 7px 12px; border-style: dashed; border-radius: 999px; font-size: 13px; }
 .custom-problem .chip-button { display: inline-flex; align-items: center; gap: 4px; }
 
-/* 衛教單入口：放大、放在 A/P 最後 */
-.problems-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 18px; padding: 14px 16px; border-radius: var(--radius-sm); background: var(--ok-soft); }
-.problems-foot p { margin: 0; color: var(--ok); font-size: 13px; font-weight: 600; }
-.problems-foot .primary-button { background: var(--ok); }
-.problems-foot .primary-button:hover { background: #215b4e; }
+/* 衛教單入口：放在開藥區最後，開完藥接著做 */
+.rx-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 18px; padding: 14px 16px; border-radius: var(--radius-sm); background: var(--ok-soft); }
+.rx-foot p { margin: 0; color: var(--ok); font-size: 13px; font-weight: 600; }
+.rx-foot .primary-button { background: var(--ok); }
+.rx-foot .primary-button:hover { background: #215b4e; }
+#rxTitle:focus { outline: none; }
+
+/* 病歷頁版面：病人資料滿版；S｜O；左 A/P＋開藥區、右推薦藥品 */
+.rx-layout {
+  grid-template-columns: minmax(380px, 5fr) minmax(0, 7fr); grid-template-rows: auto auto auto 1fr;
+  grid-template-areas: "patient patient" "s o" "ap recs" "rx recs"; gap: 20px 28px;
+}
+.rx-layout > * { min-width: 0; }
+.patient-card { grid-area: patient; }
+.soap-s { grid-area: s; align-self: stretch; }
+.soap-o { grid-area: o; align-self: stretch; display: flex; flex-direction: column; }
+.soap-o label { flex: 1; grid-template-rows: auto 1fr; }
+.soap-o textarea { min-height: 160px; }
+.problems-card { grid-area: ap; }
+.rx-section { grid-area: rx; align-self: start; }
+.rx-recs { grid-area: recs; align-self: start; }
+.patient-body { display: grid; grid-template-columns: minmax(0, 620px) minmax(0, 1fr); gap: 12px 28px; align-items: end; }
+.patient-body .allergy-row { margin-top: 0; padding-top: 0; border-top: 0; }
+.record-actions .save-state { margin-left: 4px; }
+.recs-safety { margin: 0 0 18px; }
+@media (max-width: 1180px) {
+  .patient-body { grid-template-columns: 1fr; }
+}
+@media (max-width: 860px) {
+  .rx-layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "patient" "s" "o" "ap" "recs" "rx"; }
+}
 
 /* 病歷管理 */
 .records-dialog { width: min(1080px, calc(100% - 32px)); }
@@ -1097,9 +1097,8 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .records-table td { padding: 10px 12px; border-top: 1px solid var(--line); vertical-align: top; line-height: 1.55; }
 .records-table tr.current { background: var(--accent-soft); }
 .records-table .nowrap { white-space: nowrap; }
-.mini-problem { display: block; }
-.mini-problem + .mini-problem { margin-top: 4px; }
-.mini-problem small { display: block; color: var(--muted); }
+.mini-problems { display: flex; flex-wrap: wrap; gap: 2px 10px; }
+.mini-assessment { display: block; margin-top: 4px; color: var(--muted); }
 .status-done { display: inline-flex; align-items: center; gap: 3px; color: var(--ok); font-weight: 600; }
 .status-draft { color: var(--faint); }
 .row-actions { display: flex; align-items: center; gap: 4px; }
@@ -1134,28 +1133,23 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .note-tabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
 .note-text { max-height: 58vh; overflow: auto; margin: 0; padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: #fffefa; color: var(--ink); font-family: "SF Mono", Menlo, Consolas, var(--sans); font-size: 13px; line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
 
-@media (max-width: 1180px) and (min-width: 861px) {
-  .vitals-row { grid-template-columns: repeat(3, 1fr); }
-  .patient-row { grid-template-columns: 1fr 1fr; }
-}
+
 @media (max-width: 640px) {
   .records-dialog { width: 100%; }
   .record-actions { gap: 8px; }
   .record-actions .primary-button, .record-actions .secondary-button { padding: 9px 14px; }
-  .problem-head em { display: none; }
-  .vitals-row { grid-template-columns: repeat(2, 1fr); }
   .patient-row { grid-template-columns: 1fr 1fr; }
   .rx-switcher { flex-wrap: wrap; }
   .rx-switcher select { flex: 1 1 100%; }
-  .problem-rx, .ai-plan { margin-left: 0; }
-  .rx-card .problem-field { grid-template-columns: 22px 1fr; }
   .records-table thead { display: none; }
   .records-table tr { display: grid; grid-template-columns: 1fr auto; padding: 10px 12px; border-top: 1px solid var(--line); }
   .records-table td { padding: 2px 0; border: 0; }
   .records-table td:nth-child(4), .records-table td:nth-child(5) { grid-column: 1 / -1; }
-  .problems-foot .primary-button { width: 100%; }
+  .rx-foot .primary-button { width: 100%; }
+  .problem em { display: none; }
 }
 .dialog-head h2[tabindex="-1"]:focus { outline: none; }
 .voice-stage .voice-upload { display: inline-flex; flex-direction: row; align-items: center; gap: 5px; }
 .voice-item { margin: 0; font-weight: 400; }
 .voice-item span span { font-weight: 400; }
+.rx-card-head .link-button { white-space: nowrap; flex: none; }

@@ -218,21 +218,21 @@ class AIService:
     # ---- 病歷：看診錄音 → SOAP ----
     def soap_from_transcript(self, transcript: str, names: list[str]) -> tuple[dict | None, dict]:
         system = (
-            "你協助家醫科門診醫師，把看診錄音的逐字稿整理成 SOAP 病歷（Modified POMR：S、O 各一段，A、P 依問題分開）。"
+            "你協助家醫科門診醫師，把看診錄音的逐字稿整理成 SOAP 病歷。格式：S 主訴與現病史；O 身體檢查與檢驗；"
+            "A 先列出問題清單，再寫一段統整評估；P 寫一段統整治療計畫（不必每個問題各寫一次）。"
             "逐字稿包含醫師與病人的對話，可能有口語贅字與語音辨識的同音錯字：請依醫學語境修正明顯錯字"
-            "（例：變桃腺→扁桃腺、肺陰→肺音、涼血壓→量血壓、38度板→38度半），但不可改變原意。"
+            "（例：變桃腺→扁桃腺、肺陰→肺音、消傳→哮喘、涼血壓→量血壓、38度板→38度半），但不可改變原意。"
             "只整理逐字稿中明確出現的內容，不可推測或補上沒說到的症狀、檢查數值、診斷或藥物；沒提到的欄位留空字串。"
             "chief_complaint：一句話主訴，含持續時間。"
             "history：現病史（時間經過、伴隨症狀、有意義的陰性症狀如「無咳嗽」、病人自述的發燒度數）、過去病史、目前用藥、過敏、生活史，可引用病人原話。"
-            "vitals：只填醫師量測並說出口的數值（bp 如 142/88、hr、bt、rr、spo2，只填數字）。"
-            "exam：醫師說出的身體檢查與檢驗結果，陽性發現與有意義的陰性發現都要寫。"
-            f"problems：本次處理的所有問題，依嚴重度排序，包含醫師有交代處置的慢性病（例如「高血壓的藥繼續吃」→ 高血壓）。"
-            f"可用病灶名稱：{'、'.join(names)}。同一種病請用可用名稱（例：急性扁桃腺炎、咽喉炎 → 扁桃腺炎／咽喉炎；感冒 → 急性上呼吸道感染）並設 is_catalog=true；"
-            "真的不在清單的才寫簡短繁中病名並設 is_catalog=false。"
-            "每個問題的 assessment 寫醫師的判斷與依據（例：發燒、扁桃腺滲出、無咳嗽，疑細菌性），plan 寫醫師口述的計畫（檢查、用藥、衛教、追蹤）。"
+            "exam：醫師說出的量測值（如 BT 37.8°C、BP 146/90 mmHg、HR 88/min）與身體檢查、檢驗結果，陽性與有意義的陰性發現都要寫。"
+            "problems：本次處理的所有問題名稱，依嚴重度排序，包含醫師有交代處置的慢性病（例如「高血壓的藥繼續吃」→ 高血壓）。"
+            f"可用病灶名稱：{'、'.join(names)}。同一種病請用可用名稱（例：急性扁桃腺炎、咽喉炎 → 扁桃腺炎／咽喉炎；感冒 → 急性上呼吸道感染）；"
+            "真的不在清單的才寫簡短的繁中病名。"
+            "assessment：醫師的判斷與依據，可用 #1、#2 對應問題清單，每個問題一行（例：#1 急性上呼吸道感染：發燒、無肺炎跡象，疑病毒感染）。"
+            "plan：醫師口述的整體計畫（檢查、用藥與注意事項、衛教、回診與警訊），條列成數行，不重複寫問題名稱也可以。"
             "使用繁體中文（台灣用語），醫學名詞與藥名可保留英文。"
-            '回傳 JSON：{"chief_complaint": "", "history": "", "vitals": {"bp": "", "hr": "", "bt": "", "rr": "", "spo2": ""}, '
-            '"exam": "", "problems": [{"name": "", "is_catalog": true, "assessment": "", "plan": ""}]}'
+            '回傳 JSON：{"chief_complaint": "", "history": "", "exam": "", "problems": [""], "assessment": "", "plan": ""}'
         )
         return self.chat_json(system, transcript[:12000], max_tokens=3000)
 
@@ -240,25 +240,29 @@ class AIService:
     def plan_suggestions(self, record: dict) -> tuple[dict | None, dict]:
         system = (
             "你是家醫科主治醫師，替新手醫師的門診病歷寫一份參考用的醫療計畫（P），供他寫完後對照學習，不是最終醫囑。"
-            "依病歷中的 S、O 與每個問題的 A，針對每個問題分別寫：diagnostic（還需要的檢查或鑑別診斷）、"
+            "依病歷中的 S、O、問題清單與 A，寫一份統整的計畫：diagnostic（還需要的檢查或鑑別診斷）、"
             "therapeutic（治療：藥理類別或常用成分、非藥物治療；不寫具體劑量，避開病人的過敏與病史風險）、"
             "educational（衛教與告知重點）、follow_up（回診時機與需要立即回診的警訊）、consult（需要轉介或會診時才寫，否則留空）。"
-            "每項 1-3 點，以「；」分隔，簡潔、符合台灣門診常規。藥名一律寫英文學名（例：dextromethorphan、cetirizine），不要音譯成中文。資訊不足以判斷時，寫出需要先確認的事。"
-            '回傳 JSON：{"problems": [{"name": 問題名稱（與輸入相同）, "diagnostic": "", "therapeutic": "", "educational": "", "follow_up": "", "consult": ""}]}'
+            "每項 1-4 點，以「；」分隔，必要時用 #1、#2 標出對應的問題；簡潔、符合台灣門診常規。"
+            "藥名一律寫英文學名（例：dextromethorphan、cetirizine），不要音譯成中文。資訊不足以判斷時，寫出需要先確認的事。"
+            '回傳 JSON：{"diagnostic": "", "therapeutic": "", "educational": "", "follow_up": "", "consult": ""}'
         )
-        return self.chat_json(system, json.dumps(record, ensure_ascii=False)[:12000], max_tokens=3000)
+        return self.chat_json(system, json.dumps(record, ensure_ascii=False)[:12000], max_tokens=2000)
 
     # ---- 病歷：英文版 ----
     def english_note(self, record: dict) -> tuple[dict | None, dict]:
         system = (
-            "Translate this Taiwanese family-medicine outpatient chart into a concise English SOAP note (modified POMR). "
+            "Translate this Taiwanese family-medicine outpatient chart into a concise English SOAP note. "
             "Translate faithfully: do not add findings, diagnoses, doses or advice that are not in the input. "
             "Use standard clinical English and abbreviations (e.g. y/o, F/M, c/o, HPI, PE, BP, QD, BID, TID, PRN). "
-            "Layout (plain text, keep line breaks):\n"
-            "Date / patient line (code, age, sex, allergies: NKDA if none)\n"
-            "S: chief complaint, then HPI\nO: vital signs on one line, then PE / labs\n"
-            "A/P:\n#1 Problem (ICD-10-CM)\n  A: ...\n  P: ... (include the prescriptions linked to this problem: drug, frequency, days)\n"
-            "Omit sections that are empty. "
+            "Start directly with 'S:' (the date/patient line is added by the program). "
+            "Use this structure; the example only shows the format, never copy its findings, drugs or numbers:\n"
+            "S: <chief complaint>\n   HPI: <history, pertinent negatives, PMH, current meds, allergy history>\n"
+            "O: <vital signs and physical exam / labs>\n"
+            "A: #1 <problem> (<ICD-10-CM>)\n   #2 <problem> (<ICD-10-CM>)\n   <assessment, keep the #1/#2 references>\n"
+            "P: <plan>\n   Rx: <drug frequency x days; ...>\n"
+            "Translate every Chinese word into English (including allergy names, e.g. Penicillin類 → penicillins), "
+            "Omit any line or section that has no content in the input (e.g. no 'Rx:' line without prescriptions, no 'O:' without findings). "
             'Return JSON: {"note": "<the English note>"}'
         )
         return self.chat_json(system, json.dumps(record, ensure_ascii=False)[:12000], max_tokens=3000)

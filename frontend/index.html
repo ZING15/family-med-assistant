@@ -112,14 +112,15 @@
             </header>
 
             <div class="rx-layout">
-              <div class="rx-editor">
-                <section class="rx-card patient-card">
-                  <div class="record-actions">
-                    <button class="primary-button voice-visit" id="voiceVisitButton" type="button"><svg class="icon" aria-hidden="true"><use href="#i-mic"/></svg>語音看診</button>
-                    <button class="secondary-button" id="completeButton" type="button"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>完成病歷</span></button>
-                    <span class="record-status" id="recordStatus" role="status"></span>
-                    <button class="icon-button danger-icon" id="deleteRecordButton" type="button" aria-label="刪除這份病歷"><svg class="icon" aria-hidden="true"><use href="#i-trash-2"/></svg></button>
-                  </div>
+              <section class="rx-card patient-card" aria-label="病人資料">
+                <div class="record-actions">
+                  <button class="primary-button voice-visit" id="voiceVisitButton" type="button"><svg class="icon" aria-hidden="true"><use href="#i-mic"/></svg>語音看診</button>
+                  <button class="secondary-button" id="completeButton" type="button"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>完成病歷</span></button>
+                  <span class="record-status" id="recordStatus" role="status"></span>
+                  <span class="save-state" id="saveState" role="status"></span>
+                  <button class="icon-button danger-icon" id="deleteRecordButton" type="button" aria-label="刪除這份病歷"><svg class="icon" aria-hidden="true"><use href="#i-trash-2"/></svg></button>
+                </div>
+                <div class="patient-body">
                   <div class="patient-row">
                     <label>代號<input id="pCode" maxlength="30" /></label>
                     <label>年齡<input id="pAge" inputmode="numeric" maxlength="3" /></label>
@@ -142,86 +143,67 @@
                       </div>
                     </div>
                   </div>
-                </section>
+                </div>
+              </section>
 
-                <section class="rx-card soap-card" aria-labelledby="soapSTitle">
-                  <h2 class="soap-title" id="soapSTitle"><b>S</b>主觀<small>病人的陳述，盡量引用原話</small></h2>
-                  <label><span>主訴</span><textarea id="rChief" rows="2" placeholder="例：咳嗽兩週，有痰"></textarea></label>
-                  <label><span>現病史</span><textarea id="rHistory" rows="5" placeholder="現病史、過去病史、目前用藥、生活史（請去識別化）"></textarea></label>
-                </section>
+              <section class="rx-card soap-card soap-s" aria-labelledby="soapSTitle">
+                <h2 class="soap-title" id="soapSTitle"><b>S</b>主觀<small>病人的陳述，盡量引用原話</small></h2>
+                <label><span>主訴</span><textarea id="rChief" rows="2" placeholder="例：咳嗽兩週，有痰"></textarea></label>
+                <label><span>現病史</span><textarea id="rHistory" rows="5" placeholder="現病史、過去病史、目前用藥、生活史（請去識別化）"></textarea></label>
+                <p class="soap-hint">輸入時會自動偵測問題（「無發燒」這類否定不會被當成問題）</p>
+              </section>
 
-                <section class="rx-card soap-card" aria-labelledby="soapOTitle">
-                  <h2 class="soap-title" id="soapOTitle"><b>O</b>客觀<small>身體檢查與檢驗，陽性與有意義的陰性都要寫</small></h2>
-                  <div class="vitals-row">
-                    <label><span class="vital-name">BP<small>mmHg</small></span><input id="vBp" data-vital="bp" placeholder="120/80" maxlength="12" /></label>
-                    <label><span class="vital-name">HR<small>/min</small></span><input id="vHr" data-vital="hr" inputmode="numeric" maxlength="4" /></label>
-                    <label><span class="vital-name">BT<small>°C</small></span><input id="vBt" data-vital="bt" inputmode="decimal" maxlength="5" /></label>
-                    <label><span class="vital-name">RR<small>/min</small></span><input id="vRr" data-vital="rr" inputmode="numeric" maxlength="3" /></label>
-                    <label><span class="vital-name">SpO₂<small>%</small></span><input id="vSpo2" data-vital="spo2" inputmode="numeric" maxlength="3" /></label>
-                  </div>
-                  <label><span>身體檢查／檢驗</span><textarea id="rExam" rows="3" placeholder="例：咽部輕度紅，肺音清，無喘鳴"></textarea></label>
-                  <div class="soap-foot">
-                    <p class="soap-hint">輸入時會自動偵測問題（「無發燒」這類否定不會被當成問題）</p>
-                    <span class="save-state" id="saveState" role="status"></span>
-                  </div>
-                </section>
+              <section class="rx-card soap-card soap-o" aria-labelledby="soapOTitle">
+                <h2 class="soap-title" id="soapOTitle"><b>O</b>客觀<small>身體檢查與檢驗；有量到的體溫、血壓也寫在這裡</small></h2>
+                <label><span>身體檢查／檢驗</span><textarea id="rExam" rows="8" placeholder="例：BT 37.8°C、BP 146/90。咽部紅，扁桃腺輕度腫大無化膿；肺音清，無喘鳴"></textarea></label>
+              </section>
 
-                <section class="rx-card problems-card" aria-labelledby="soapAPTitle">
-                  <div class="rx-card-head">
-                    <h2 class="soap-title" id="soapAPTitle"><b>A/P</b>問題與計畫<small>每個問題各自評估與計畫</small></h2>
-                    <div class="problem-tools">
-                      <button class="link-button" id="aiDetectButton" type="button"><svg class="icon" aria-hidden="true"><use href="#i-sparkles"/></svg><span>AI 偵測</span></button>
-                      <button class="link-button" id="aiPlanButton" type="button"><svg class="icon" aria-hidden="true"><use href="#i-sparkles"/></svg><span>AI 參考計畫</span></button>
-                    </div>
-                  </div>
-                  <div class="semantic-suggest" id="semanticSuggest" hidden></div>
-                  <ol class="problem-list" id="problemList"></ol>
-                  <p class="removed-conditions" id="removedConditions" hidden></p>
-                  <div class="condition-add">
-                    <select id="conditionAdd" aria-label="從清單新增問題"><option value="">從清單新增問題…</option></select>
-                    <form class="custom-problem" id="customProblemForm">
-                      <input id="customProblem" maxlength="40" placeholder="或輸入其他問題（不在清單，不提供用藥推薦）" aria-label="輸入其他問題" />
-                      <button class="chip-button" type="submit"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>加入</button>
-                    </form>
-                  </div>
-                  <p class="ai-other" id="aiOther" hidden></p>
-                  <div class="problems-foot">
-                    <p>依問題與本次處方，產生給病人的白話衛教單</p>
-                    <button class="primary-button" id="makeEducationMain" type="button"><svg class="icon" aria-hidden="true"><use href="#i-file-heart"/></svg>產生衛教單</button>
-                  </div>
-                </section>
+              <section class="rx-card problems-card" aria-labelledby="soapAPTitle">
+                <div class="rx-card-head">
+                  <h2 class="soap-title" id="soapAPTitle"><b>A/P</b>評估與計畫<small>先列出問題，再統整寫評估與治療計畫</small></h2>
+                  <button class="link-button" id="aiDetectButton" type="button"><svg class="icon" aria-hidden="true"><use href="#i-sparkles"/></svg><span>AI 偵測</span></button>
+                </div>
+                <div class="semantic-suggest" id="semanticSuggest" hidden></div>
+                <h3 class="field-title">問題清單</h3>
+                <ol class="problem-list" id="problemList"></ol>
+                <p class="removed-conditions" id="removedConditions" hidden></p>
+                <div class="condition-add">
+                  <select id="conditionAdd" aria-label="從清單新增問題"><option value="">從清單新增問題…</option></select>
+                  <form class="custom-problem" id="customProblemForm">
+                    <input id="customProblem" maxlength="40" placeholder="或輸入其他問題（不在清單，不提供用藥推薦）" aria-label="輸入其他問題" />
+                    <button class="chip-button" type="submit"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>加入</button>
+                  </form>
+                </div>
+                <p class="ai-other" id="aiOther" hidden></p>
+                <label class="ap-field"><span><b>A</b>評估</span><textarea id="rAssessment" rows="4" placeholder="統整評估，可用 #1、#2 對應問題。例：#1 感冒後咳嗽，無發燒、肺音清，傾向病毒感染"></textarea></label>
+                <label class="ap-field"><span><b>P</b>計畫</span><textarea id="rPlan" rows="4" placeholder="檢查、治療、衛教、追蹤與回診警訊"></textarea></label>
+                <p class="plan-rx"><span>處方</span><span id="planRx"></span></p>
+                <div class="ai-plan" id="aiPlan"></div>
+              </section>
 
-                <section class="rx-card" id="rxSection">
-                  <div class="rx-card-head">
-                    <h2 class="rx-card-title">開藥區 <small id="rxCount"></small></h2>
-                  </div>
+              <section class="rx-card rx-section" id="rxSection" aria-labelledby="rxTitle">
+                <div class="rx-card-head">
+                  <h2 class="rx-card-title" id="rxTitle" tabindex="-1">開藥區 <small id="rxCount"></small></h2>
+                </div>
                   <div class="rx-list" id="rxList"></div>
                   <div class="rx-search">
                     <input id="rxDrugSearch" placeholder="搜尋藥品加入（成分或商品名）" autocomplete="off" aria-label="搜尋藥品加入開藥區" />
                     <div class="search-results" id="rxDrugResults"></div>
                   </div>
-                </section>
-              </div>
+                <div class="rx-foot">
+                  <p>依問題與處方，產生給病人的白話衛教單</p>
+                  <button class="primary-button" id="makeEducation" type="button"><svg class="icon" aria-hidden="true"><use href="#i-file-heart"/></svg>產生衛教單</button>
+                </div>
+              </section>
 
-              <aside class="rx-recs" aria-label="本次處方與推薦藥品">
-                <!-- 本次處方與過敏排除：採用的結果與安全資訊固定在推薦上方 -->
-                <section class="recs-tray" id="recsTray" aria-labelledby="trayTitle">
-                  <div class="tray-head">
-                    <h2 id="trayTitle" tabindex="-1">本次處方 <small id="trayCount"></small></h2>
-                    <div class="tray-head-actions">
-                      <button type="button" class="link-button" id="trayJump">到開藥區調整品項</button>
-                      <button type="button" class="primary-button compact-button" id="makeEducation"><svg class="icon" aria-hidden="true"><use href="#i-file-heart"/></svg>產生衛教單</button>
-                    </div>
-                  </div>
-                  <div class="tray-list" id="trayList"></div>
-                  <div class="tray-safety" id="traySafety"></div>
-                </section>
+              <aside class="rx-recs" aria-label="推薦藥品">
                 <div class="recs-head">
                   <div>
                     <h2>推薦藥品</h2>
                     <p>依病灶對照表、你的採用紀錄與市售品項數排序；點卡片看詳細資料</p>
                   </div>
                 </div>
+                <div class="recs-safety tray-safety" id="recsSafety"></div>
                 <p class="sr-only" id="recsStatus" role="status" aria-live="polite"></p>
                 <div id="recRows"></div>
                 <details class="excluded" id="excludedBox" hidden>
@@ -229,7 +211,7 @@
                   <ul id="excludedList"></ul>
                 </details>
               </aside>
-              <!-- 窄螢幕單欄時，本次處方不在畫面上就顯示這個按鈕 -->
+              <!-- 窄螢幕單欄時，開藥區不在畫面上就顯示這個按鈕 -->
               <button type="button" class="tray-fab" id="trayFab" hidden><svg class="icon" aria-hidden="true"><use href="#i-clipboard-pen"/></svg><span></span></button>
             </div>
           </section>

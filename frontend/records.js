@@ -1,7 +1,7 @@
 /* ==========================================================
    病歷與開藥（F-03～F-07）
-   病歷採 SOAP＋問題導向（Modified POMR）：S 主訴與現病史、O 生命徵象與身體檢查、
-   每個問題（病灶）各自寫 A 評估與 P 計畫。
+   病歷採 SOAP：S 主訴與現病史、O 身體檢查與檢驗、A 問題清單＋統整評估、P 統整治療計畫
+  （依教材，問題多時逐題寫 SOAP 太繁瑣，改為列出問題後統整一份計畫）。
    流程：寫病歷或語音看診 → 自動偵測問題 → 依問題列出推薦（每個問題一排）
         → 醫師採用（寫入開藥區）／這次不用／此病灶不再推薦 → 完成病歷（同時產生英文版）
    依賴 app.js 的 $、$$、api、jsonBody、escapeHtml、showToast、hueStyle、icon
@@ -13,8 +13,7 @@ const FREQUENCIES = [
 ];
 const DAYS = [1, 3, 5, 7, 14, 28];
 const SOURCE_LABEL = { keyword: '關鍵字', semantic: '語意', ai: 'AI', manual: '手動', voice: '語音' };
-const VITALS = ['bp', 'hr', 'bt', 'rr', 'spo2'];
-const VITAL_UNITS = { bp: ['BP', ' mmHg'], hr: ['HR', '/min'], bt: ['BT', '°C'], rr: ['RR', '/min'], spo2: ['SpO2', '%'] };
+
 // TFDA 許可證「藥品類別」：處方藥、指示藥、成藥（甲乙類成藥可自行購買）
 const CATEGORY_LABEL = { rx: '處方', otc: '指示藥', general: '成藥' };
 
@@ -60,7 +59,7 @@ const rx = {
   collapsed: {},       // 每排是否收起
   riskSig: '',         // 目前病史風險（變動時才重新取推薦）
   removedCache: {},    // 本次移除的病灶，供「復原」還原原本的來源
-  peek: {},            // 各問題的 AI 參考計畫是否已打開
+  peek: false,         // AI 參考計畫是否已打開
   semantic: [],        // 語意相近、尚未加入的「可能問題」
   loaded: false,
 };
@@ -104,13 +103,14 @@ async function openRecord(id) {
   $('#pCode').value = rx.record.patient_code;
   $('#pAge').value = rx.record.age;
   $('#pSex').value = rx.record.sex;
-  rx.peek = {};
+  rx.peek = false;
   rx.semantic = [];
   $('#pDate').value = rx.record.visit_date || '';
   $('#rChief').value = rx.record.chief_complaint;
   $('#rHistory').value = rx.record.history;
   $('#rExam').value = rx.record.exam;
-  VITALS.forEach((k) => { $(`[data-vital="${k}"]`).value = rx.record.vitals?.[k] || ''; });
+  $('#rAssessment').value = rx.record.assessment;
+  $('#rPlan').value = rx.record.plan;
   $('#aiOther').hidden = true;
   renderSemantic();
   updateRecordStatus();
@@ -147,8 +147,7 @@ async function saveRecord() {
   Object.assign(r, {
     patient_code: $('#pCode').value.trim(), age: $('#pAge').value.trim(), sex: $('#pSex').value,
     visit_date: $('#pDate').value, chief_complaint: $('#rChief').value, history: $('#rHistory').value,
-    exam: $('#rExam').value, vitals: Object.fromEntries(VITALS.map((k) => [k, $(`[data-vital="${k}"]`).value.trim()])),
-    assessment: '',
+    exam: $('#rExam').value, assessment: $('#rAssessment').value, plan: $('#rPlan').value,
   });
   try {
     const saved = await api(`/api/records/${r.id}`, jsonBody(r, 'PUT'));
@@ -164,25 +163,22 @@ async function saveRecord() {
 }
 
 ['#pCode', '#pAge', '#pSex', '#pDate'].forEach((sel) => $(sel).addEventListener('input', scheduleSave));
-$$('[data-vital]').forEach((input) => input.addEventListener('input', scheduleSave));
+$('#rPlan').addEventListener('input', scheduleSave);
 // 年齡影響「65 歲以上」的提醒
 let ageTimer;
 $('#pAge').addEventListener('input', () => {
   clearTimeout(ageTimer);
   ageTimer = setTimeout(refreshRecommendations, 600);
 });
-// S、O、各問題的 A：偵測問題與病史風險都以這段文字為準
-const recordText = () => [
-  $('#rChief').value, $('#rHistory').value, $('#rExam').value,
-  ...(rx.record?.conditions || []).map((c) => c.assessment || ''),
-].join('\n');
+// S、O、A：偵測問題與病史風險都以這段文字為準
+const recordText = () => [$('#rChief').value, $('#rHistory').value, $('#rExam').value, $('#rAssessment').value].join('\n');
 
 function scheduleDetect() {
   clearTimeout(detectTimer);
   detectTimer = setTimeout(detectConditions, 600);
 }
 
-['#rChief', '#rHistory', '#rExam'].forEach((sel) => $(sel).addEventListener('input', () => {
+['#rChief', '#rHistory', '#rExam', '#rAssessment'].forEach((sel) => $(sel).addEventListener('input', () => {
   scheduleSave();
   scheduleDetect();
 }));
@@ -205,7 +201,7 @@ async function resolveAllergyNames() {
     } catch { /* 查不到就顯示代碼 */ }
   }
   renderAllergies();
-  renderTray();
+  renderSafety();
 }
 
 function renderAllergies() {
@@ -343,7 +339,7 @@ $('#semanticSuggest').addEventListener('click', (event) => {
   const found = rx.semantic.find((c) => c.name === name);
   if (!found) return;
   rx.record.removed_conditions = rx.record.removed_conditions.filter((n) => n !== name);
-  rx.record.conditions.push({ name, source: 'semantic', matched: found.matched, icd10: found.icd10, assessment: '', plan: '' });
+  rx.record.conditions.push({ name, source: 'semantic', matched: found.matched, icd10: found.icd10 });
   rx.semantic = rx.semantic.filter((c) => c.name !== name);
   renderConditions();
   renderSemantic();
@@ -354,11 +350,9 @@ $('#semanticSuggest').addEventListener('click', (event) => {
 // 關鍵字結果會整批更新；AI、語意、語音與手動加入的保留；醫師移除過的不再自動加回
 function mergeConditions(found, source) {
   const r = rx.record;
-  const isAuto = (c) => c.source === 'keyword' && !c.assessment && !c.plan; // 已寫 A／P 的問題不會因關鍵字消失而被拿掉
-  const kept = r.conditions.filter((c) => (source === 'keyword' ? !isAuto(c) || found.some((f) => f.name === c.name) : true));
+  const kept = r.conditions.filter((c) => (source === 'keyword' ? c.source !== 'keyword' || found.some((f) => f.name === c.name) : true));
   const names = new Set(kept.map((c) => c.name));
-  const added = found.filter((c) => !names.has(c.name) && !r.removed_conditions.includes(c.name))
-    .map((c) => ({ ...c, assessment: '', plan: '' }));
+  const added = found.filter((c) => !names.has(c.name) && !r.removed_conditions.includes(c.name));
   const next = [...kept, ...added];
   const changed = JSON.stringify(next.map((c) => c.name)) !== JSON.stringify(r.conditions.map((c) => c.name));
   r.conditions = next;
@@ -373,26 +367,40 @@ function mergeConditions(found, source) {
 
 const PLAN_LABELS = [['diagnostic', '診斷'], ['therapeutic', '治療'], ['educational', '衛教'], ['follow_up', '追蹤'], ['consult', '會診']];
 
-function aiPlanHtml(name) {
-  const item = rx.record.ai_plan?.problems?.find((p) => p.name === name);
-  if (!item) return '';
-  const shown = Boolean(rx.peek[name]);
-  const rows = PLAN_LABELS.filter(([k]) => item[k]).map(([k, label]) => `<div><dt>${label}</dt><dd>${escapeHtml(item[k])}</dd></div>`).join('');
-  return `
-    <div class="ai-plan ${shown ? 'shown' : ''}">
-      <div class="ai-plan-head">
-        <span>${icon('sparkles')}AI 參考計畫</span>
-        <button type="button" class="link-button" data-peek="${escapeHtml(name)}" aria-expanded="${shown}">${shown ? '遮住' : '偷看'}</button>
-      </div>
-      <dl class="ai-plan-body" ${shown ? '' : 'aria-hidden="true" inert'}>${rows}</dl>
-    </div>`;
+// AI 參考計畫：一份統整計畫，預設模糊遮住，醫師寫完自己的 P 再偷看
+function renderAiPlan() {
+  const plan = rx.record.ai_plan || {};
+  const box = $('#aiPlan');
+  const has = PLAN_LABELS.some(([k]) => plan[k]);
+  if (!has) {
+    box.className = 'ai-plan empty';
+    box.innerHTML = `<div class="ai-plan-head"><span>${icon('sparkles')}AI 參考計畫</span>
+      <button type="button" class="link-button" data-ai-plan>產生</button></div>
+      <p class="ai-plan-hint">先寫你自己的計畫，再產生 AI 的版本對照（會先遮住）</p>`;
+    return;
+  }
+  const stale = JSON.stringify(plan.basis || []) !== JSON.stringify(rx.record.conditions.map((c) => c.name));
+  const rows = PLAN_LABELS.filter(([k]) => plan[k]).map(([k, label]) => `<div><dt>${label}</dt><dd>${escapeHtml(plan[k])}</dd></div>`).join('');
+  box.className = `ai-plan ${rx.peek ? 'shown' : ''}`;
+  box.innerHTML = `
+    <div class="ai-plan-head">
+      <span>${icon('sparkles')}AI 參考計畫${stale ? '<em>問題清單已變更</em>' : ''}</span>
+      <span class="ai-plan-actions">
+        <button type="button" class="link-button" data-ai-plan>重新產生</button>
+        <button type="button" class="link-button" data-peek aria-expanded="${rx.peek}">${rx.peek ? '遮住' : '偷看'}</button>
+      </span>
+    </div>
+    <dl class="ai-plan-body" ${rx.peek ? '' : 'aria-hidden="true" inert'}>${rows}</dl>`;
 }
 
-const problemRxText = (name) => {
-  const list = rx.record.prescriptions.filter((p) => p.condition === name);
-  if (!list.length) return '<span class="muted-text">尚未開藥，可從右側推薦採用</span>';
-  return list.map((p) => `<b>${escapeHtml(rxName(p))}</b>${[p.frequency, p.days && `${p.days} 天`].filter(Boolean).map((x) => ` ${escapeHtml(String(x))}`).join('')}`).join('；');
-};
+const rxLine = (p) => [rxName(p), p.frequency, p.days && `${p.days} 天`].filter(Boolean).join(' ');
+
+function renderPlanRx() {
+  const list = rx.record.prescriptions;
+  $('#planRx').innerHTML = list.length
+    ? list.map((p) => `<b>${escapeHtml(rxName(p))}</b>${escapeHtml(rxLine(p).slice(rxName(p).length))}`).join('；')
+    : '<span class="muted-text">尚未開藥，從推薦藥品「採用」後會出現在開藥區</span>';
+}
 
 function renderConditions() {
   const list = rx.record.conditions;
@@ -400,24 +408,18 @@ function renderConditions() {
   $('#problemList').innerHTML = list.length
     ? list.map((c, i) => `
       <li class="problem" data-index="${i}" style="${hueStyle(c.name)}">
-        <div class="problem-head">
-          <span class="problem-no">#${i + 1}</span>
-          <b>${escapeHtml(c.name)}</b>
-          ${c.icd10 ? `<small>${escapeHtml(c.icd10)}</small>` : ''}
-          <em ${c.matched ? `title="依據：${escapeHtml(c.matched)}"` : ''}>${SOURCE_LABEL[c.source] || ''}</em>
-          ${catalogNames.has(c.name) ? '' : '<em class="no-recs">無推薦清單</em>'}
-          <span class="problem-move">
-            <button type="button" data-move="-1" aria-label="#${i + 1} 上移" ${i === 0 ? 'disabled' : ''}>${icon('arrow-left')}</button>
-            <button type="button" data-move="1" aria-label="#${i + 1} 下移" ${i === list.length - 1 ? 'disabled' : ''}>${icon('arrow-right')}</button>
-          </span>
+        <span class="problem-no">#${i + 1}</span>
+        <b>${escapeHtml(c.name)}</b>
+        ${c.icd10 ? `<small>${escapeHtml(c.icd10)}</small>` : ''}
+        <em ${c.matched ? `title="依據：${escapeHtml(c.matched)}"` : ''}>${SOURCE_LABEL[c.source] || ''}</em>
+        ${catalogNames.has(c.name) ? '' : '<em class="no-recs">無推薦清單</em>'}
+        <span class="problem-move">
+          <button type="button" data-move="-1" aria-label="#${i + 1} ${escapeHtml(c.name)} 上移" ${i === 0 ? 'disabled' : ''}>${icon('arrow-left')}</button>
+          <button type="button" data-move="1" aria-label="#${i + 1} ${escapeHtml(c.name)} 下移" ${i === list.length - 1 ? 'disabled' : ''}>${icon('arrow-right')}</button>
           <button type="button" class="problem-remove" data-remove-condition="${escapeHtml(c.name)}" aria-label="移除問題 ${escapeHtml(c.name)}">${icon('x')}</button>
-        </div>
-        <label class="problem-field"><span>A</span><textarea rows="2" data-field="assessment" aria-label="#${i + 1} ${escapeHtml(c.name)} 評估" placeholder="判斷與依據，例：無發燒、痰白，改善中">${escapeHtml(c.assessment || '')}</textarea></label>
-        <label class="problem-field"><span>P</span><textarea rows="2" data-field="plan" aria-label="#${i + 1} ${escapeHtml(c.name)} 計畫" placeholder="檢查、治療、衛教、追蹤">${escapeHtml(c.plan || '')}</textarea></label>
-        <p class="problem-rx"><span>處方</span><span data-problem-rx>${problemRxText(c.name)}</span></p>
-        ${aiPlanHtml(c.name)}
+        </span>
       </li>`).join('')
-    : '<li class="problem-empty">尚未偵測到問題。寫下主訴與病史、使用語音看診，或從下方手動新增</li>';
+    : '<li class="problem-empty">尚未偵測到問題。寫下主訴與病史、使用語音看診，或從下方新增</li>';
 
   // 移除過的問題不會再被關鍵字加回，要讓醫師看得到、也能復原
   const removed = rx.record.removed_conditions;
@@ -426,22 +428,7 @@ function renderConditions() {
   box.innerHTML = removed.length
     ? `<span>已移除，不再自動偵測：</span>${removed.map((n) => `<button type="button" class="restore-chip" data-restore-condition="${escapeHtml(n)}" aria-label="復原問題 ${escapeHtml(n)}">${escapeHtml(n)}<span aria-hidden="true">復原</span></button>`).join('')}`
     : '';
-  updatePlanTools();
-}
-
-// 開藥區變動時只更新各問題的處方摘要，不重繪（避免打斷正在輸入的 A／P）
-function renderProblemRx() {
-  $$('#problemList .problem').forEach((li) => {
-    const c = rx.record.conditions[Number(li.dataset.index)];
-    if (c) li.querySelector('[data-problem-rx]').innerHTML = problemRxText(c.name);
-  });
-}
-
-function updatePlanTools() {
-  const plan = rx.record.ai_plan;
-  const button = $('#aiPlanButton');
-  const stale = plan?.problems?.length && JSON.stringify(plan.basis || []) !== JSON.stringify(rx.record.conditions.map((c) => c.name));
-  button.querySelector('span').textContent = plan?.problems?.length ? (stale ? 'AI 計畫（問題已變更，重新產生）' : '重新產生 AI 計畫') : 'AI 參考計畫';
+  renderAiPlan();
 }
 
 function removeCondition(name) {
@@ -460,7 +447,7 @@ function restoreCondition(name) {
   r.removed_conditions = r.removed_conditions.filter((n) => n !== name);
   if (!r.conditions.some((c) => c.name === name)) {
     const info = rx.catalog.conditions.find((c) => c.name === name);
-    r.conditions.push(rx.removedCache[name] || { name, source: 'manual', icd10: info?.icd10 || '', assessment: '', plan: '' });
+    r.conditions.push(rx.removedCache[name] || { name, source: 'manual', icd10: info?.icd10 || '' });
   }
   renderConditions();
   scheduleSave();
@@ -470,14 +457,6 @@ function restoreCondition(name) {
 $('#problemList').addEventListener('click', (event) => {
   const remove = event.target.closest('[data-remove-condition]');
   if (remove) return removeCondition(remove.dataset.removeCondition);
-  const peek = event.target.closest('[data-peek]');
-  if (peek) {
-    rx.peek[peek.dataset.peek] = !rx.peek[peek.dataset.peek];
-    const li = peek.closest('.problem');
-    li.querySelector('.ai-plan').outerHTML = aiPlanHtml(peek.dataset.peek);
-    li.querySelector('[data-peek]').focus();
-    return;
-  }
   const move = event.target.closest('[data-move]');
   if (move) {
     const list = rx.record.conditions;
@@ -492,15 +471,6 @@ $('#problemList').addEventListener('click', (event) => {
   }
 });
 
-$('#problemList').addEventListener('input', (event) => {
-  const field = event.target.dataset.field;
-  if (!field) return;
-  const c = rx.record.conditions[Number(event.target.closest('.problem').dataset.index)];
-  c[field] = event.target.value;
-  scheduleSave();
-  if (field === 'assessment') scheduleDetect();
-});
-
 $('#removedConditions').addEventListener('click', (event) => {
   const name = event.target.closest('[data-restore-condition]')?.dataset.restoreCondition;
   if (name) restoreCondition(name);
@@ -510,7 +480,7 @@ function addProblem(name, extra = {}) {
   if (!name || rx.record.conditions.some((c) => c.name === name)) return false;
   const info = rx.catalog.conditions.find((c) => c.name === name);
   rx.record.removed_conditions = rx.record.removed_conditions.filter((n) => n !== name);
-  rx.record.conditions.push({ name, source: 'manual', icd10: info?.icd10 || '', custom: !info, assessment: '', plan: '', ...extra });
+  rx.record.conditions.push({ name, source: 'manual', icd10: info?.icd10 || '', custom: !info, ...extra });
   return true;
 }
 
@@ -571,23 +541,29 @@ $('#aiOther').addEventListener('click', (event) => {
   scheduleSave();
 });
 
-$('#aiPlanButton').addEventListener('click', async () => {
+async function generateAiPlan(button) {
   if (!rx.record?.conditions.length) return showToast('請先建立至少一個問題');
-  const button = $('#aiPlanButton');
   button.disabled = true;
-  button.querySelector('span').textContent = 'AI 計畫產生中…';
+  button.textContent = '產生中…';
   try {
-    clearTimeout(saveTimer);
-    await saveRecord();
+    await flushSave();
     rx.record.ai_plan = await api(`/api/records/${rx.record.id}/ai-plan`, { method: 'POST' });
-    rx.peek = {};
-    renderConditions();
-    showToast('AI 參考計畫已放在每個問題下方（已遮住）。先寫你自己的 P，再按「偷看」對照');
+    rx.peek = false;
+    renderAiPlan();
+    showToast('AI 參考計畫已產生（先遮住）。寫完你的計畫後按「偷看」對照');
   } catch (error) {
     showToast(error.message);
-  } finally {
-    button.disabled = false;
-    updatePlanTools();
+    renderAiPlan();
+  }
+}
+
+$('#aiPlan').addEventListener('click', (event) => {
+  const generate = event.target.closest('[data-ai-plan]');
+  if (generate) return generateAiPlan(generate);
+  if (event.target.closest('[data-peek]')) {
+    rx.peek = !rx.peek;
+    renderAiPlan();
+    $('#aiPlan [data-peek]').focus();
   }
 });
 
@@ -602,7 +578,7 @@ async function refreshRecommendations() {
     box.innerHTML = `<div class="recs-empty"><div class="empty-mark">${icon('pill')}</div>
       <p>寫下主訴與病史後，這裡會依每個病灶列出推薦藥品。</p></div>`;
     $('#excludedBox').hidden = true;
-    renderTray();
+    renderSafety();
     return;
   }
   try {
@@ -712,7 +688,7 @@ function renderRecommendations() {
       ${e.reason === 'never' ? `<button type="button" class="link-button" data-restore-never="${e.atc_code}" data-condition="${escapeHtml(e.condition)}">復原</button>` : ''}
       ${e.reason === 'dismissed' ? `<button type="button" class="link-button" data-restore-dismiss="${e.atc_code}" data-condition="${escapeHtml(e.condition)}">復原</button>` : ''}
     </li>`).join('');
-  renderTray();
+  renderSafety();
 }
 
 // 採用／移除只更新卡片狀態，不重繪整排（避免外觀圖重新淡入、焦點跑掉）
@@ -944,60 +920,43 @@ $('#excludedList').addEventListener('click', (event) => {
   if (dismiss) restoreDismiss(dismiss.dataset.condition, dismiss.dataset.restoreDismiss);
 });
 
-/* ---------- 本次處方（推薦欄頂部）與過敏排除 ---------- */
+/* ---------- 推薦欄頂部：過敏與病史風險 ---------- */
 
-function renderTray() {
+function renderSafety() {
   if (!rx.record) return;
-  const list = rx.record.prescriptions;
-  $('#trayCount').textContent = list.length ? `${list.length} 項` : '';
-  $('#trayJump').hidden = !list.length;
-  $('#trayList').innerHTML = list.length
-    ? list.map((p, i) => `
-      <div class="tray-item" data-index="${i}">
-        <div class="tray-name">
-          <b>${escapeHtml(rxName(p))}</b>
-          ${p.nhi_code ? '<span class="nhi-tag">健保</span>' : p.nhi_code === '' ? '<span class="nhi-tag self-pay">自費</span>' : ''}
-          ${p.condition ? `<span class="rx-for" style="${hueStyle(p.condition)}">${escapeHtml(p.condition)}</span>` : ''}
-        </div>
-        <div class="rx-dose">${doseHtml(p)}</div>
-        <button type="button" class="rx-remove" data-remove-rx="${i}" aria-label="移除 ${escapeHtml(rxName(p))}">${icon('x')}</button>
-        <div class="tray-hints">${rxHints(p, i)}</div>
-      </div>`).join('')
-    : '<p class="tray-empty">還沒有採用藥品。按下卡片上的「採用」，藥品會出現在這裡，頻率與天數由你決定。</p>';
-
   // 安全資訊只寫系統真的做了什麼：過敏會排除；病史風險只在卡片提醒；其他禁忌由醫師確認
   const allergies = rx.record.allergies.map(allergyLabel);
   const blocked = new Set(rx.recs.excluded.filter((e) => e.reason === 'allergy').map((e) => e.atc_code)).size;
   const risks = rx.recs.risks || [];
-  $('#traySafety').classList.toggle('has-allergy', allergies.length > 0);
-  $('#traySafety').innerHTML = `${icon('shield-alert')}<div>
+  const box = $('#recsSafety');
+  box.classList.toggle('has-allergy', allergies.length > 0);
+  box.innerHTML = `${icon('shield-alert')}<div>
     <p>${allergies.length
       ? `過敏：<b>${allergies.map(escapeHtml).join('、')}</b>。${blocked
         ? `已從推薦排除 ${blocked} 個藥品 <button type="button" class="link-button" data-show-excluded>查看</button>`
         : '目前的推薦中沒有相關藥品。'}`
-      : '無已知過敏。若病人有過敏，請在「新增過敏」加入，推薦會自動排除。'}</p>
+      : '無已知過敏。若病人有過敏，請在上方「新增過敏」加入，推薦會自動排除。'}</p>
     ${risks.length ? `<p class="safety-risk">病史風險：<b>${risks.map((r) => escapeHtml(r.label)).join('、')}</b>。相關藥品卡片已加上提醒，未排除。</p>` : ''}
     <p class="safety-scope">系統只依過敏排除藥品；病史中的其他禁忌請自行確認。</p>
   </div>`;
-  updateTrayFab();
 }
 
-// 單欄版面（窄螢幕）時，本次處方不在畫面上就顯示浮動按鈕，點一下回到本次處方
-let trayVisible = true;
+// 單欄版面（窄螢幕）時，開藥區不在畫面上就顯示浮動按鈕，點一下回到開藥區
+let rxVisible = true;
 function updateTrayFab() {
   const count = rx.record?.prescriptions.length || 0;
   const fab = $('#trayFab');
-  fab.hidden = !count || trayVisible || !matchMedia('(max-width: 860px)').matches;
-  fab.querySelector('span').textContent = `本次處方 ${count} 項`;
+  fab.hidden = !count || rxVisible || !matchMedia('(max-width: 860px)').matches;
+  fab.querySelector('span').textContent = `開藥區 ${count} 項`;
 }
 new IntersectionObserver(([entry]) => {
-  trayVisible = entry.isIntersecting;
+  rxVisible = entry.isIntersecting;
   updateTrayFab();
-}).observe($('#recsTray'));
+}).observe($('#rxSection'));
 matchMedia('(max-width: 860px)').addEventListener('change', updateTrayFab);
 $('#trayFab').addEventListener('click', () => {
-  $('#recsTray').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  $('#trayTitle').focus({ preventScroll: true });
+  $('#rxSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  $('#rxTitle').focus({ preventScroll: true });
 });
 
 function doseHtml(p) {
@@ -1033,7 +992,7 @@ function rxHints(p, index) {
 function onDoseChange(event) {
   const select = event.target.closest('select[data-field]');
   if (!select) return;
-  const where = select.closest('#trayList') ? '#trayList' : '#rxList';
+  const where = '#rxList';
   const index = Number(select.closest('[data-index]').dataset.index);
   const field = select.dataset.field;
   const item = rx.record.prescriptions[index];
@@ -1043,7 +1002,6 @@ function onDoseChange(event) {
   scheduleSave();
   $(`${where} [data-index="${index}"] select[data-field="${field}"]`)?.focus();
 }
-$('#trayList').addEventListener('change', onDoseChange);
 $('#rxList').addEventListener('change', onDoseChange);
 
 function removeRx(index) {
@@ -1062,18 +1020,14 @@ function removeRx(index) {
   });
 }
 
-$('#trayList').addEventListener('click', (event) => {
-  const remove = event.target.closest('[data-remove-rx]');
-  if (remove) removeRx(Number(remove.dataset.removeRx));
-});
-$('#traySafety').addEventListener('click', (event) => {
+$('#recsSafety').addEventListener('click', (event) => {
   if (!event.target.closest('[data-show-excluded]')) return;
   const box = $('#excludedBox');
   box.open = true;
   box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   $('#excludedSummary').focus({ preventScroll: true });
 });
-// 產生衛教單：先把尚未儲存的修改存好，再帶著病灶與本次處方到衛教單頁
+// 產生衛教單：先把尚未儲存的修改存好，再帶著問題清單與開藥區的處方到衛教單頁
 async function makeEducation() {
   if (!rx.record?.conditions.length) return showToast('請先寫主訴或新增問題，再產生衛教單');
   clearTimeout(saveTimer);
@@ -1081,12 +1035,6 @@ async function makeEducation() {
   createSheetFromRecord(rx.record.id);
 }
 $('#makeEducation').addEventListener('click', makeEducation);
-$('#makeEducationMain').addEventListener('click', makeEducation);
-
-$('#trayJump').addEventListener('click', () => {
-  $('#rxSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  $('#rxSection .rx-product, #rxDrugSearch')?.focus({ preventScroll: true });
-});
 
 /* ---------- 開藥區 ---------- */
 
@@ -1159,8 +1107,8 @@ function renderPrescriptions() {
       <div class="product-picker" hidden></div>
     </div>`).join('')
     : '<p class="rx-empty">從推薦藥品按「採用」，或用下方搜尋加入藥品。劑量與頻率由醫師決定。</p>';
-  renderTray();
-  renderProblemRx();
+  renderPlanRx();
+  updateTrayFab();
 }
 
 $('#rxList').addEventListener('click', async (event) => {
@@ -1363,8 +1311,8 @@ function filteredRecords() {
   const problem = $('#fProblem').value;
   const status = $('#fStatus').value;
   return rx.records.filter((r) => {
-    const haystack = [r.patient_code, r.chief_complaint, r.history, r.exam,
-      ...r.conditions.flatMap((c) => [c.name, c.assessment || '', c.plan || ''])].join(' ').toLowerCase();
+    const haystack = [r.patient_code, r.chief_complaint, r.history, r.exam, r.assessment, r.plan,
+      ...r.conditions.map((c) => c.name)].join(' ').toLowerCase();
     return (!text || haystack.includes(text)) && ageInRange(r.age, age) && (!sex || r.sex === sex)
       && (!problem || r.conditions.some((c) => c.name === problem))
       && (!status || (status === 'done') === isCompleted(r));
@@ -1380,7 +1328,8 @@ function renderRecordsTable() {
       <td class="nowrap"><b>${escapeHtml(r.patient_code || '未命名')}</b></td>
       <td class="nowrap">${escapeHtml([r.age && `${r.age} 歲`, r.sex].filter(Boolean).join('・') || '—')}</td>
       <td>${escapeHtml(r.chief_complaint || '—')}</td>
-      <td>${r.conditions.length ? r.conditions.map((c, i) => `<span class="mini-problem"><b>#${i + 1} ${escapeHtml(c.name)}</b>${c.assessment ? `<small>${escapeHtml(c.assessment.slice(0, 40))}${c.assessment.length > 40 ? '…' : ''}</small>` : ''}</span>`).join('') : '<span class="muted-text">—</span>'}</td>
+      <td>${r.conditions.length ? `<span class="mini-problems">${r.conditions.map((c, i) => `<b>#${i + 1} ${escapeHtml(c.name)}</b>`).join('')}</span>` : '<span class="muted-text">—</span>'}
+        ${r.assessment ? `<small class="mini-assessment">${escapeHtml(r.assessment.replace(/\n/g, '　').slice(0, 60))}${r.assessment.length > 60 ? '…' : ''}</small>` : ''}</td>
       <td class="nowrap">${isCompleted(r) ? `<span class="status-done">${icon('check')}已完成</span>` : '<span class="status-draft">未完成</span>'}</td>
       <td class="nowrap row-actions">
         <button type="button" class="secondary-button compact-button" data-open-record="${r.id}">開啟</button>
@@ -1478,11 +1427,9 @@ function updateRecordStatus() {
   button.textContent = changed ? '更新英文版' : '檢視病歷';
 }
 
-function vitalsText(v = {}) {
-  return VITALS.filter((k) => v[k]).map((k) => `${VITAL_UNITS[k][0]} ${v[k]}${VITAL_UNITS[k][1]}`).join(', ');
-}
+const indent = (text) => text.split('\n').map((l) => `   ${l}`);
 
-// 中文 SOAP（Modified POMR）：S、O 各一段，每個問題各自的 A／P 與處方
+// 中文 SOAP：S、O 各一段；A 先列問題清單再寫評估；P 計畫與處方
 function chineseNote(r) {
   const allergies = r.allergies.length ? r.allergies.map(allergyLabel).join('、') : '無已知過敏';
   const lines = [
@@ -1490,19 +1437,15 @@ function chineseNote(r) {
     '',
     `S：${r.chief_complaint || '—'}`,
   ];
-  if (r.history) lines.push(...r.history.split('\n').map((l) => `   ${l}`));
-  lines.push('', `O：${vitalsText(r.vitals) || '—'}`);
-  if (r.exam) lines.push(...r.exam.split('\n').map((l) => `   ${l}`));
-  lines.push('', 'A/P：');
-  r.conditions.forEach((c, i) => {
-    lines.push(`#${i + 1} ${c.name}${c.icd10 ? `（${c.icd10}）` : ''}`);
-    if (c.assessment) lines.push(`   A：${c.assessment}`);
-    if (c.plan) lines.push(`   P：${c.plan}`);
-    const meds = r.prescriptions.filter((p) => p.condition === c.name);
-    if (meds.length) lines.push(`   處方：${meds.map((p) => [rxName(p), p.frequency, p.days && `${p.days} 天`].filter(Boolean).join(' ')).join('；')}`);
-  });
-  const others = r.prescriptions.filter((p) => !r.conditions.some((c) => c.name === p.condition));
-  if (others.length) lines.push(`其他處方：${others.map((p) => [rxName(p), p.frequency, p.days && `${p.days} 天`].filter(Boolean).join(' ')).join('；')}`);
+  if (r.history) lines.push(...indent(r.history));
+  lines.push('', `O：${r.exam ? '' : '—'}`);
+  if (r.exam) lines.push(...indent(r.exam));
+  lines.push('', 'A：');
+  r.conditions.forEach((c, i) => lines.push(`   #${i + 1} ${c.name}${c.icd10 ? `（${c.icd10}）` : ''}`));
+  if (r.assessment) lines.push(...indent(r.assessment));
+  lines.push('', 'P：');
+  if (r.plan) lines.push(...indent(r.plan));
+  if (r.prescriptions.length) lines.push(`   處方：${r.prescriptions.map(rxLine).join('；')}`);
   return lines.join('\n');
 }
 
@@ -1645,7 +1588,7 @@ function stopVoiceStream() {
 }
 
 async function sendVoice(file) {
-  $('#voiceBody').innerHTML = `<div class="voice-stage"><div class="spinner"></div><p id="voiceProgress">轉成文字中…</p><p class="muted-text">接著由 AI 分到 SOAP，約 10–30 秒</p></div>`;
+  $('#voiceBody').innerHTML = `<div class="voice-stage"><div class="spinner"></div><p id="voiceProgress">轉成文字中…</p><p class="muted-text">接著由 AI 分到 SOAP；5 分鐘的錄音約 30–40 秒</p></div>`;
   const form = new FormData();
   form.append('file', file);
   setTimeout(() => { const el = $('#voiceProgress'); if (el) el.textContent = 'AI 整理成 SOAP 中…'; }, 4000);
@@ -1667,23 +1610,20 @@ function renderVoicePreview() {
       <input type="checkbox" data-voice="${key}" checked />
       <span><b>${label}</b>${existing ? '<em>接在原有內容後</em>' : ''}<span>${escapeHtml(value)}</span></span>
     </label>` : '';
-  const vitals = vitalsText(soap.vitals);
+  const problems = soap.problems.map((pr, i) => `#${i + 1} ${pr.name}${pr.custom ? '（不在清單）' : ''}${r.conditions.some((c) => c.name === pr.name) ? '（已在清單）' : ''}`).join('\n');
   const items = [
     section('chief', 'S 主訴', soap.chief_complaint, r.chief_complaint.trim()),
     section('history', 'S 現病史', soap.history, r.history.trim()),
-    section('vitals', 'O 生命徵象', vitals, false),
     section('exam', 'O 身體檢查／檢驗', soap.exam, r.exam.trim()),
-    ...soap.problems.map((pr, i) => {
-      const exists = r.conditions.some((c) => c.name === pr.name);
-      return section(`problem-${i}`, `問題：${pr.name}${pr.custom ? '（不在清單）' : ''}`,
-        [pr.assessment && `A：${pr.assessment}`, pr.plan && `P：${pr.plan}`].filter(Boolean).join('\n') || '（只加入問題）', exists);
-    }),
+    section('problems', 'A 問題清單', problems, false),
+    section('assessment', 'A 評估', soap.assessment, r.assessment.trim()),
+    section('plan', 'P 計畫', soap.plan, r.plan.trim()),
   ].filter(Boolean);
   $('#voiceBody').innerHTML = `
     <div class="voice-preview">
       ${items.length ? items.join('') : '<p class="muted-text">逐字稿中沒有可以整理的內容。</p>'}
       <details class="voice-transcript"><summary>看逐字稿</summary><p>${escapeHtml(transcript)}</p></details>
-      <p class="voice-note">AI 只整理錄音中說到的內容，請確認後再填入；生命徵象只會填入空白的欄位。</p>
+      <p class="voice-note">AI 只整理錄音中說到的內容，請確認後再填入；處方請從推薦藥品採用。</p>
       <div class="dialog-actions">
         <button type="button" class="secondary-button" id="voiceRetry">${icon('mic')}重新錄音</button>
         <button type="button" class="primary-button" id="voiceApply" ${items.length ? '' : 'disabled'}>${icon('check')}填入勾選的內容</button>
@@ -1694,30 +1634,33 @@ function renderVoicePreview() {
 
 const appendText = (current, add) => (current.trim() ? `${current.trimEnd()}\n${add}` : add);
 
-function applyVoice() {
+async function applyVoice() {
   const { soap } = voice.result;
   const r = rx.record;
   const on = (key) => $(`[data-voice="${key}"]`)?.checked;
-  if (on('chief')) $('#rChief').value = appendText($('#rChief').value, soap.chief_complaint);
-  if (on('history')) $('#rHistory').value = appendText($('#rHistory').value, soap.history);
-  if (on('exam')) $('#rExam').value = appendText($('#rExam').value, soap.exam);
-  if (on('vitals')) VITALS.forEach((k) => { const el = $(`[data-vital="${k}"]`); if (soap.vitals[k] && !el.value.trim()) el.value = soap.vitals[k]; });
-  soap.problems.forEach((pr, i) => {
-    if (!on(`problem-${i}`)) return;
-    const existing = r.conditions.find((c) => c.name === pr.name);
-    if (existing) {
-      if (pr.assessment) existing.assessment = appendText(existing.assessment || '', pr.assessment);
-      if (pr.plan) existing.plan = appendText(existing.plan || '', pr.plan);
-    } else {
-      addProblem(pr.name, { source: 'voice', icd10: pr.icd10, custom: pr.custom, assessment: pr.assessment, plan: pr.plan });
-    }
-  });
+  const fill = (sel, value, key) => { if (on(key)) $(sel).value = appendText($(sel).value, value); };
+  fill('#rChief', soap.chief_complaint, 'chief');
+  fill('#rHistory', soap.history, 'history');
+  fill('#rExam', soap.exam, 'exam');
+  fill('#rAssessment', soap.assessment, 'assessment');
+  fill('#rPlan', soap.plan, 'plan');
   voiceDialog.close();
+  if (on('problems')) {
+    soap.problems.forEach((pr) => addProblem(pr.name, { source: 'voice', icd10: pr.icd10, custom: pr.custom }));
+    // 問題清單以語音整理的為準：關鍵字另外抓到的（例如「咳嗽」已含在上呼吸道感染）放到「已移除」，需要時可一鍵復原
+    try {
+      const keep = new Set(r.conditions.map((c) => c.name));
+      const { conditions } = await api('/api/detect', jsonBody({ text: recordText() }));
+      const skip = conditions.map((c) => c.name).filter((n) => !keep.has(n));
+      r.removed_conditions = [...new Set([...r.removed_conditions, ...skip])];
+    } catch { /* 偵測失敗就照一般流程 */ }
+  }
   renderConditions();
   scheduleSave();
-  detectConditions();
+  await detectConditions();
   refreshRecommendations();
   showToast('已填入語音整理的內容，請檢查後修改');
+  $('#soapSTitle').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 $('#voiceVisitButton').addEventListener('click', openVoiceDialog);
