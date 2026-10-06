@@ -11,7 +11,7 @@
 | [產品規格_新手家醫看診助手.md](產品規格_新手家醫看診助手.md) | 需求的唯一依據：Persona、功能 F-01～F-10 與驗收條件、流程、技術與 AI 規劃、時程（v0.2） |
 | [PRODUCT.md](PRODUCT.md) | 給設計工具 impeccable 讀的產品脈絡：使用者、使用情境、定位、產品原則 |
 | [DESIGN.md](DESIGN.md) | 視覺設計系統「臨床手札」：色彩、字體、元件與規則 |
-| [部署指南_Azure.md](部署指南_Azure.md) | 部署到 Azure App Service 給醫師試用的步驟 |
+| [部署指南_Azure.md](部署指南_Azure.md) | 部署到 Azure App Service 給醫師試用的步驟、目前的部署設定與免費方案限制 |
 | [驗證清單_健保藥品.md](驗證清單_健保藥品.md) | 健保給付藥品清單的人工核對步驟（對照健保署官網） |
 
 ## 功能進度
@@ -22,7 +22,8 @@
 | 學習庫 AI：圖片辨識、語音轉逐字稿、自動帶入來源、語意搜尋 | ✅ |
 | 病歷、病灶偵測、用藥推薦、回饋、過敏排除、藥品卡 | ✅ |
 | 衛教單：從病歷或主題產生 AI 草稿、直接編輯、醫師確認、下載圖片、存到學習庫 | ✅ |
-| AI 衛教圖（Microsoft MAI-Image-2.6） | ✅ |
+| AI 衛教圖（Microsoft MAI-Image-2.6） | ✅（使用流程待討論調整） |
+| 雲端試用版：https://tsuchedaily.azurewebsites.net（Azure App Service F1，需共用密碼） | ✅ 2026-10-06 上線 |
 
 ## 啟動
 
