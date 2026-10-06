@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新手家醫看診助手｜個人專題規劃</title>
+
+<!-- 字體：與產品前端相同（Noto Serif TC 標題；Source Sans 3 + Noto Sans TC 內文） -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================================
+   THEME TOKENS
+   直接沿用產品 DESIGN.md「臨床手札」：紙、墨、鉛筆三色＋單一處方簽藍。
+   改這裡就能改整份簡報的顏色。
+   =========================================================== */
+:root {
+  --stage-bg: #e9e5dc;          /* 投影時舞台外的留白 */
+  --slide-bg: #f5f3ee;          /* notebook-paper 手札紙 */
+  --paper: #f5f3ee;
+  --surface: #ffffff;           /* sheet-white 紙頁白 */
+  --ink: #16232c;               /* notebook-ink 手札墨 */
+  --ink-2: #3a4a55;             /* graphite */
+  --muted: #5f6b74;             /* pencil-grey */
+  --faint: #66717a;             /* faded-pencil */
+  --mark: #a3acb2;              /* 非文字裝飾 */
+  --line: #e4dfd5;
+  --line-2: #eeeae2;
+  --accent: #1f5e8c;            /* 處方簽藍：只給「目前位置／重點動作」 */
+  --accent-soft: #e6eef5;
+  --ok: #2a7262;  --ok-soft: #e5f2ee;
+  --warn: #93600f; --warn-soft: #fbf0dc;
+  --danger: #b4432f; --danger-soft: #fbe9e5;
+
+  /* 三個功能的主題色相（與產品「主題色由名稱雜湊」同公式：低飽和） */
+  --h-lib: 208;   /* 學習庫 */
+  --h-rx: 158;    /* 病歷與開藥 */
+  --h-edu: 32;    /* 衛教單 */
+
+  --serif: "Noto Serif TC", "Songti TC", serif;
+  --sans: "Source Sans 3", "Noto Sans TC", "PingFang TC", sans-serif;
+
+  --shadow-rest: 0 1px 1px rgba(22,35,44,.04), 0 2px 4px -1px rgba(22,35,44,.05), 0 8px 18px -10px rgba(22,35,44,.16);
+  --shadow-lift: 0 1px 2px rgba(22,35,44,.04), 0 24px 56px -20px rgba(22,35,44,.26);
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===========================================================
+   FIXED 16:9 STAGE — viewport-base.css（完整內容，勿刪）
+   =========================================================== */
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--slide-bg, #fff); }
+.slide { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: block; visibility: hidden; opacity: 0; pointer-events: none; background: var(--slide-bg, #fff); }
+.slide.active, .slide.visible { visibility: visible; opacity: 1; pointer-events: auto; z-index: 1; }
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+.deck-controls { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 1000; }
+@media print {
+  html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+  .deck-viewport { position: static; overflow: visible; background: #fff; }
+  .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+  .slide { position: relative; display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always; }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  .deck-controls { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
+
+/* ===========================================================
+   BASE TYPOGRAPHY（1920×1080 設計尺寸）
+   =========================================================== */
+.slide { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; }
+.icon { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.frame { position: absolute; left: 128px; right: 128px; top: 96px; bottom: 120px; }
+.h2 { font: 700 76px/1.2 var(--serif); letter-spacing: .01em; }
+.lede { margin-top: 18px; font-size: 32px; line-height: 1.5; color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+
+/* 每頁底部資訊列（真實簡報 chrome） */
+.foot { position: absolute; left: 128px; right: 128px; bottom: 44px; display: flex; justify-content: space-between; align-items: center; font-size: 21px; color: var(--faint); }
+.foot .brand { display: flex; align-items: center; gap: 12px; color: var(--ink-2); font-weight: 600; }
+.foot .brand i { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--ink); color: #fff; font-size: 18px; }
+.foot .note { color: var(--faint); }
+
+/* 白色紙卡（Resting Sheet） */
+.sheet { background: var(--surface); border-radius: 16px; box-shadow: var(--shadow-rest); }
+
+/* 主題色工具：在元素上設 --h */
+.tint { background: hsl(var(--h) 35% 94%); color: hsl(var(--h) 32% 26%); }
+.dot { width: 14px; height: 14px; border-radius: 50%; background: hsl(var(--h) 40% 52%); flex: none; }
+
+/* 膠囊 */
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 22px; border-radius: 999px; font-size: 24px; font-weight: 600; background: var(--surface); color: var(--ink-2); box-shadow: 0 1px 2px rgba(22,35,44,.06), inset 0 0 0 1px var(--line); }
+.pill.ink { background: var(--ink); color: #fff; box-shadow: none; }
+.pill.warn { background: var(--warn-soft); color: var(--warn); box-shadow: none; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); box-shadow: none; }
+
+/* 截圖框：紙頁浮在紙上 */
+.shot { border-radius: 16px; overflow: hidden; background: var(--surface); box-shadow: var(--shadow-lift), 0 0 0 1px rgba(22,35,44,.05); }
+.shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: left top; max-width: none; max-height: none; }
+
+/* ===========================================================
+   ANIMATION：唯一曲線 var(--ease)，浮起＋淡入
+   在元素上設 style="--d:3" 控制出場順序
+   =========================================================== */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s var(--ease), transform .7s var(--ease); transition-delay: calc(var(--d, 0) * 90ms + 80ms); }
+.slide.visible .reveal { opacity: 1; transform: none; }
+.lift { opacity: 0; transform: translateY(40px) rotate(var(--r, 0deg)) scale(.98); transition: opacity .9s var(--ease), transform .9s var(--ease); transition-delay: calc(var(--d, 0) * 110ms + 150ms); }
+.slide.visible .lift { opacity: 1; transform: rotate(var(--r, 0deg)); }
+
+/* ===========================================================
+   01 COVER
+   =========================================================== */
+.cover-brand { display: flex; align-items: center; gap: 18px; font-size: 26px; color: var(--muted); }
+.cover-brand i { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 18px; background: var(--ink); color: #fff; font-size: 32px; }
+.cover-title { margin-top: 64px; font: 900 156px/1.1 var(--serif); letter-spacing: .02em; }
+.cover-sub { margin-top: 36px; font-size: 38px; line-height: 1.5; color: var(--ink-2); }
+.cover-pills { margin-top: 48px; display: flex; gap: 16px; }
+.cover-pills .pill { font-size: 28px; padding: 14px 28px; }
+.cover-pills .pill .icon { color: hsl(var(--h) 40% 42%); font-size: 30px; }
+.cover-meta { position: absolute; left: 0; bottom: 0; display: flex; gap: 40px; font-size: 26px; color: var(--muted); }
+.cover-meta b { color: var(--ink); font-weight: 600; }
+.cover-stack { position: absolute; right: 0; top: 40px; width: 860px; height: 820px; }
+.cover-stack .shot { position: absolute; width: 640px; height: 400px; }
+
+/* ===========================================================
+   02 PROBLEM CARDS
+   =========================================================== */
+.cards3 { margin-top: 72px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.pcard { padding: 48px 44px 44px; min-height: 520px; display: flex; flex-direction: column; }
+.pcard .badge { display: grid; place-items: center; width: 84px; height: 84px; border-radius: 22px; font-size: 42px; }
+.pcard h3 { margin-top: 36px; font: 700 46px/1.3 var(--serif); }
+.pcard p { margin-top: 18px; font-size: 28px; line-height: 1.55; color: var(--ink-2); }
+.pcard blockquote { margin-top: auto; padding-top: 28px; border-top: 1px solid var(--line-2); font-size: 25px; line-height: 1.6; color: var(--muted); }
+
+/* ===========================================================
+   03 POSITIONING FLOW
+   =========================================================== */
+.flow { margin-top: 96px; display: flex; align-items: center; gap: 28px; }
+.node { padding: 44px 40px; height: 330px; display: flex; flex-direction: column; justify-content: center; }
+.node .tag { font-size: 24px; color: var(--muted); font-weight: 600; letter-spacing: .08em; }
+.node h3 { margin-top: 14px; font: 700 52px/1.25 var(--serif); }
+.node p { margin-top: 18px; font-size: 28px; line-height: 1.5; color: var(--ink-2); }
+.node.main { background: var(--ink); color: #fff; box-shadow: var(--shadow-lift); }
+.node.main .tag, .node.main p { color: #c9d2d8; }
+.arrow { flex: none; font-size: 56px; color: var(--mark); }
+.flow-note { margin-top: 72px; font: 600 40px/1.5 var(--serif); color: var(--ink); }
+.flow-note em { font-style: normal; background: linear-gradient(transparent 62%, var(--accent-soft) 62%); }
+
+/* ===========================================================
+   04 DAY TIMELINE
+   =========================================================== */
+.day { margin-top: 88px; position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.moment { overflow: hidden; }
+.moment .top { height: 190px; padding: 36px 40px; display: flex; justify-content: space-between; align-items: flex-start; }
+.moment .top .icon { font-size: 76px; color: hsl(var(--h) 38% 40%); stroke-width: 1.6; }
+.moment .when { font-size: 26px; font-weight: 700; letter-spacing: .06em; }
+.moment .body { padding: 36px 40px 44px; }
+.moment h3 { font: 700 50px/1.25 var(--serif); }
+.moment p { margin-top: 16px; font-size: 29px; line-height: 1.55; color: var(--ink-2); }
+.loop { margin-top: 40px; display: flex; align-items: center; gap: 20px; padding: 26px 36px; border-radius: 999px; border: 1.5px dashed #d3cbbd; font-size: 29px; color: var(--ink-2); }
+.loop .icon { font-size: 38px; color: var(--accent); }
+
+/* ===========================================================
+   05–07 FEATURE + SCREENSHOT
+   =========================================================== */
+.feat { margin-top: 72px; display: grid; grid-template-columns: 600px 1fr; gap: 72px; align-items: start; }
+.steps { display: grid; gap: 40px; padding-top: 12px; }
+.step { display: grid; grid-template-columns: 64px 1fr; gap: 26px; align-items: start; }
+.step .n { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; font: 700 28px var(--sans); }
+.step h4 { font-size: 34px; font-weight: 700; line-height: 1.35; margin-top: 6px; }
+.step p { margin-top: 8px; font-size: 26px; line-height: 1.55; color: var(--muted); }
+.feat .shot { width: 984px; height: 615px; }
+.guard { margin-top: 44px; display: flex; align-items: flex-start; gap: 16px; padding: 22px 26px; border-radius: 12px; background: var(--warn-soft); color: var(--warn); font-size: 25px; line-height: 1.5; font-weight: 600; }
+.guard .icon { font-size: 30px; margin-top: 2px; }
+
+/* ===========================================================
+   08 SOLUTION TABLE
+   =========================================================== */
+.sol { margin-top: 56px; display: grid; gap: 22px; }
+.sol .head, .sol .row { display: grid; grid-template-columns: 300px 500px 1fr; gap: 40px; align-items: center; }
+.sol .head { padding: 0 44px; font-size: 22px; font-weight: 600; letter-spacing: .14em; color: var(--faint); }
+.sol .row { padding: 34px 44px; }
+.sol .name { display: flex; align-items: center; gap: 16px; font: 700 42px/1.2 var(--serif); }
+.sol .name .dot { width: 16px; height: 16px; }
+.sol .what { font-size: 28px; line-height: 1.55; color: var(--ink-2); }
+.sol .tech { display: flex; flex-wrap: wrap; gap: 12px; }
+.sol .tech .pill { font-size: 23px; padding: 8px 18px; }
+.stackline { margin-top: 34px; display: flex; gap: 48px; padding: 0 44px; font-size: 26px; color: var(--muted); }
+.stackline b { color: var(--ink); font-weight: 600; margin-left: 10px; }
+
+/* ===========================================================
+   09 AI TILES
+   =========================================================== */
+.ai4 { margin-top: 64px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+.ai { padding: 40px 36px; display: flex; flex-direction: column; min-height: 500px; }
+.ai .ico { display: grid; place-items: center; width: 76px; height: 76px; border-radius: 20px; background: var(--accent-soft); color: var(--accent); font-size: 38px; }
+.ai .role { margin-top: 30px; font-size: 24px; font-weight: 600; color: var(--muted); letter-spacing: .08em; }
+.ai .model { margin-top: 8px; font-size: 28px; font-weight: 700; line-height: 1.3; white-space: nowrap; }
+.ai .use { margin-top: 18px; font-size: 27px; line-height: 1.55; color: var(--ink-2); }
+.ai .when { margin-top: auto; min-height: 104px; padding-top: 22px; border-top: 1px solid var(--line-2); font-size: 23px; line-height: 1.5; color: var(--muted); }
+.ai-foot { margin-top: 36px; display: flex; gap: 16px; align-items: center; font-size: 26px; color: var(--ink-2); }
+
+/* ===========================================================
+   10 ARCHITECTURE（絕對座標，方便畫連線）
+   =========================================================== */
+.arch { position: absolute; inset: 0; }
+.box { position: absolute; padding: 26px 30px; display: flex; flex-direction: column; justify-content: center; }
+.box .bt { display: flex; align-items: center; gap: 14px; font-size: 32px; font-weight: 700; }
+.box .bt .icon { font-size: 34px; color: var(--accent); }
+.box .bs { margin-top: 10px; font-size: 23px; line-height: 1.5; color: var(--muted); }
+.box.core { background: var(--ink); color: #fff; box-shadow: var(--shadow-lift); }
+.box.core .bt .icon { color: #9fc3df; }
+.box.core .bs { color: #c9d2d8; }
+.box.src { background: transparent; box-shadow: none; border: 1.5px dashed #d3cbbd; }
+.wires { position: absolute; inset: 0; width: 1920px; height: 1080px; max-width: none; max-height: none; pointer-events: none; }
+.wires path { fill: none; stroke: #9aa4ab; stroke-width: 2.5; stroke-dasharray: 1400; stroke-dashoffset: 1400; transition: stroke-dashoffset 1.2s var(--ease) .5s; }
+.slide.visible .wires path { stroke-dashoffset: 0; }
+.wlabel { position: absolute; font-size: 20px; color: var(--faint); background: var(--paper); padding: 2px 8px; }
+.deploy { position: absolute; left: 128px; top: 936px; display: flex; align-items: center; gap: 16px; font-size: 26px; color: var(--ink-2); }
+.deploy .icon { font-size: 32px; color: var(--accent); }
+
+/* ===========================================================
+   11 CLOSING
+   =========================================================== */
+.close-grid { margin-top: 8px; display: grid; grid-template-columns: 1fr 640px; gap: 96px; }
+.close-title { font: 900 104px/1.15 var(--serif); }
+.rules { margin-top: 56px; display: grid; gap: 30px; }
+.rule { display: flex; align-items: flex-start; gap: 22px; font-size: 32px; line-height: 1.5; color: var(--ink-2); }
+.rule .icon { flex: none; margin-top: 6px; font-size: 34px; color: var(--ok); stroke-width: 2.4; }
+.plan { padding: 48px 48px 40px; align-self: start; margin-top: 24px; }
+.plan h3 { font: 700 38px var(--serif); }
+.ms { margin-top: 36px; display: grid; gap: 34px; position: relative; }
+.ms::before { content: ""; position: absolute; left: 13px; top: 18px; bottom: 64px; border-left: 2px solid var(--line); }
+.mi { display: grid; grid-template-columns: 28px 1fr; gap: 26px; position: relative; }
+.mi .pt { width: 28px; height: 28px; margin-top: 6px; border-radius: 50%; background: var(--surface); border: 3px solid var(--mark); }
+.mi.now .pt { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 0 6px var(--accent-soft); }
+.mi .d { font-size: 30px; font-weight: 700; }
+.mi .t { margin-top: 4px; font-size: 26px; line-height: 1.5; color: var(--muted); }
+.thanks { position: absolute; right: 0; bottom: 0; font: 700 56px var(--serif); color: var(--ink); }
+
+/* ===========================================================
+   PRESENTER CHROME（舞台外：進度條、講稿面板、編輯）
+   =========================================================== */
+.progress { position: fixed; left: 0; top: 0; height: 4px; background: var(--accent); z-index: 1000; transition: width .4s var(--ease); }
+.notes-panel { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); width: min(1100px, 92vw); max-height: 38vh; overflow: auto; padding: 18px 24px; border-radius: 14px; background: rgba(22,35,44,.94); color: #eef2f4; font: 16px/1.7 var(--sans); white-space: pre-wrap; z-index: 1001; display: none; }
+.notes-panel.show { display: block; }
+.notes-panel b { color: #9fc3df; }
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle { position: fixed; top: 16px; left: 16px; z-index: 10001; padding: 8px 14px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font: 600 14px var(--sans); opacity: 0; pointer-events: none; transition: opacity .3s; cursor: pointer; }
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { background: var(--accent); }
+body.editing [data-edit] { outline: 1.5px dashed rgba(31,94,140,.45); outline-offset: 4px; cursor: text; }
+.notes { display: none; }
+</style>
+</head>
+<body>
+
+<!-- Lucide 圖示（與產品前端同一套 sprite，另補架構圖所需） -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-clipboard-pen" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5.5"/><path d="M4 13.5V6a2 2 0 0 1 2-2h2"/><path d="M13.378 15.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></symbol>
+  <symbol id="i-file-heart" viewBox="0 0 24 24"><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M2.62 13.8A2.25 2.25 0 1 1 6 10.836a2.25 2.25 0 1 1 3.38 2.966l-2.626 2.856a.998.998 0 0 1-1.507 0z"/><path d="M4 6.005V4a2 2 0 0 1 2-2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-1.9-1.376"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></symbol>
+  <symbol id="i-pill" viewBox="0 0 24 24"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></symbol>
+  <symbol id="i-shield-alert" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></symbol>
+  <symbol id="i-triangle-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-type" viewBox="0 0 24 24"><path d="M12 4v16"/><path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2"/><path d="M9 20h6"/></symbol>
+  <symbol id="i-audio-lines" viewBox="0 0 24 24"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></symbol>
+  <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></symbol>
+  <symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01"/><path d="M6 18h.01"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></symbol>
+  <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M12 2 20 7H4z"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+</svg>
+
+<div class="progress" id="progress"></div>
+<div class="notes-panel" id="notesPanel"></div>
+<div class="edit-hotzone" id="editHotzone"></div>
+<button class="edit-toggle" id="editToggle" title="編輯模式（E）">編輯文字</button>
+
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage">
+
+<!-- =========================================================
+     01 封面
+     ========================================================= -->
+<section class="slide active" data-title="封面">
+  <div class="frame">
+    <div class="cover-brand reveal" style="--d:0"><i><svg class="icon" style="stroke-width:2.4"><use href="#i-plus"/></svg></i><span data-edit>個人專題規劃</span></div>
+    <h1 class="cover-title reveal" style="--d:1" data-edit>新手家醫<br>看診助手</h1>
+    <p class="cover-sub reveal" style="--d:2" data-edit>給剛上門診的家醫科醫師，<br>一個看診輔助與學習工具。</p>
+    <div class="cover-pills reveal" style="--d:3">
+      <span class="pill" style="--h:var(--h-lib)"><svg class="icon"><use href="#i-book-open"/></svg>學習庫</span>
+      <span class="pill" style="--h:var(--h-rx)"><svg class="icon"><use href="#i-clipboard-pen"/></svg>病歷與開藥</span>
+      <span class="pill" style="--h:var(--h-edu)"><svg class="icon"><use href="#i-file-heart"/></svg>衛教單</span>
+    </div>
+    <div class="cover-meta reveal" style="--d:4"><span>提案人　<b data-edit>黃子哲</b></span><span class="num">2026.10.08</span></div>
+    <div class="cover-stack" aria-hidden="true">
+      <div class="shot lift" style="--r:-5deg; --d:1; left:40px; top:30px"><img src="assets/library-topics.jpg" alt=""></div>
+      <div class="shot lift" style="--r:3deg; --d:2; left:210px; top:250px"><img src="assets/records.jpg" alt=""></div>
+      <div class="shot lift" style="--r:-1.5deg; --d:3; left:90px; top:440px"><img src="assets/edu-sheet2.jpg" alt="" style="object-position: 60% top"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="note">練習資料，非臨床建議</span><span class="num">01 / 11</span></div>
+  <aside class="notes">（15 秒）
+大家好，我是黃子哲。我的專題是「新手家醫看診助手」，給剛開始看門診的家醫科醫師使用。／它有三個功能：學習庫、病歷與開藥、衛教單。／裡面的病例都是練習用的假資料。</aside>
+</section>
+
+<!-- =========================================================
+     02 專題目的：要解決的問題
+     ========================================================= -->
+<section class="slide" data-title="問題">
+  <div class="frame">
+    <h2 class="h2 reveal" style="--d:0" data-edit>新手家醫最常卡住的三個時刻</h2>
+    <p class="lede reveal" style="--d:1" data-edit>訪談 3 位醫師（其中 1 位為腸胃科）後整理</p>
+    <div class="cards3">
+      <article class="sheet pcard reveal" style="--d:2; --h:var(--h-lib)">
+        <div class="badge tint"><svg class="icon"><use href="#i-image"/></svg></div>
+        <h3 data-edit>筆記散落，<br>要用時找不到</h3>
+        <p data-edit>期刊圖表存在手機相簿和備忘錄，分類靠自己。</p>
+        <blockquote data-edit>「那些圖片…需要查的時候，就是反覆的拿出來看」</blockquote>
+      </article>
+      <article class="sheet pcard reveal" style="--d:3; --h:var(--h-rx)">
+        <div class="badge tint"><svg class="icon"><use href="#i-pill"/></svg></div>
+        <h3 data-edit>少見病灶，<br>選藥靠經驗</h3>
+        <p data-edit>家醫科問題很廣，不常遇到的病灶不容易想到可用的藥。</p>
+        <blockquote data-edit>「病歷可以抓到這個病人有哪些症狀、可能需要哪些藥」</blockquote>
+      </article>
+      <article class="sheet pcard reveal" style="--d:4; --h:var(--h-edu)">
+        <div class="badge tint"><svg class="icon"><use href="#i-message"/></svg></div>
+        <h3 data-edit>醫囑太長，<br>長輩聽不懂</h3>
+        <p data-edit>藥名、用法一長串，病人回家照著做很難。</p>
+        <blockquote data-edit>「最終你還是要用病人聽得懂的話講給他聽」</blockquote>
+      </article>
+    </div>
+  </div>
+  <div class="foot"><span class="brand"><i><svg class="icon" style="stroke-width:2.4"><use href="#i-plus"/></svg></i>新手家醫看診助手</span><span class="num">02 / 11</span></div>
+  <aside class="notes">（35 秒）
+我訪談了三位醫師，整理出新手家醫最常卡住的三個時刻。／
+第一，筆記散落。期刊圖表存在手機相簿和備忘錄，要用的時候找不到。／
+第二，家醫科的問題很廣，遇到少見的病灶，不容易馬上想到可以用哪些藥。／
+第三，醫囑和藥名太長，長輩病人聽不懂，回家也很難照著做。</aside>
+</section>
+
+<!-- =========================================================
+     03 定位：OpenEvidence 的下游
+     ========================================================= -->
+<section class="slide" data-title="定位">
+  <div class="frame">
+    <h2 class="h2 reveal" style="--d:0" data-edit>不做另一個醫學問答 AI</h2>
+    <p class="lede reveal" style="--d:1" data-edit>醫師已經在用 OpenEvidence 查證，它做得很好。我接在它的下游。</p>
+    <div class="flow">
+      <div class="sheet node reveal" style="--d:2; width:480px">
+        <span class="tag">查證</span>
+        <h3>OpenEvidence</h3>
+        <p data-edit>醫師已在使用，<br>查文獻、看出處</p>
+      </div>
+      <svg class="icon arrow reveal" style="--d:3"><use href="#i-arrow-right"/></svg>
+      <div class="node main reveal" style="--d:3; flex:1; border-radius:16px">
+        <span class="tag">本專題</span>
+        <h3>看診助手</h3>
+        <p data-edit>收藏所學 · 寫病歷時的用藥候選 · 衛教單</p>
+      </div>
+      <svg class="icon arrow reveal" style="--d:4"><use href="#i-arrow-right"/></svg>
+      <div class="sheet node reveal" style="--d:5; width:400px">
+        <span class="tag">交付</span>
+        <h3>病人</h3>
+        <p data-edit>以長輩為主，<br>需要大字、少字、多圖</p>
+      </div>
+    </div>
+    <p class="flow-note reveal" style="--d:6" data-edit>把醫師查到、學到的，變成<em>自己的知識庫</em>；<br>而且越用，越懂這位醫師的用藥習慣。</p>
+  </div>
+  <div class="foot"><span class="brand"><i><svg class="icon" style="stroke-width:2.4"><use href="#i-plus"/></svg></i>新手家醫看診助手</span><span class="num">03 / 11</span></div>
+  <aside class="notes">（30 秒）
+醫師告訴我，他們查資料已經在用 OpenEvidence，而且做得很好。／所以我不再做一個醫學問答 AI，而是接在它的下游：／
+把醫師查到、學到的東西收進自己的知識庫；寫病歷時給出用藥候選；最後產生病人看得懂的衛教單。／
+系統會記住醫師採用過哪些藥，所以越用，越貼近這位醫師的習慣。</aside>
+</section>
+
+<!-- =========================================================
+     04 使用情境：一天三個時刻
+     ========================================================= -->
+<section class="slide" data-title="使用情境">
+  <div class="frame">
+    <h2 class="h2 reveal" style="--d:0" data-edit>使用情境：一天裡的三個時刻</h2>
+    <div class="day">
+      <article class="sheet moment reveal" style="--d:1; --h:var(--h-lib)">
+        <div class="top tint"><span class="when">通勤・空檔</span><svg class="icon"><use href="#i-book-open"/></svg></div>
+        <div class="body"><h3>學習庫</h3><p data-edit>看到好的期刊圖表就截圖，或錄一段語音，存起來。</p></div>
+      </article>
+      <article class="sheet moment reveal" style="--d:2; --h:var(--h-rx)">
+        <div class="top tint"><span class="when">看診中</span><svg class="icon"><use href="#i-clipboard-pen"/></svg></div>
+        <div class="body"><h3>病歷與開藥</h3><p data-edit>一邊寫病歷，旁邊就列出可以考慮的藥。</p></div>
+      </article>
+      <article class="sheet moment reveal" style="--d:3; --h:var(--h-edu)">
+        <div class="top tint"><span class="when">看診後</span><svg class="icon"><use href="#i-file-heart"/></svg></div>
+        <div class="body"><h3>衛教單</h3><p data-edit>一鍵產生長輩看得懂的圖文衛教，確認後交給病人。</p></div>
+      </article>
+    </div>
+    <div class="loop reveal" style="--d:4"><svg class="icon"><use href="#i-refresh"/></svg><span data-edit>三者串在一起：藥品卡、衛教單可以存回學習庫；採用紀錄讓下次推薦更貼近這位醫師。</span></div>
+  </div>
+  <div class="foot"><span class="brand"><i><svg class="icon" style="stroke-width:2.4"><use href="#i-plus"/></svg></i>新手家醫看診助手</span><span class="num">04 / 11</span></div>
+  <aside class="notes">（30 秒）
+實際使用分成一天裡的三個時刻。／
+通勤或空檔時，把看到的圖表截圖、或錄一段語音，存進學習庫。／
+看診中，一邊寫病歷，旁邊就列出可以考慮的藥。／
+看診後，一鍵產生衛教單，確認後交給病人。／
+三者是串在一起的：藥品卡和衛教單可以存回學習庫，採用紀錄也會讓下次的推薦更準。</aside>
+</section>
+
+<!-- =========================================================
+     05 功能一：學習庫
+     ========================================================= -->
+<section class="slide" data-title="學習庫">
+  <div class="frame" style="--h:var(--h-lib)">
+    <h2 class="h2 reveal" style="--d:0" data-edit>學習庫：用一句話找回來</h2>
+    <div class="feat">
+      <div class="steps">
+        <div class="step reveal" style="--d:1"><span class="n tint">1</span><div><h4 data-edit>三種方式存進來</h4><p data-edit>上傳圖片、寫文字，或直接錄音</p></div></div>
+        <div class="step reveal" style="--d:2"><span class="n tint">2</span><div><h4 data-edit>AI 幫忙整理</h4><p data-edit>擷取圖中文字、語音轉逐字稿，建議標題與主題；看得到的期刊與 DOI 才帶入，不杜撰</p></div></div>
+        <div class="step reveal" style="--d:3"><span class="n tint">3</span><div><h4 data-edit>用一句話搜尋</h4><p data-edit>例如「胃出血嚴重度評估」，依意思比對，不必記得關鍵字</p></div></div>
+      </div>
+      <div class="shot lift" style="--d:2"><img src="assets/c-library.jpg" alt="學習庫畫面：搜尋列、主題索引與最近新增的筆記卡"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand"><i><svg class="icon" style="stroke-width:2.4"><use href="#i-plus"/></svg></i>新手家醫看診助手</span><span class="num">05 / 11</span></div>
+  <aside class="notes">（35 秒）
+先看學習庫。新增筆記有三種方式：上傳圖片、直接打字，或是錄音。／
+AI 會擷取圖片裡的文字、把語音轉成逐字稿，再建議標題和主題。圖上看得到的期刊名稱會自動帶入，看不到就留空，不會亂編。／
+要找的時候，用一句話搜尋就好，例如「胃出血嚴重度評估」。系統比對的是意思，不是字面，所以不用記得當初的關鍵字。</aside>
+</section>
+
+<!-- =========================================================
+     06 功能二：病歷與開藥
+     ========================================================= -->
+<section class="slide" data-title="病歷與開藥">
+  <div class="frame" style="--h:var(--h-rx)">
+    <h2 class="h2 reveal" style="--d:0" data-edit>病歷與開藥：寫病歷，推薦就在旁邊</h2>
+    <div class="feat">
+      <div class="steps">
+        <div class="step reveal" style="--d:1"><span class="n tint">1</span><div><h4 data-edit>偵測病灶</h4><p data-edit>涵蓋 27 個常見家醫問題；關鍵字對照為主，找不到才請 AI</p></div></div>
+        <div class="step reveal" style="--d:2"><span class="n tint">2</span><div><h4 data-edit>列出候選藥</h4><p data-edit>對應藥理類別，排除過敏與「不再推薦」的藥，標示健保</p></div></div>
+        <div class="step reveal" style="--d:3"><span class="n tint">3</span><div><h4 data-edit>醫師按下「採用」</h4><p data-edit>才寫進開藥區；頻率與天數由醫師決定</p></div></div>
+      </div>
+      <div class="shot lift" style="--d:2"><img src="assets/c-records.jpg" alt="病歷與開藥畫面：病歷欄位、本次處方與推薦藥品卡"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand"><i><svg class="icon" style="stroke-width:2.4"><use href="#i-plus"/></svg></i>新手家醫看診助手</span><span class="num">06 / 11</span></div>
+  <aside class="notes">（40 秒）
+第二個是病歷與開藥。醫師寫病歷時，系統會先偵測病灶。目前整理了 27 個常見的家醫問題，主要用關鍵字比對，找不到才請 AI 幫忙。／
+接著對應到藥理類別、列出候選藥，同時排除病人過敏的藥，和醫師標過「不再推薦」的藥。藥品資料來自食藥署和健保署的開放資料，所以也看得出有沒有健保。／
+最重要的是：醫師按下「採用」，才會寫進開藥區；頻率和天數也由醫師決定。</aside>
+</section>
+
+<!-- =========================================================
+     07 功能三：衛教單
+     ========================================================= -->
+<section class="slide" data-title="衛教單">
+  <div class="frame" style="--h:var(--h-edu)">
+    <h2 class="h2 reveal" style="--d:0" data-edit>衛教單：長輩看得懂才算完成</h2>
+    <div class="feat">
+      <div class="steps">
+        <div class="step reveal" style="--d:1"><span class="n tint">1</span><div><h4 data-edit>AI 寫白話草稿</h4><p data-edit>從病歷與本次處方產生，附一張不含文字的衛教插圖</p></div></div>
+        <div class="step reveal" style="--d:2"><span class="n tint">2</span><div><h4 data-edit>醫師修改並確認</h4><p data-edit>點文字就能改，勾選確認後才能交付</p></div></div>
+        <div class="step reveal" style="--d:3"><span class="n tint">3</span><div><h4 data-edit>下載或存回學習庫</h4><p data-edit>大字、條列，附 TFDA 公開的藥丸外觀照</p></div></div>
+        <div class="guard reveal" style="--d:4"><svg class="icon"><use href="#i-shield-alert"/></svg><span data-edit>劑量、頻率、天數由醫師決定，AI 不改；衛教圖不畫藥品，避免混淆。</span></div>
+      </div>
+      <div class="shot lift" style="--d:2"><img src="assets/c-edu.jpg" alt="衛教單畫面：這是什麼問題、怎麼吃藥，附藥丸外觀照"></div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand"><i><svg class="icon" style="stroke-width:2.4"><use href="#i-plus"/></svg></i>新手家醫看診助手</span><span class="num">07 / 11</span></div>
+  <aside class="notes">（35 秒）
+第三個是衛教單。看完診，按一下就能從病歷和這次的處方，產生白話的衛教單草稿，再附一張插圖。／
+醫師可以直接點文字修改，勾選「醫師已確認」之後，才能下載或存回學習庫。／
+安全上有兩個原則：劑量、頻率、天數由醫師決定，AI 不會更改；插圖也不畫藥品，避免病人和真的藥搞混。</aside>
+</section>
+
+<!-- =========================================================
+     08 解決方案：功能 × 技術
+     ========================================================= -->
+<section class="slide" data-title="解決方案">
+  <div class="frame">
+    <h2 class="h2 reveal" style="--d:0" data-edit>解決方案：用哪些技術完成哪些功能</h2>
+    <div class="sol">
+      <div class="head reveal" style="--d:1"><span>功能</span><span>做什麼</span><span>用什麼</span></div>
+      <div class="sheet row reveal" style="--d:2; --h:var(--h-lib)">
+        <div class="name"><span class="dot"></span>學習庫</div>
+        <div class="what" data-edit>圖片辨識、語音逐字稿、主題整理、語意搜尋</div>
+        <div class="tech"><span class="pill">Azure OpenAI 視覺</span><span class="pill">MAI-Transcribe-2</span><span class="pill">Embedding</span></div>
+      </div>
+      <div class="sheet row reveal" style="--d:3; --h:var(--h-rx)">
+        <div class="name"><span class="dot"></span>病歷與開藥</div>
+        <div class="what" data-edit>病灶偵測、藥品推薦、過敏排除、健保標示</div>
+        <div class="tech"><span class="pill">病灶對照表＋GPT</span><span class="pill">TFDA 開放資料</span><span class="pill">健保署開放資料</span></div>
+      </div>
+      <div class="sheet row reveal" style="--d:4; --h:var(--h-edu)">
+        <div class="name"><span class="dot"></span>衛教單</div>
+        <div class="what" data-edit>白話草稿、衛教插圖、下載圖片</div>
+        <div class="tech"><span class="pill">GPT 結構化輸出</span><span class="pill">MAI-Image-2.6</span><span class="pill">html-to-image</span></div>
+      </div>
+    </div>
+    <div class="stackline reveal" style="--d:5"><span>前端<b>原生 HTML／CSS／JS</b></span><span>後端<b>Python・FastAPI</b></span><span>資料庫<b>SQLite</b></span></div>
+  </div>
+  <div class="foot"><span class="brand"><i><svg class="icon" style="stroke-width:2.4"><use href="#i-plus"/></svg></i>新手家醫看診助手</span><span class="num">08 / 11</span></div>
+  <aside class="notes">（40 秒）
+接著用技術來看。／
+學習庫用 Azure OpenAI 的模型辨識圖片，用 MAI-Transcribe-2 把語音轉成文字，再用 Embedding 做語意搜尋。／
+病歷與開藥用我自己整理的病灶對照表，加上食藥署和健保署的開放資料。／
+衛教單用 GPT 產生固定格式的草稿，用 MAI-Image-2.6 畫插圖，再讓醫師下載成圖片。／
+前端是原生的 HTML、CSS、JavaScript，後端是 Python 的 FastAPI，資料存在 SQLite。（時間不夠可省略這句）</aside>
+</section>
+
+<!-- =========================================================
+     09 AI 運用與成本控制
+     ========================================================= -->
+<section class="slide" data-title="AI 運用">
+  <div class="frame">
+    <h2 class="h2 reveal" style="--d:0" data-edit>AI 運用：四個 Azure 模型，只在必要時呼叫</h2>
+    <div class="ai4">
+      <article class="sheet ai reveal" style="--d:1">
+        <div class="ico"><svg class="icon"><use href="#i-sparkles"/></svg></div>
+        <div class="role">對話</div><div class="model">gpt-4o-mini</div>
+        <div class="use" data-edit>圖片文字擷取、摘要、病灶擷取、衛教文字</div>
+        <div class="when" data-edit>上傳或按下產生時一次；藥品簡介每種成分只產生一次</div>
+      </article>
+      <article class="sheet ai reveal" style="--d:2">
+        <div class="ico"><svg class="icon"><use href="#i-search"/></svg></div>
+        <div class="role">語意向量</div><div class="model">text-embedding-3-small</div>
+        <div class="use" data-edit>語意搜尋、相關主題建議</div>
+        <div class="when" data-edit>筆記儲存時算一次；搜尋只算查詢句</div>
+      </article>
+      <article class="sheet ai reveal" style="--d:3">
+        <div class="ico"><svg class="icon"><use href="#i-audio-lines"/></svg></div>
+        <div class="role">語音</div><div class="model">MAI-Transcribe-2</div>
+        <div class="use" data-edit>語音筆記轉逐字稿，轉成台灣正體</div>
+        <div class="when" data-edit>錄音或上傳音檔時一次</div>
+      </article>
+      <article class="sheet ai reveal" style="--d:4">
+        <div class="ico"><svg class="icon"><use href="#i-image"/></svg></div>
+        <div class="role">生圖</div><div class="model">MAI-Image-2.6</div>
+        <div class="use" data-edit>衛教插圖；不畫文字，也不畫藥品</div>
+        <div class="when" data-edit>醫師按下產生時；每份衛教單存檔重複使用</div>
+      </article>
+    </div>
+    <div class="ai-foot reveal" style="--d:5"><span class="pill warn"><svg class="icon"><use href="#i-triangle-alert"/></svg>AI 產生，待醫師確認</span><span data-edit>所有 AI 產出都這樣標示；沒設定金鑰時以示範模式運作。</span></div>
+  </div>
+  <div class="foot"><span class="brand"><i><svg class="icon" style="stroke-width:2.4"><use href="#i-plus"/></svg></i>新手家醫看診助手</span><span class="num">09 / 11</span></div>
+  <aside class="notes">（35 秒）
+AI 的部分我用了四個 Azure 模型：對話用 gpt-4o-mini，語意搜尋用 text-embedding-3-small，語音用 MAI-Transcribe-2，生圖用 MAI-Image-2.6。／
+AI 是依使用量計費的，所以每個呼叫都只在必要時做一次，結果存起來重複使用；例如藥品簡介每種成分只產生一次，衛教圖每份只畫一次。／
+所有 AI 產生的內容，都會標示「AI 產生，待醫師確認」。</aside>
+</section>
+
+<!-- =========================================================
+     10 系統架構
+     ========================================================= -->
+<section class="slide" data-title="系統架構">
+  <div class="frame"><h2 class="h2 reveal" style="--d:0" data-edit>系統架構</h2></div>
+  <div class="arch">
+    <svg class="wires" viewBox="0 0 1920 1080" aria-hidden="true">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#9aa4ab"/></marker></defs>
+      <path d="M440 600 H532" marker-end="url(#ah)" marker-start="url(#ah)"/>
+      <path d="M892 600 H950 V380 H1012" marker-end="url(#ah)"/>
+      <path d="M892 600 H1012" marker-end="url(#ah)"/>
+      <path d="M892 600 H950 V826 H1012" marker-end="url(#ah)"/>
+      <path d="M1528 826 H1428" marker-end="url(#ah)"/>
+    </svg>
+    <div class="sheet box reveal" style="--d:1; left:128px; top:520px; width:312px; height:160px">
+      <div class="bt"><svg class="icon"><use href="#i-monitor"/></svg>醫師的瀏覽器</div>
+      <div class="bs">原生 HTML／CSS／JS<br>桌機看診・手機學習</div>
+    </div>
+    <div class="box core reveal" style="--d:2; left:540px; top:490px; width:352px; height:220px; border-radius:16px">
+      <div class="bt"><svg class="icon"><use href="#i-server"/></svg>FastAPI 後端</div>
+      <div class="bs">Python 3.13<br>病灶偵測・推薦排序<br>去識別化提醒</div>
+    </div>
+    <div class="sheet box reveal" style="--d:3; left:1020px; top:305px; width:404px; height:150px">
+      <div class="bt"><svg class="icon"><use href="#i-database"/></svg>SQLite</div>
+      <div class="bs">學習庫、病歷、推薦回饋、過敏</div>
+    </div>
+    <div class="sheet box reveal" style="--d:4; left:1020px; top:490px; width:404px; height:220px">
+      <div class="bt"><svg class="icon"><use href="#i-sparkles"/></svg>Azure AI</div>
+      <div class="bs">gpt-4o-mini<br>text-embedding-3-small<br>MAI-Transcribe-2・MAI-Image-2.6</div>
+    </div>
+    <div class="sheet box reveal" style="--d:5; left:1020px; top:750px; width:404px; height:150px">
+      <div class="bt"><svg class="icon"><use href="#i-pill"/></svg>藥品參考表</div>
+      <div class="bs">唯讀；許可證、ATC、外觀、健保</div>
+    </div>
+    <div class="box src reveal" style="--d:6; left:1532px; top:750px; width:260px; height:150px; padding:22px; border-radius:16px">
+      <div class="bt" style="font-size:26px; gap:10px"><svg class="icon"><use href="#i-landmark"/></svg>政府開放資料</div>
+      <div class="bs" style="font-size:21px">TFDA 4 個資料集<br>健保署用藥品項</div>
+    </div>
+    <span class="wlabel reveal" style="--d:6; left:1436px; top:784px">腳本整理</span>
+    <div class="deploy reveal" style="--d:7"><svg class="icon"><use href="#i-cloud"/></svg><span data-edit>部署：Azure App Service（打包與設定腳本已備妥，10/8 起給受訪醫師試用）</span></div>
+  </div>
+  <div class="foot"><span class="brand"><i><svg class="icon" style="stroke-width:2.4"><use href="#i-plus"/></svg></i>新手家醫看診助手</span><span class="num">10 / 11</span></div>
+  <aside class="notes">（30 秒）
+系統架構是這樣：醫師在瀏覽器操作，網頁透過 API 呼叫 FastAPI 後端。／後端讀寫 SQLite 資料庫，需要時再呼叫 Azure 的 AI。／
+藥品資料是先用 Python 腳本，把政府開放資料整理成一份唯讀的藥品參考表。（時間不夠可省略這句）／
+部署會放在 Azure App Service，受訪醫師打開網址就能試用。</aside>
+</section>
+
+<!-- =========================================================
+     11 界線、時程與結尾
+     ========================================================= -->
+<section class="slide" data-title="結尾">
+  <div class="frame">
+    <div class="close-grid">
+      <div>
+        <h2 class="close-title reveal" style="--d:0" data-edit>系統推薦，<br>醫師決定。</h2>
+        <div class="rules">
+          <div class="rule reveal" style="--d:1"><svg class="icon"><use href="#i-check"/></svg><span data-edit>寫入開藥區、交給病人的內容，都要醫師按下</span></div>
+          <div class="rule reveal" style="--d:2"><svg class="icon"><use href="#i-check"/></svg><span data-edit>不做診斷、不判讀影像、不自動決定劑量</span></div>
+          <div class="rule reveal" style="--d:3"><svg class="icon"><use href="#i-check"/></svg><span data-edit>只用練習假資料與政府開放資料</span></div>
+        </div>
+      </div>
+      <div class="sheet plan reveal" style="--d:3">
+        <h3>接下來</h3>
+        <div class="ms">
+          <div class="mi now"><span class="pt"></span><div><div class="d num">10/08</div><div class="t" data-edit>第一版完成，邀請受訪醫師試用</div></div></div>
+          <div class="mi"><span class="pt"></span><div><div class="d num">10/08 – 10/15</div><div class="t" data-edit>依試用回饋修正；補訪推薦排序與衛教交付方式</div></div></div>
+          <div class="mi"><span class="pt"></span><div><div class="d num">10/15</div><div class="t" data-edit>成果發表與現場操作</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="thanks reveal" style="--d:5">謝謝聆聽</div>
+  </div>
+  <div class="foot"><span class="brand"><i><svg class="icon" style="stroke-width:2.4"><use href="#i-plus"/></svg></i>新手家醫看診助手</span><span class="num">11 / 11</span></div>
+  <aside class="notes">（25 秒）
+最後，這個專題的原則是：系統推薦，醫師決定。／
+寫入開藥區、交給病人的內容，都要醫師按下；不做診斷、不判讀影像、不自動決定劑量；只用練習假資料和政府開放資料。／
+接下來會請受訪醫師試用、依回饋修正，10 月 15 號做成果發表。謝謝大家。</aside>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ===========================================================
+   SLIDE PRESENTATION CONTROLLER
+   方向鍵／空白鍵／PageUp/Down／滑鼠滾輪／觸控滑動換頁
+   N：顯示講稿　F：全螢幕　E：編輯文字
+   =========================================================== */
+class SlidePresentation {
+  constructor() {
+    this.slides = [...document.querySelectorAll('.slide')];
+    this.stage = document.getElementById('deckStage');
+    this.progress = document.getElementById('progress');
+    this.notesPanel = document.getElementById('notesPanel');
+    this.current = 0;
+    this.setupStageScale();
+    this.setupKeyboardNav();
+    this.setupWheelNav();
+    this.setupTouchNav();
+    const fromHash = parseInt(location.hash.slice(1), 10);
+    this.show(Number.isFinite(fromHash) ? fromHash - 1 : 0);
+  }
+
+  /* 把 1920×1080 舞台等比縮放到視窗，置中留邊 */
+  setupStageScale() {
+    const scale = () => {
+      const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+      this.stage.style.transform = `translate(${(innerWidth - 1920 * k) / 2}px, ${(innerHeight - 1080 * k) / 2}px) scale(${k})`;
+    };
+    scale();
+    addEventListener('resize', scale);
+  }
+
+  setupKeyboardNav() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.isContentEditable) return;
+      if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); this.show(this.current + 1); }
+      if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); this.show(this.current - 1); }
+      if (e.key === 'Home') this.show(0);
+      if (e.key === 'End') this.show(this.slides.length - 1);
+      if (e.key === 'n' || e.key === 'N') this.notesPanel.classList.toggle('show');
+      if (e.key === 'f' || e.key === 'F') document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    });
+  }
+
+  setupWheelNav() {
+    let lock = false;
+    addEventListener('wheel', (e) => {
+      if (lock || Math.abs(e.deltaY) < 30) return;
+      lock = true; this.show(this.current + (e.deltaY > 0 ? 1 : -1));
+      setTimeout(() => (lock = false), 700);
+    }, { passive: true });
+  }
+
+  setupTouchNav() {
+    let x0 = null;
+    addEventListener('touchstart', (e) => (x0 = e.touches[0].clientX), { passive: true });
+    addEventListener('touchend', (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 50) this.show(this.current + (dx < 0 ? 1 : -1));
+      x0 = null;
+    });
+  }
+
+  show(i) {
+    this.current = Math.max(0, Math.min(i, this.slides.length - 1));
+    this.slides.forEach((s, n) => {
+      s.classList.toggle('active', n === this.current);
+      s.classList.toggle('visible', n === this.current);
+    });
+    this.progress.style.width = `${((this.current + 1) / this.slides.length) * 100}%`;
+    const note = this.slides[this.current].querySelector('.notes');
+    this.notesPanel.innerHTML = `<b>${this.current + 1}／${this.slides.length}　${this.slides[this.current].dataset.title}</b>\n${note ? note.textContent.trim() : ''}`;
+    history.replaceState(null, '', `#${this.current + 1}`);
+  }
+}
+
+/* ===========================================================
+   INLINE EDITING
+   左上角懸停或按 E 進入編輯；Ctrl/⌘+S 下載修改後的 HTML
+   =========================================================== */
+class InlineEditor {
+  constructor() {
+    this.isActive = false;
+    this.toggle = document.getElementById('editToggle');
+    const hot = document.getElementById('editHotzone');
+    let hide = null;
+    const showBtn = () => { clearTimeout(hide); this.toggle.classList.add('show'); };
+    const hideBtn = () => { hide = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); };
+    hot.addEventListener('mouseenter', showBtn); hot.addEventListener('mouseleave', hideBtn);
+    this.toggle.addEventListener('mouseenter', showBtn); this.toggle.addEventListener('mouseleave', hideBtn);
+    hot.addEventListener('click', () => this.toggleEditMode());
+    this.toggle.addEventListener('click', () => this.toggleEditMode());
+    document.addEventListener('keydown', (e) => {
+      if ((e.key === 'e' || e.key === 'E') && !e.target.isContentEditable) this.toggleEditMode();
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); this.download(); }
+    });
+  }
+  toggleEditMode() {
+    this.isActive = !this.isActive;
+    document.body.classList.toggle('editing', this.isActive);
+    this.toggle.classList.toggle('active', this.isActive);
+    this.toggle.textContent = this.isActive ? '完成編輯' : '編輯文字';
+    document.querySelectorAll('[data-edit]').forEach((el) => (el.contentEditable = this.isActive));
+  }
+  download() {
+    if (this.isActive) this.toggleEditMode();
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([html], { type: 'text/html' })), download: 'index.html' });
+    a.click(); URL.revokeObjectURL(a.href);
+  }
+}
+
+new SlidePresentation();
+new InlineEditor();
+</script>
+</body>
+</html>
