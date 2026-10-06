@@ -215,6 +215,54 @@ class AIService:
         )
         return self.chat_json(system, text[:6000], max_tokens=1200)
 
+    # ---- 病歷：看診錄音 → SOAP ----
+    def soap_from_transcript(self, transcript: str, names: list[str]) -> tuple[dict | None, dict]:
+        system = (
+            "你協助家醫科門診醫師，把看診錄音的逐字稿整理成 SOAP 病歷（Modified POMR：S、O 各一段，A、P 依問題分開）。"
+            "逐字稿包含醫師與病人的對話，可能有口語贅字與語音辨識的同音錯字：請依醫學語境修正明顯錯字"
+            "（例：變桃腺→扁桃腺、肺陰→肺音、涼血壓→量血壓、38度板→38度半），但不可改變原意。"
+            "只整理逐字稿中明確出現的內容，不可推測或補上沒說到的症狀、檢查數值、診斷或藥物；沒提到的欄位留空字串。"
+            "chief_complaint：一句話主訴，含持續時間。"
+            "history：現病史（時間經過、伴隨症狀、有意義的陰性症狀如「無咳嗽」、病人自述的發燒度數）、過去病史、目前用藥、過敏、生活史，可引用病人原話。"
+            "vitals：只填醫師量測並說出口的數值（bp 如 142/88、hr、bt、rr、spo2，只填數字）。"
+            "exam：醫師說出的身體檢查與檢驗結果，陽性發現與有意義的陰性發現都要寫。"
+            f"problems：本次處理的所有問題，依嚴重度排序，包含醫師有交代處置的慢性病（例如「高血壓的藥繼續吃」→ 高血壓）。"
+            f"可用病灶名稱：{'、'.join(names)}。同一種病請用可用名稱（例：急性扁桃腺炎、咽喉炎 → 扁桃腺炎／咽喉炎；感冒 → 急性上呼吸道感染）並設 is_catalog=true；"
+            "真的不在清單的才寫簡短繁中病名並設 is_catalog=false。"
+            "每個問題的 assessment 寫醫師的判斷與依據（例：發燒、扁桃腺滲出、無咳嗽，疑細菌性），plan 寫醫師口述的計畫（檢查、用藥、衛教、追蹤）。"
+            "使用繁體中文（台灣用語），醫學名詞與藥名可保留英文。"
+            '回傳 JSON：{"chief_complaint": "", "history": "", "vitals": {"bp": "", "hr": "", "bt": "", "rr": "", "spo2": ""}, '
+            '"exam": "", "problems": [{"name": "", "is_catalog": true, "assessment": "", "plan": ""}]}'
+        )
+        return self.chat_json(system, transcript[:12000], max_tokens=3000)
+
+    # ---- 病歷：AI 參考計畫（醫師自己寫完再對照） ----
+    def plan_suggestions(self, record: dict) -> tuple[dict | None, dict]:
+        system = (
+            "你是家醫科主治醫師，替新手醫師的門診病歷寫一份參考用的醫療計畫（P），供他寫完後對照學習，不是最終醫囑。"
+            "依病歷中的 S、O 與每個問題的 A，針對每個問題分別寫：diagnostic（還需要的檢查或鑑別診斷）、"
+            "therapeutic（治療：藥理類別或常用成分、非藥物治療；不寫具體劑量，避開病人的過敏與病史風險）、"
+            "educational（衛教與告知重點）、follow_up（回診時機與需要立即回診的警訊）、consult（需要轉介或會診時才寫，否則留空）。"
+            "每項 1-3 點，以「；」分隔，簡潔、符合台灣門診常規。藥名一律寫英文學名（例：dextromethorphan、cetirizine），不要音譯成中文。資訊不足以判斷時，寫出需要先確認的事。"
+            '回傳 JSON：{"problems": [{"name": 問題名稱（與輸入相同）, "diagnostic": "", "therapeutic": "", "educational": "", "follow_up": "", "consult": ""}]}'
+        )
+        return self.chat_json(system, json.dumps(record, ensure_ascii=False)[:12000], max_tokens=3000)
+
+    # ---- 病歷：英文版 ----
+    def english_note(self, record: dict) -> tuple[dict | None, dict]:
+        system = (
+            "Translate this Taiwanese family-medicine outpatient chart into a concise English SOAP note (modified POMR). "
+            "Translate faithfully: do not add findings, diagnoses, doses or advice that are not in the input. "
+            "Use standard clinical English and abbreviations (e.g. y/o, F/M, c/o, HPI, PE, BP, QD, BID, TID, PRN). "
+            "Layout (plain text, keep line breaks):\n"
+            "Date / patient line (code, age, sex, allergies: NKDA if none)\n"
+            "S: chief complaint, then HPI\nO: vital signs on one line, then PE / labs\n"
+            "A/P:\n#1 Problem (ICD-10-CM)\n  A: ...\n  P: ... (include the prescriptions linked to this problem: drug, frequency, days)\n"
+            "Omit sections that are empty. "
+            'Return JSON: {"note": "<the English note>"}'
+        )
+        return self.chat_json(system, json.dumps(record, ensure_ascii=False)[:12000], max_tokens=3000)
+
     # ---- 藥品白話簡介 ----
     def drug_summary(self, concept: dict) -> tuple[dict | None, dict]:
         system = (
@@ -338,6 +386,13 @@ class AIService:
             return None
         response = self._chat.embeddings.create(model=azure.embedding_deployment, input=text[:8000])
         return response.data[0].embedding
+
+    def embed_many(self, texts: list[str]) -> list[list[float]] | None:
+        """一次呼叫取得多段文字的向量（病灶語意偵測用）。"""
+        if not self.embedding_ready or not texts:
+            return None
+        response = self._chat.embeddings.create(model=azure.embedding_deployment, input=[t[:2000] for t in texts])
+        return [d.embedding for d in sorted(response.data, key=lambda d: d.index)]
 
     # ---- 圖片生成 ----
     # 兩種 API：gpt-image 系列走 Azure OpenAI 的 images.generate；

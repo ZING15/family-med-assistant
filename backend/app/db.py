@@ -40,10 +40,16 @@ CREATE TABLE IF NOT EXISTS records (
     chief_complaint TEXT NOT NULL DEFAULT '',
     history         TEXT NOT NULL DEFAULT '',
     assessment      TEXT NOT NULL DEFAULT '',
-    conditions      TEXT NOT NULL DEFAULT '[]',        -- JSON：[{name, source: keyword|ai|manual}]
+    conditions      TEXT NOT NULL DEFAULT '[]',        -- JSON：問題清單（POMR）[{name, source: keyword|semantic|ai|manual|voice, icd10, assessment, plan, custom}]
     removed_conditions TEXT NOT NULL DEFAULT '[]',     -- JSON：醫師手動移除、不再自動偵測的病灶
     dismissed       TEXT NOT NULL DEFAULT '[]',        -- JSON：這次不用 [{condition, atc}]
-    prescriptions   TEXT NOT NULL DEFAULT '[]',        -- JSON：開藥區
+    prescriptions   TEXT NOT NULL DEFAULT '[]',        -- JSON：開藥區（每項的 condition 對應問題清單）
+    visit_date      TEXT NOT NULL DEFAULT '',          -- 就診日期（醫師法第 12 條必載）
+    vitals          TEXT NOT NULL DEFAULT '{}',        -- JSON：O 的生命徵象 bp、hr、bt、rr、spo2
+    exam            TEXT NOT NULL DEFAULT '',          -- O：身體檢查與檢驗結果
+    ai_plan         TEXT NOT NULL DEFAULT '{}',        -- JSON：AI 參考計畫（醫師寫完可對照，預設遮蔽）
+    english_note    TEXT NOT NULL DEFAULT '',          -- 完成病歷時產生的英文 SOAP
+    completed_at    TEXT NOT NULL DEFAULT '',
     created_at      TEXT NOT NULL,
     updated_at      TEXT NOT NULL
 );
@@ -91,6 +97,12 @@ def now() -> str:
 # 既有資料庫補欄位：(資料表, 欄位, 定義)
 MIGRATIONS = [
     ("library_items", "audio_path", "TEXT NOT NULL DEFAULT ''"),
+    ("records", "visit_date", "TEXT NOT NULL DEFAULT ''"),
+    ("records", "vitals", "TEXT NOT NULL DEFAULT '{}'"),
+    ("records", "exam", "TEXT NOT NULL DEFAULT ''"),
+    ("records", "ai_plan", "TEXT NOT NULL DEFAULT '{}'"),
+    ("records", "english_note", "TEXT NOT NULL DEFAULT ''"),
+    ("records", "completed_at", "TEXT NOT NULL DEFAULT ''"),
 ]
 
 

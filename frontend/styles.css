@@ -403,6 +403,7 @@ main { flex: 1; min-width: 0; }
    ========================================================== */
 .rx-hero { margin-bottom: 32px; }
 .rx-switcher { display: flex; align-items: center; gap: 10px; }
+.rx-switcher button { white-space: nowrap; }
 .rx-switcher select {
   max-width: 300px; padding: 12px 38px 12px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface);
   font-size: 14px; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
@@ -998,3 +999,163 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 /* 匯出前先移除編輯用的按鈕，讓版面重新排列；排程膠囊不換行（轉圖時字寬略有差異） */
 .edu-sheet.exporting .edu-ui { display: none; }
 .edu-sheet.exporting .edu-med-schedule .edu-edit { white-space: nowrap; }
+
+/* ==========================================================
+   病歷 SOAP（Modified POMR）、病歷管理、語音看診、完成病歷
+   ========================================================== */
+.compact-button { padding: 8px 14px; font-size: 13px; }
+.icon-button { display: inline-grid; place-items: center; flex: none; width: 36px; height: 36px; border: 0; border-radius: 50%; background: none; color: var(--muted); }
+.icon-button:hover { background: var(--paper); color: var(--ink); }
+.icon-button .icon { width: 18px; height: 18px; }
+.danger-icon:hover { background: #fbe9e5; color: var(--danger); }
+.danger-icon.confirming { background: var(--danger); color: #fff; }
+
+/* 病人資料列：動作在上、資料在下 */
+.record-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--line); }
+.record-actions .voice-visit { background: var(--accent); }
+.record-actions .voice-visit:hover { background: #194d74; }
+.record-status { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; }
+.record-status.done { color: var(--ok); }
+.record-status.changed { color: var(--warn); }
+.record-actions .danger-icon { margin-left: auto; }
+.record-status:empty { display: none; }
+.patient-row { grid-template-columns: 1.2fr .6fr .7fr 1.1fr; }
+
+/* S／O／A/P 標題：大寫字母當段落記號 */
+.soap-title { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin: 0; font-family: var(--serif); font-size: 18px; font-weight: 700; }
+.soap-title b { display: inline-grid; place-items: center; min-width: 30px; height: 30px; padding: 0 7px; border-radius: 9px; background: var(--ink); color: #fff; font-family: var(--sans); font-size: 14px; letter-spacing: .02em; transform: translateY(-2px); }
+.soap-title small { flex-basis: 100%; color: var(--faint); font-family: var(--sans); font-size: 12px; font-weight: 500; }
+.problems-card .rx-card-head { align-items: flex-start; }
+.problem-tools { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px; }
+
+/* O：生命徵象 */
+.vitals-row { display: grid; grid-template-columns: 1.5fr repeat(4, minmax(0, 1fr)); gap: 8px; }
+.vitals-row label { gap: 4px; min-width: 0; }
+.vital-name { display: flex; align-items: baseline; gap: 4px; font-family: var(--sans) !important; font-size: 12px !important; font-weight: 700; color: var(--ink-2) !important; }
+.vital-name small { color: var(--faint); font-size: 10px; font-weight: 500; }
+.rx-card .vitals-row input { min-width: 0; padding-left: 10px; padding-right: 8px; font-variant-numeric: tabular-nums; }
+
+/* A/P：問題清單 */
+.problem-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.problem { padding: 14px 14px 12px; border: 1px solid var(--line); border-left: 4px solid hsl(var(--hue) 45% 62%); border-radius: var(--radius-sm); background: hsl(var(--hue) 40% 98.5%); }
+.problem-head { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; margin-bottom: 10px; }
+.problem-no { color: hsl(var(--hue) 35% 34%); font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.problem-head b { font-family: var(--serif); font-size: 16px; }
+.problem-head small { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.problem-head em { padding: 1px 8px; border-radius: 999px; background: #fff; color: var(--muted); font-size: 11px; font-style: normal; font-weight: 600; }
+.problem-head em.no-recs { background: var(--warn-soft); color: var(--warn); }
+.problem-move { display: inline-flex; margin-left: auto; }
+.problem-move button, .problem-remove { display: inline-grid; place-items: center; width: 30px; height: 30px; border: 0; border-radius: 50%; background: none; color: var(--muted); }
+.problem-move button .icon { transform: rotate(90deg); }
+.problem-move button:hover:not(:disabled), .problem-remove:hover { background: rgba(0, 0, 0, .06); color: var(--ink); }
+.problem-move button:disabled { opacity: .3; cursor: default; }
+.rx-card .problem-field { grid-template-columns: 28px 1fr; align-items: start; gap: 8px; margin-top: 8px; }
+.problem-field > span { padding-top: 9px; color: hsl(var(--hue) 35% 34%); font-size: 13px; font-weight: 700; text-align: center; }
+.problem-field textarea { background: #fff; }
+.problem-rx { display: flex; gap: 8px; margin: 10px 0 0 36px; color: var(--ink-2); font-size: 13px; line-height: 1.6; }
+.problem-rx > span:first-child { flex: none; color: var(--faint); font-weight: 600; }
+.problem-empty { padding: 18px; border: 1px dashed #d6cfc1; border-radius: var(--radius-sm); color: var(--muted); font-size: 14px; text-align: center; }
+
+/* AI 參考計畫：預設模糊遮住，醫師寫完再偷看 */
+.ai-plan { position: relative; margin: 10px 0 0 36px; padding: 10px 12px; border: 1px dashed #c7d3dd; border-radius: var(--radius-sm); background: #fff; }
+.ai-plan-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--accent); font-size: 12px; font-weight: 700; }
+.ai-plan-head > span { display: inline-flex; align-items: center; gap: 5px; }
+.ai-plan-body { display: grid; gap: 4px; margin: 8px 0 0; filter: blur(5px); opacity: .55; user-select: none; transition: filter .3s var(--ease), opacity .3s var(--ease); }
+.ai-plan.shown .ai-plan-body { filter: none; opacity: 1; user-select: text; }
+.ai-plan-body div { display: grid; grid-template-columns: 36px 1fr; gap: 6px; font-size: 13px; line-height: 1.6; }
+.ai-plan-body dt { color: var(--faint); font-weight: 600; }
+.ai-plan-body dd { margin: 0; color: var(--ink-2); }
+
+/* 語意偵測的「可能的問題」 */
+.semantic-suggest { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--accent-soft); }
+.semantic-suggest > span { display: inline-flex; align-items: center; gap: 5px; color: var(--accent); font-size: 12px; font-weight: 700; }
+.suggest-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 12px; border: 1px solid #b9cad8; border-radius: 999px; background: #fff; color: var(--ink); font-size: 13px; font-weight: 600; }
+.suggest-chip small { color: var(--faint); font-size: 11px; font-weight: 500; }
+.suggest-chip .icon { width: 14px; height: 14px; color: var(--accent); }
+.suggest-chip:hover { border-color: var(--accent); }
+
+.condition-add { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.custom-problem { display: flex; flex: 1 1 260px; gap: 6px; }
+.rx-card .custom-problem input { flex: 1; min-width: 0; padding: 7px 12px; border-style: dashed; border-radius: 999px; font-size: 13px; }
+.custom-problem .chip-button { display: inline-flex; align-items: center; gap: 4px; }
+
+/* 衛教單入口：放大、放在 A/P 最後 */
+.problems-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 18px; padding: 14px 16px; border-radius: var(--radius-sm); background: var(--ok-soft); }
+.problems-foot p { margin: 0; color: var(--ok); font-size: 13px; font-weight: 600; }
+.problems-foot .primary-button { background: var(--ok); }
+.problems-foot .primary-button:hover { background: #215b4e; }
+
+/* 病歷管理 */
+.records-dialog { width: min(1080px, calc(100% - 32px)); }
+.records-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 12px; margin: 18px 0 14px; }
+.records-filters label { margin-top: 0; display: grid; gap: 4px; color: var(--muted); font-size: 12px; font-weight: 600; }
+.records-filters input, .records-filters select { padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); color: var(--ink); font-size: 14px; }
+.records-filters .filter-search { flex: 1 1 240px; }
+.records-table-wrap { max-height: min(60vh, 560px); overflow: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); }
+.records-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.records-table th { position: sticky; top: 0; z-index: 1; padding: 10px 12px; background: var(--paper); color: var(--muted); font-size: 12px; text-align: left; white-space: nowrap; }
+.records-table td { padding: 10px 12px; border-top: 1px solid var(--line); vertical-align: top; line-height: 1.55; }
+.records-table tr.current { background: var(--accent-soft); }
+.records-table .nowrap { white-space: nowrap; }
+.mini-problem { display: block; }
+.mini-problem + .mini-problem { margin-top: 4px; }
+.mini-problem small { display: block; color: var(--muted); }
+.status-done { display: inline-flex; align-items: center; gap: 3px; color: var(--ok); font-weight: 600; }
+.status-draft { color: var(--faint); }
+.row-actions { display: flex; align-items: center; gap: 4px; }
+.records-empty { padding: 28px !important; color: var(--muted); text-align: center; }
+
+/* 語音看診 */
+.voice-stage { display: grid; justify-items: center; gap: 12px; padding: 26px 8px 8px; text-align: center; color: var(--ink-2); }
+.voice-stage p { margin: 0; max-width: 46ch; line-height: 1.65; }
+.voice-record { display: grid; place-items: center; gap: 4px; width: 132px; height: 132px; border: 0; border-radius: 50%; background: var(--accent); color: #fff; font-size: 14px; font-weight: 700; box-shadow: 0 10px 28px -10px rgba(31, 94, 140, .6); transition: transform .2s var(--ease); }
+.voice-record .icon { width: 34px; height: 34px; }
+.voice-record:hover { transform: scale(1.03); }
+.voice-record.stop { background: var(--danger); box-shadow: 0 0 0 0 rgba(180, 67, 47, .45); animation: voice-pulse 1.6s ease-out infinite; }
+@keyframes voice-pulse { to { box-shadow: 0 0 0 22px rgba(180, 67, 47, 0); } }
+.voice-timer { font-family: var(--serif); font-size: 30px; font-variant-numeric: tabular-nums; color: var(--ink); }
+.voice-upload { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+.voice-privacy { display: flex; gap: 6px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--warn-soft); color: var(--warn); font-size: 12px; text-align: left; }
+.voice-privacy .icon { flex: none; margin-top: 2px; }
+.voice-preview { display: grid; gap: 10px; margin-top: 16px; }
+.voice-item { display: grid; grid-template-columns: 20px 1fr; gap: 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); cursor: pointer; }
+.voice-item:has(input:checked) { border-color: #b9cad8; background: var(--accent-soft); }
+.voice-item input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--accent); }
+.voice-item b { margin-right: 8px; font-size: 13px; }
+.voice-item em { color: var(--warn); font-size: 11px; font-style: normal; font-weight: 600; }
+.voice-item span span { display: block; margin-top: 4px; color: var(--ink-2); font-size: 14px; line-height: 1.6; white-space: pre-line; }
+.voice-transcript summary { cursor: pointer; color: var(--accent); font-size: 13px; }
+.voice-transcript p { margin: 8px 0 0; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--paper); font-size: 13px; line-height: 1.7; }
+.voice-note { margin: 0; color: var(--faint); font-size: 12px; }
+
+/* 完成病歷：中文／英文 */
+.note-tabs { display: inline-flex; gap: 4px; margin: 16px 0 10px; padding: 4px; border-radius: 999px; background: var(--paper); }
+.note-tabs button { padding: 6px 16px; border: 0; border-radius: 999px; background: none; color: var(--muted); font-size: 13px; font-weight: 600; }
+.note-tabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+.note-text { max-height: 58vh; overflow: auto; margin: 0; padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: #fffefa; color: var(--ink); font-family: "SF Mono", Menlo, Consolas, var(--sans); font-size: 13px; line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+
+@media (max-width: 1180px) and (min-width: 861px) {
+  .vitals-row { grid-template-columns: repeat(3, 1fr); }
+  .patient-row { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .records-dialog { width: 100%; }
+  .record-actions { gap: 8px; }
+  .record-actions .primary-button, .record-actions .secondary-button { padding: 9px 14px; }
+  .problem-head em { display: none; }
+  .vitals-row { grid-template-columns: repeat(2, 1fr); }
+  .patient-row { grid-template-columns: 1fr 1fr; }
+  .rx-switcher { flex-wrap: wrap; }
+  .rx-switcher select { flex: 1 1 100%; }
+  .problem-rx, .ai-plan { margin-left: 0; }
+  .rx-card .problem-field { grid-template-columns: 22px 1fr; }
+  .records-table thead { display: none; }
+  .records-table tr { display: grid; grid-template-columns: 1fr auto; padding: 10px 12px; border-top: 1px solid var(--line); }
+  .records-table td { padding: 2px 0; border: 0; }
+  .records-table td:nth-child(4), .records-table td:nth-child(5) { grid-column: 1 / -1; }
+  .problems-foot .primary-button { width: 100%; }
+}
+.dialog-head h2[tabindex="-1"]:focus { outline: none; }
+.voice-stage .voice-upload { display: inline-flex; flex-direction: row; align-items: center; gap: 5px; }
+.voice-item { margin: 0; font-weight: 400; }
+.voice-item span span { font-weight: 400; }

@@ -159,6 +159,58 @@ def detect_keywords(text: str) -> list[dict]:
     return found
 
 
+# 語意偵測：關鍵字沒對到、但意思相近的句子（例：「小便灼熱、跑廁所很多次」→ 尿路感染）。
+# 病歷逐句轉成向量，與每個病灶（名稱＋關鍵字）比較；否定句不算。結果只當「可能」，由醫師決定是否加入。
+CLAUSE_SPLIT = re.compile(r"[。，,；;、\n！？!?]+")
+NEGATED_CLAUSE = re.compile(r"^\s*(無|沒有|沒|否認|未|不|denies|denied|no\b)", re.IGNORECASE)
+SEMANTIC_THRESHOLD = 0.7   # 實測：相符的描述多在 0.7 以上，無關句子約 0.6 以下
+_condition_vectors: list[tuple[dict, list[float]]] = []   # 每個病灶有多句描述，一句一個向量
+_clause_vectors: dict[str, list[float]] = {}
+
+
+@lru_cache
+def condition_descriptions() -> dict[str, list[str]]:
+    return json.loads((DATA_DIR / "condition_semantics.json").read_text(encoding="utf-8"))["descriptions"]
+
+
+def semantic_candidates(text: str, skip: set[str]) -> list[dict]:
+    """回傳語意相近、尚未在問題清單裡的病灶，依相似度排序；未設定 Embedding 時回傳空清單。"""
+    from .ai import ai, cosine  # 避免循環匯入
+
+    if not ai.embedding_ready:
+        return []
+    global _condition_vectors
+    if not _condition_vectors:
+        pairs = [(c, d) for c in conditions() for d in condition_descriptions().get(c["name"], [c["name"]])]
+        vectors = ai.embed_many([d for _, d in pairs]) or []
+        _condition_vectors = [(c, v) for (c, _), v in zip(pairs, vectors)]
+    clauses = []
+    for clause in CLAUSE_SPLIT.split(text):
+        clause = clause.strip()
+        if len(clause) >= 2 and not NEGATED_CLAUSE.search(clause) and clause not in clauses:
+            clauses.append(clause)
+    clauses = clauses[:40]
+    missing = [c for c in clauses if c not in _clause_vectors]
+    if missing:
+        if len(_clause_vectors) > 2000:
+            _clause_vectors.clear()
+        for clause, vector in zip(missing, ai.embed_many(missing) or []):
+            _clause_vectors[clause] = vector
+    best: dict[str, dict] = {}
+    for clause in clauses:
+        vector = _clause_vectors.get(clause)
+        if not vector:
+            continue
+        for cond, cond_vector in _condition_vectors:
+            if cond["name"] in skip:
+                continue
+            score = cosine(vector, cond_vector)
+            if score >= SEMANTIC_THRESHOLD and score > best.get(cond["name"], {}).get("score", 0):
+                best[cond["name"]] = {"name": cond["name"], "source": "semantic", "matched": clause,
+                                      "icd10": cond["icd10"], "score": round(score, 3)}
+    return sorted(best.values(), key=lambda c: -c["score"])[:3]
+
+
 # ---------- 過敏 ----------
 
 def allergy_rules(allergy_ids: list[str]) -> list[dict]:
