@@ -71,6 +71,12 @@ data/       TFDA／健保署原始資料、藥品參考表、上傳檔、app.sql
 | `all1_YYYMM_*.TXT` | 健保用藥品項查詢檔（Big5、固定寬度、含歷年價格；多檔為同一清單切段） | https://data.gov.tw/dataset/23715 |
 | `健保用藥品項查詢檔欄位格式說明(109.01.09更新，更正末欄名稱).pdf` | 上述檔案的官方欄位位置說明，解析腳本依此切欄 | 健保署，與資料檔一同下載 |
 
+### 原始資料（`data/raw/icd/`）
+
+| 檔案 | 資料集 | 來源 |
+|---|---|---|
+| `icd10cm_2023_tw.csv` | 2023年版_中文版ICD-10-CM（正式版），健保自 2025-01-01 起使用；用來核對病灶代碼 | https://data.gov.tw/dataset/177507 |
+
 ### 產生的資料
 
 | 檔案 | 說明 |
@@ -80,6 +86,7 @@ data/       TFDA／健保署原始資料、藥品參考表、上傳檔、app.sql
 | `data/drug_reference/nhi_covered_drugs.csv` | 目前有健保給付的藥品清單（UTF-8 BOM，可用 Excel 開啟） |
 | `data/app.sqlite` | 學習庫、病歷、推薦回饋（程式執行時自動建立，並建立 3 筆示範病歷） |
 | `data/uploads/` | 學習庫上傳的圖片與錄音 |
+| `data/review/病灶用藥對照_審閱表.xlsx` | 執行 `scripts/build_review_sheet.py` 產生：給醫師審閱的病灶、ATC 類別、ICD-10-CM 核對與風險提醒（需 openpyxl） |
 
 ### 不採用的資料
 
