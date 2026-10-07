@@ -1,0 +1,7321 @@
+{
+ "_source": "教育部《臺灣台語常用詞辭典》分類索引：身體構造、傷疾病痛、醫療保健（https://sutian.moe.edu.tw/zh-hant/hunlui/20/、/43/、/44/）",
+ "_license": "創用CC 姓名標示－禁止改作 3.0 臺灣（CC BY-ND 3.0 TW）。詞目、音讀、釋義為原文，未經改寫。",
+ "_retrieved": "2026-10-07",
+ "terms": [
+  {
+   "word": "頷",
+   "roman": "ām",
+   "meaning": "脖子。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頷胿",
+   "roman": "ām-kui",
+   "meaning": "脖子的前面部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頷頸",
+   "roman": "ām-kún",
+   "meaning": "脖子。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頷頸珠",
+   "roman": "ām-kún-tsu",
+   "meaning": "喉結。男性在青春期後，在頸部前面，由甲狀軟骨生成的隆起物。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頷腮",
+   "roman": "ām-tshi",
+   "meaning": "耳朵的下方，腮頰的後方部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頷珠",
+   "roman": "ām-tsu",
+   "meaning": "喉結。指人咽喉部位的甲狀軟骨突起。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尪仔頭",
+   "roman": "ang-á-thâu",
+   "meaning": "玩偶的頭。\n面孔、五官長相。\n瞳孔。",
+   "category": "身體構造"
+  },
+  {
+   "word": "紅筋",
+   "roman": "âng-kin/âng-kun",
+   "meaning": "血管。動物體內血液循環流通的管道，有動脈、靜脈、微血管三種。",
+   "category": "身體構造"
+  },
+  {
+   "word": "喉鐘",
+   "roman": "âu-tsing",
+   "meaning": "小舌、懸雍垂。口腔內軟顎中央的一個圓錘形物體。",
+   "category": "身體構造"
+  },
+  {
+   "word": "後跤",
+   "roman": "āu-kha",
+   "meaning": "後腿、後腳。一般用在「扯後腿」之意，即阻撓他人行動，使其不能達到目的。\n動物長在後面的兩隻腳。",
+   "category": "身體構造"
+  },
+  {
+   "word": "後擴",
+   "roman": "āu-khok",
+   "meaning": "後腦杓。頭後面比較突出的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "後齻",
+   "roman": "āu-tsan",
+   "meaning": "泛稱所有的臼齒。\n智齒。也就是第三大臼齒，因為該齒位於上下顎最深處，通常由門牙正中算起第八顆的牙齒就稱為智齒。由於其萌出之時間常在十六至二十歲左右，恰好是發育過程中邁入成人，智慧較成熟的階段，故稱為智齒。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肉",
+   "roman": "bah",
+   "meaning": "動物體中介於皮和骨骼之間的柔韌組織。\n果核外可以食用的部分。\n刀刃以外的刀身部分。\n以肉類為材料作成的食品。\n指人豐腴的樣子。",
+   "category": "身體構造"
+  },
+  {
+   "word": "䆀指",
+   "roman": "bái-tsáinn",
+   "meaning": "無名指。",
+   "category": "身體構造"
+  },
+  {
+   "word": "眉",
+   "roman": "bâi",
+   "meaning": "眉毛。\n像眉形物。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目",
+   "roman": "ba̍k",
+   "meaning": "眼睛。\n節。\n細孔。\n量詞。計算節的單位，或指圍棋遊戲中的棋子。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目眉",
+   "roman": "ba̍k-bâi",
+   "meaning": "眉毛。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目尾",
+   "roman": "ba̍k-bué/ba̍k-bé",
+   "meaning": "眼尾。雙眼的末端。\n眼角餘光。偏斜的視線。\n指眼神、眼色。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目蚶",
+   "roman": "ba̍k-ham",
+   "meaning": "眼瞼。眼球前的軟皮肌肉組織，邊緣長有睫毛，可以保護眼球。\n眼睛稍微腫脹。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目空",
+   "roman": "ba̍k-khang",
+   "meaning": "眼窩。含有眼球的凹狀頭骨結構。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目箍",
+   "roman": "ba̍k-khoo",
+   "meaning": "眼眶。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目墘",
+   "roman": "ba̍k-kînn",
+   "meaning": "眼眶。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目頭",
+   "roman": "ba̍k-thâu",
+   "meaning": "眉頭。兩眉毛之間。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目睫毛",
+   "roman": "ba̍k-tsiah-mn̂g",
+   "meaning": "眼睫毛。長在眼皮邊上的毛。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目睭",
+   "roman": "ba̍k-tsiu",
+   "meaning": "眼睛。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目睭仁",
+   "roman": "ba̍k-tsiu-jîn/ba̍k-tsiu-lîn",
+   "meaning": "眼珠、眼球。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目睭毛",
+   "roman": "ba̍k-tsiu-mn̂g",
+   "meaning": "睫毛。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目睭皮",
+   "roman": "ba̍k-tsiu-phuê/ba̍k-tsiu-phê",
+   "meaning": "眼皮、眼瞼。眼睛外部可以開合的軟皮。",
+   "category": "身體構造"
+  },
+  {
+   "word": "眉",
+   "roman": "bî",
+   "meaning": "眉毛。",
+   "category": "身體構造"
+  },
+  {
+   "word": "面",
+   "roman": "bīn",
+   "meaning": "臉。\n計算平面物體的單位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "面肉",
+   "roman": "bīn-bah",
+   "meaning": "臉部。臉部容貌、肌膚及外觀。",
+   "category": "身體構造"
+  },
+  {
+   "word": "面馬",
+   "roman": "bīn-bé",
+   "meaning": "臉形。",
+   "category": "身體構造"
+  },
+  {
+   "word": "面模仔",
+   "roman": "bīn-bôo-á",
+   "meaning": "臉龐、臉蛋，臉的輪廓。",
+   "category": "身體構造"
+  },
+  {
+   "word": "面形",
+   "roman": "bīn-hîng",
+   "meaning": "臉形。",
+   "category": "身體構造"
+  },
+  {
+   "word": "面油",
+   "roman": "bīn-iû",
+   "meaning": "面霜。一種化妝保養品。\n指臉部因為天氣太熱或其他因素而分泌出來的油脂。",
+   "category": "身體構造"
+  },
+  {
+   "word": "面貌",
+   "roman": "bīn-māu",
+   "meaning": "面容、容貌。",
+   "category": "身體構造"
+  },
+  {
+   "word": "面水",
+   "roman": "bīn-tsuí",
+   "meaning": "姿色。指女子的儀態容貌。\n面子。",
+   "category": "身體構造"
+  },
+  {
+   "word": "目",
+   "roman": "bo̍k",
+   "meaning": "眼睛。\n名稱、標題。\n大項中再分的細目。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尾二指",
+   "roman": "bué-jī-tsáinn/bé-lī-tsáinn",
+   "meaning": "無名指。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尾溜",
+   "roman": "bué-liu/bé-liu",
+   "meaning": "事、物的末端、頂端。\n動物的尾巴或人的屁股。\n順序的最後、最終。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尾胴骨",
+   "roman": "bué-tâng-kut/bé-tâng-kut",
+   "meaning": "薦骨。位於脊柱下端，由五塊退化的椎骨癒合而成。形似三角，上接腰椎，下接尾骨，兩側與髖骨構成骨盆腔。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尾指",
+   "roman": "bué-tsáinn/bé-tsáinn",
+   "meaning": "小指，手或腳的第五指。",
+   "category": "身體構造"
+  },
+  {
+   "word": "下頦",
+   "roman": "ē-hâi",
+   "meaning": "下巴。臉部嘴脣以下的部位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "下𦜆",
+   "roman": "ē-ham",
+   "meaning": "下巴、下顎。",
+   "category": "身體構造"
+  },
+  {
+   "word": "下顎",
+   "roman": "ē-kok",
+   "meaning": "下巴。一般稱「下巴」為「下頦」(ē-hâi)，「下顎」多在面相當中使用。",
+   "category": "身體構造"
+  },
+  {
+   "word": "下半身",
+   "roman": "ē-puànn-sin",
+   "meaning": "下半身。",
+   "category": "身體構造"
+  },
+  {
+   "word": "牙",
+   "roman": "gâ",
+   "meaning": "螺絲紋。",
+   "category": "身體構造"
+  },
+  {
+   "word": "眼",
+   "roman": "gán",
+   "meaning": "瞄、看一下、過目一下。\n眼睛。",
+   "category": "身體構造"
+  },
+  {
+   "word": "眼力",
+   "roman": "gán-li̍k",
+   "meaning": "眼睛看東西的能力。\n見識。辨別事物是非好壞的能力。",
+   "category": "身體構造"
+  },
+  {
+   "word": "顏",
+   "roman": "gân",
+   "meaning": "臉、面部。\n姓氏。",
+   "category": "身體構造"
+  },
+  {
+   "word": "牙",
+   "roman": "gê",
+   "meaning": "人和動物口腔內咀嚼研磨的器官。\n一種民間習俗。商家在農曆每月初二、十六日備牲禮祭拜土地公和孤魂野鬼等，祈求生意興隆，稱為做牙。",
+   "category": "身體構造"
+  },
+  {
+   "word": "牙槽",
+   "roman": "gê-tsô",
+   "meaning": "齒槽。包圍牙根，使牙根嵌入的凸凹腔。",
+   "category": "身體構造"
+  },
+  {
+   "word": "牙槽骨",
+   "roman": "gê-tsô-kut",
+   "meaning": "下顎骨。顎骨的一部分，能夠作開閉運動，發揮咀嚼功能。",
+   "category": "身體構造"
+  },
+  {
+   "word": "齴牙",
+   "roman": "giàng-gê",
+   "meaning": "突出嘴脣外的牙齒。\n張牙舞爪。",
+   "category": "身體構造"
+  },
+  {
+   "word": "蟯",
+   "roman": "giô",
+   "meaning": "文蛤。貝類。殼略呈三角形，大的長二、三寸，殼表彩色或暗褐或灰白。生於沿海的沙中，以藻類為食。肉味鮮美，極富營養。\n借指女性生殖器。",
+   "category": "身體構造"
+  },
+  {
+   "word": "蟯桮",
+   "roman": "giô-pue",
+   "meaning": "大的蚌殼。也用來比喻女性的生殖器官。",
+   "category": "身體構造"
+  },
+  {
+   "word": "𦜆",
+   "roman": "ham",
+   "meaning": "顎。口腔內部上下壁部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肺",
+   "roman": "hì",
+   "meaning": "動物呼吸器官之一，位於胸腔，分左右兩扇，左二葉，右三葉。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肺管",
+   "roman": "hì-kńg",
+   "meaning": "氣管、支氣管。由喉頭到肺臟空氣出入的總管，是呼吸系統中的一個器官。",
+   "category": "身體構造"
+  },
+  {
+   "word": "額",
+   "roman": "hia̍h",
+   "meaning": "人臉部頭髮以下眉毛以上的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "額頭",
+   "roman": "hia̍h-thâu",
+   "meaning": "眉毛上方，頭髮下方的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "血",
+   "roman": "hiat",
+   "meaning": "動物體內脈管所含的紅色血液。",
+   "category": "身體構造"
+  },
+  {
+   "word": "穴",
+   "roman": "hia̍t",
+   "meaning": "人體經脈的會聚處。\n洞窟。",
+   "category": "身體構造"
+  },
+  {
+   "word": "胸",
+   "roman": "hing",
+   "meaning": "指身體前面脖子以下，肚子以上的部分。\n引申作人的內心。",
+   "category": "身體構造"
+  },
+  {
+   "word": "胸坎",
+   "roman": "hing-khám",
+   "meaning": "胸膛、胸部。人體軀幹正面上部，內有心臟、肺臟等器官。",
+   "category": "身體構造"
+  },
+  {
+   "word": "胸坎骨",
+   "roman": "hing-khám-kut",
+   "meaning": "胸骨。陸生脊椎動物胸腔前面，正中央的一根劍狀扁平骨，連接和支持肩帶上的鎖骨與肋骨，並與胸椎和肋骨構成胸腔。",
+   "category": "身體構造"
+  },
+  {
+   "word": "胸掛骨",
+   "roman": "hing-kuà-kut",
+   "meaning": "鎖骨。位於胸腔上部、頸下兩旁與肩胛相聯的骨骼，左右各一。",
+   "category": "身體構造"
+  },
+  {
+   "word": "耳",
+   "roman": "hīnn/hī",
+   "meaning": "耳朵。對整個耳朵(包含內耳、外耳)的統稱。\n指器物的提把。",
+   "category": "身體構造"
+  },
+  {
+   "word": "耳仔",
+   "roman": "hīnn-á/hī-á",
+   "meaning": "耳朵。",
+   "category": "身體構造"
+  },
+  {
+   "word": "耳甕仔",
+   "roman": "hīnn-àng-á/hī-àng-á",
+   "meaning": "耳咽管、歐氏管。由咽腔左右兩側通至中耳之鼓室的管子。有平衡鼓膜內外空氣壓力的功能。",
+   "category": "身體構造"
+  },
+  {
+   "word": "耳空",
+   "roman": "hīnn-khang/hī-khang",
+   "meaning": "耳孔、耳朵。",
+   "category": "身體構造"
+  },
+  {
+   "word": "耳空鬼仔",
+   "roman": "hīnn-khang-kuí-á/hī-khang-kuí-á",
+   "meaning": "鼓膜。位於外耳和中耳間的傳音膜。",
+   "category": "身體構造"
+  },
+  {
+   "word": "耳鏡",
+   "roman": "hīnn-kiànn/hī-kiànn",
+   "meaning": "鼓膜。外耳與中耳間的薄膜。",
+   "category": "身體構造"
+  },
+  {
+   "word": "耳珠",
+   "roman": "hīnn-tsu/hī-tsu",
+   "meaning": "耳垂。",
+   "category": "身體構造"
+  },
+  {
+   "word": "胡蠅屎痣",
+   "roman": "hôo-sîn-sái-kì",
+   "meaning": "長在臉上的小黑痣。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鬍鬚",
+   "roman": "hôo-tshiu",
+   "meaning": "絡腮鬍、落腮鬍。鬍鬚多貌。",
+   "category": "身體構造"
+  },
+  {
+   "word": "膚",
+   "roman": "hu",
+   "meaning": "身體的表層。",
+   "category": "身體構造"
+  },
+  {
+   "word": "血",
+   "roman": "hueh/huih",
+   "meaning": "動物體內脈管所含的紅色血液。",
+   "category": "身體構造"
+  },
+  {
+   "word": "血型",
+   "roman": "hueh-hîng/huih-hîng",
+   "meaning": "根據紅血球的抗原特性所分的血液類型。大致可分為A型、B型、O型和AB型等，由遺傳決定。血型原理的運用，有助於親子關係的鑑定及手術時輸血的實施。",
+   "category": "身體構造"
+  },
+  {
+   "word": "血氣",
+   "roman": "hueh-khì/huih-khì",
+   "meaning": "血液的運行。",
+   "category": "身體構造"
+  },
+  {
+   "word": "血筋",
+   "roman": "hueh-kin/huih-kun",
+   "meaning": "血管。動物體內運輸血液的管道。有動脈、靜脈、微血管三種。",
+   "category": "身體構造"
+  },
+  {
+   "word": "血管",
+   "roman": "hueh-kńg/huih-kńg",
+   "meaning": "動物體內血液循環流通的管道。",
+   "category": "身體構造"
+  },
+  {
+   "word": "血路",
+   "roman": "hueh-lōo/huih-lōo",
+   "meaning": "血液循環的系統。",
+   "category": "身體構造"
+  },
+  {
+   "word": "血凍",
+   "roman": "hueh-tàng/huih-tàng",
+   "meaning": "血塊。凝成塊狀的血液。",
+   "category": "身體構造"
+  },
+  {
+   "word": "印堂",
+   "roman": "ìn-tông",
+   "meaning": "眉心。兩眉中間的部位，是看面相時觀察運勢的重要部位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腰",
+   "roman": "io",
+   "meaning": "人體軀幹的中間，胯骨以上肋骨以下的部位。\n事物的中間部分。\n指腰圍尺吋。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腰骨",
+   "roman": "io-kut",
+   "meaning": "腰骨的下部五節骨，支撐筋肉，內繫兩臂，下與尾椎骨相連。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腰尺",
+   "roman": "io-tshioh",
+   "meaning": "胰臟。人類消化器官之一。位於胃及十二指腸之間，分布在腸繫膜上。淡黃色，呈顆粒狀，可分泌消化液，經胰臟注入十二指腸，以消化食物。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腰子",
+   "roman": "io-tsí",
+   "meaning": "腎臟。五臟之一。位在腹腔的後背，脊椎左右兩側，共二枚相對，呈扁卵圓形，紅褐色。是透析血液中廢料成為尿液的器官，及分泌腎素、紅血球生成素兩種激素的內分泌器官。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腰脊骨",
+   "roman": "io-tsiah-kut",
+   "meaning": "腰骨。脊椎骨的下部五骨節，支撐筋肉，下端和尾骨連。",
+   "category": "身體構造"
+  },
+  {
+   "word": "容貌",
+   "roman": "iông-māu",
+   "meaning": "面貌。",
+   "category": "身體構造"
+  },
+  {
+   "word": "幼齒",
+   "roman": "iù-khí",
+   "meaning": "幼小、剛長出來的乳牙。\n用來稱呼年幼的人、少女或是生手。\n形容年紀小或是技能生疏的人。",
+   "category": "身體構造"
+  },
+  {
+   "word": "油耳",
+   "roman": "iû-hīnn/iû-hī",
+   "meaning": "溼耳朵。易排出溼性耳垢的耳朵。",
+   "category": "身體構造"
+  },
+  {
+   "word": "二指",
+   "roman": "jī-tsáinn/lī-tsáinn",
+   "meaning": "食指。",
+   "category": "身體構造"
+  },
+  {
+   "word": "人中",
+   "roman": "jîn-tiong/lîn-tiong",
+   "meaning": "人臉部鼻子下，嘴脣上方凹下部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尿帕仔",
+   "roman": "jiō-phè-á/liō-phè-á",
+   "meaning": "尿布。\n膀胱。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尿道",
+   "roman": "jiō-tō/liō-tō",
+   "meaning": "排尿的管道。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肉",
+   "roman": "jio̍k/lio̍k",
+   "meaning": "軀體、身體。\n與骨相連的部分。\n做為食物，任意宰割。通常與魚並用。",
+   "category": "身體構造"
+  },
+  {
+   "word": "骱邊",
+   "roman": "kái-pinn",
+   "meaning": "鼠蹊部。指大腿與下腹部相連的地方。",
+   "category": "身體構造"
+  },
+  {
+   "word": "角齒",
+   "roman": "kak-khí",
+   "meaning": "犬齒、虎牙。形狀像狗的牙齒，適於齧裂強韌食物。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肝",
+   "roman": "kan",
+   "meaning": "肝臟。為脊椎動物的重要器官，具有分泌、儲存、解毒及造血等多項功能。位於腹腔右上方。",
+   "category": "身體構造"
+  },
+  {
+   "word": "狗牙",
+   "roman": "káu-gê",
+   "meaning": "犬齒。",
+   "category": "身體構造"
+  },
+  {
+   "word": "雞卵面",
+   "roman": "ke-nn̄g-bīn",
+   "meaning": "瓜子臉。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤",
+   "roman": "kha",
+   "meaning": "腿、足。\n在……下。\n加入互助會或參加賭局的人。\n指器物的下方、底部。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤後蹬",
+   "roman": "kha-āu-tenn/kha-āu-tinn",
+   "meaning": "腳跟、腳後跟。腳掌的後部。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤後肚",
+   "roman": "kha-āu-tóo",
+   "meaning": "小腿肚。小腿後面由腓腸肌等所形成的隆起部位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤目",
+   "roman": "kha-ba̍k",
+   "meaning": "腳踝、腳脖子。小腿和腳掌間連接關節，在兩腳兩側突起的部位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤模",
+   "roman": "kha-bôo",
+   "meaning": "腳印。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤尾",
+   "roman": "kha-bué/kha-bé",
+   "meaning": "腳、腳尖。腳的末端。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤曲",
+   "roman": "kha-khiau",
+   "meaning": "膝關節。膝蓋後方的凹陷處。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤筋",
+   "roman": "kha-kin/kha-kun",
+   "meaning": "腳後的筋。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤骨",
+   "roman": "kha-kut",
+   "meaning": "指腿和腳。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤縫",
+   "roman": "kha-phāng",
+   "meaning": "胯下。兩腿之間。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤鼻臁",
+   "roman": "kha-phīnn-liâm",
+   "meaning": "腳的脛骨。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤盤",
+   "roman": "kha-puânn",
+   "meaning": "腳背、腳面。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤梢",
+   "roman": "kha-sau",
+   "meaning": "腳褪下來的皮屑。\n笨拙、愚劣。\n地位低賤。\n品質低劣。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤液",
+   "roman": "kha-sio̍h",
+   "meaning": "腳汗。腳部所排出來的汗液或分泌物。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤胴骨",
+   "roman": "kha-tâng-kut",
+   "meaning": "脛骨。小腿內側的長管狀骨骼。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤底",
+   "roman": "kha-té/kha-tué",
+   "meaning": "腳底。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤頭趺",
+   "roman": "kha-thâu-u",
+   "meaning": "膝蓋。大腿與小腿相連處的外部關節。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤腿",
+   "roman": "kha-thuí",
+   "meaning": "小腿和大腿的總稱。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤刀",
+   "roman": "kha-to",
+   "meaning": "腳掌的外沿。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤肚",
+   "roman": "kha-tóo",
+   "meaning": "小腿肚。小腿後面由腓腸肌形成的隆起部位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤肚仁",
+   "roman": "kha-tóo-jîn/kha-tóo-lîn",
+   "meaning": "指小腿肚的肌肉。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤肚骨",
+   "roman": "kha-tóo-kut",
+   "meaning": "腓骨。為腿部兩根骨中，位於外側較小的那一根。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤手",
+   "roman": "kha-tshiú",
+   "meaning": "手和腳。\n下屬、部屬。\n人手。提供幫助的人力。\n手段、伎倆。\n手腳、動作。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尻川",
+   "roman": "kha-tshng",
+   "meaning": "屁股。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尻川溝",
+   "roman": "kha-tshng-kau",
+   "meaning": "屁股溝。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尻川口",
+   "roman": "kha-tshng-kháu",
+   "meaning": "肛門。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尻川骨",
+   "roman": "kha-tshng-kut",
+   "meaning": "坐骨。脊椎末端的楔形三角骨，位於腰椎以下，尾椎以上，和骨盆相連接。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尻川䫌",
+   "roman": "kha-tshng-phué",
+   "meaning": "屁股、臀部。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尻川斗",
+   "roman": "kha-tshng-táu",
+   "meaning": "屁股、臀部。指髖骨骨盤的部位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尻脊",
+   "roman": "kha-tsiah",
+   "meaning": "背部、背脊。",
+   "category": "身體構造"
+  },
+  {
+   "word": "尻脊骿",
+   "roman": "kha-tsiah-phiann",
+   "meaning": "背部。",
+   "category": "身體構造"
+  },
+  {
+   "word": "跤指頭仔",
+   "roman": "kha-tsíng-thâu-á",
+   "meaning": "腳指頭。",
+   "category": "身體構造"
+  },
+  {
+   "word": "口",
+   "roman": "kháu",
+   "meaning": "指人的嘴巴。\n出入的要道。\n計算器物的單位。\n計算人數的單位。特指家庭的人口。\n計算戶口的單位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "齒",
+   "roman": "khí",
+   "meaning": "牙齒。\n計算數量單位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "齒岸",
+   "roman": "khí-huānn",
+   "meaning": "牙齦、牙床。覆蓋在齒槽突及圍繞齒冠周圍的口腔黏膜，即牙齒根部所固著的地方。",
+   "category": "身體構造"
+  },
+  {
+   "word": "齒縫",
+   "roman": "khí-phāng",
+   "meaning": "牙縫。牙齒之間的細縫。",
+   "category": "身體構造"
+  },
+  {
+   "word": "器官",
+   "roman": "khì-kuan",
+   "meaning": "生物體中分任各種生理機能的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "曲",
+   "roman": "khiau",
+   "meaning": "手腳的關節處。\n彎彎的。",
+   "category": "身體構造"
+  },
+  {
+   "word": "曲痀",
+   "roman": "khiau-ku",
+   "meaning": "駝背。指先天性遺傳或後天的姿勢不正確所造成背部彎拱的現象。",
+   "category": "身體構造"
+  },
+  {
+   "word": "擴頭",
+   "roman": "khok-thâu",
+   "meaning": "指前額或後腦杓凸出。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肢",
+   "roman": "ki",
+   "meaning": "人或動物的手腳。\n計算人體或動物四肢及手指、腳趾的單位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肌膚",
+   "roman": "ki-hu",
+   "meaning": "皮膚與肌肉。\n引申為身體的氣色、體力。",
+   "category": "身體構造"
+  },
+  {
+   "word": "枝骨",
+   "roman": "ki-kut",
+   "meaning": "指人體的骨架。一般用於女性。\n器物的骨架。",
+   "category": "身體構造"
+  },
+  {
+   "word": "指指",
+   "roman": "kí-tsáinn",
+   "meaning": "食指。第二個手指頭。",
+   "category": "身體構造"
+  },
+  {
+   "word": "痣",
+   "roman": "kì",
+   "meaning": "皮膚上突起的小斑點。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腱子肉",
+   "roman": "kiàn-tsí-bah",
+   "meaning": "腱肉。牲畜的小腿上肌肉發達的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "筋",
+   "roman": "kin/kun",
+   "meaning": "骨頭和肌肉之間的韌帶。",
+   "category": "身體構造"
+  },
+  {
+   "word": "筋肉",
+   "roman": "kin-bah/kun-bah",
+   "meaning": "筋與肉，用指肌肉。",
+   "category": "身體構造"
+  },
+  {
+   "word": "筋骨",
+   "roman": "kin-kut/kun-kut",
+   "meaning": "筋肉和骨骼、體格。",
+   "category": "身體構造"
+  },
+  {
+   "word": "筋絡",
+   "roman": "kin-le/kun-le",
+   "meaning": "腱。與骨節相連的肌肉。",
+   "category": "身體構造"
+  },
+  {
+   "word": "筋節",
+   "roman": "kin-tsat/kun-tsat",
+   "meaning": "筋骨。人體裡筋頭和骨節的結合處。",
+   "category": "身體構造"
+  },
+  {
+   "word": "經",
+   "roman": "king",
+   "meaning": "存有真理、價值的書。\n經文。\n脈絡、經絡。\n經手、經由。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肩胛",
+   "roman": "king-kah",
+   "meaning": "肩膀。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肩胛頭",
+   "roman": "king-kah-thâu",
+   "meaning": "肩膀。\n需要承擔的責任。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肩頭",
+   "roman": "king-thâu",
+   "meaning": "肩膀。",
+   "category": "身體構造"
+  },
+  {
+   "word": "管",
+   "roman": "kńg",
+   "meaning": "身體上的各種管道。\n計算用量杯盛米的單位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "胳下空",
+   "roman": "koh-ē-khang",
+   "meaning": "腋下、腋窩。人體胸腔上部外側與臂膀內側之間的部位，外形呈小三角錐狀。",
+   "category": "身體構造"
+  },
+  {
+   "word": "膏肓",
+   "roman": "koo-bông",
+   "meaning": "人體心臟和橫膈膜之間的部位。舊說以為是藥效無法到達處。引申為病症已達難治的階段。\n位於肩背部的穴道，約在背部第四胸椎棘突起下方外側三寸處的穴道。",
+   "category": "身體構造"
+  },
+  {
+   "word": "股",
+   "roman": "kóo",
+   "meaning": "手臂上半部。\n鳥類翅膀的上肢部分。\n合資的公司將資本平分為若干份，每一份稱為一股，可以在票券上載明。\n計算繩線的單位。\n計算田畦的單位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "官",
+   "roman": "kuan",
+   "meaning": "官吏。\n指生物身上有機能的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "關節",
+   "roman": "kuan-tsat",
+   "meaning": "骨頭與骨頭相接連，可以活動的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肝",
+   "roman": "kuann",
+   "meaning": "肝臟。為脊椎動物的重要器官，具有分泌、儲存、解毒及造血等多項功能。位於腹腔右上方。",
+   "category": "身體構造"
+  },
+  {
+   "word": "規身軀",
+   "roman": "kui-sin-khu",
+   "meaning": "全身、整身。",
+   "category": "身體構造"
+  },
+  {
+   "word": "骨",
+   "roman": "kut",
+   "meaning": "動物體內支持身體的支架組織。",
+   "category": "身體構造"
+  },
+  {
+   "word": "骨目",
+   "roman": "kut-ba̍k",
+   "meaning": "關節，骨頭與骨頭相接之處。",
+   "category": "身體構造"
+  },
+  {
+   "word": "骨輪",
+   "roman": "kut-lûn",
+   "meaning": "骨節、關節。",
+   "category": "身體構造"
+  },
+  {
+   "word": "骨節",
+   "roman": "kut-tsat",
+   "meaning": "關節。",
+   "category": "身體構造"
+  },
+  {
+   "word": "趼",
+   "roman": "lan",
+   "meaning": "繭。皮膚因為過度摩擦而產生的厚皮。",
+   "category": "身體構造"
+  },
+  {
+   "word": "𡳞",
+   "roman": "lān",
+   "meaning": "男性或雄性動物的生殖器。",
+   "category": "身體構造"
+  },
+  {
+   "word": "𡳞核",
+   "roman": "lān-hu̍t",
+   "meaning": "睪丸。雄性生殖器官的一部分，形如卵狀，藏在陰囊中，是製造精子的地方。",
+   "category": "身體構造"
+  },
+  {
+   "word": "𡳞蔓",
+   "roman": "lān-muā",
+   "meaning": "男性陰毛。\n皮。形容厚顏無恥、流氓樣、不要臉的樣子。",
+   "category": "身體構造"
+  },
+  {
+   "word": "𡳞脬",
+   "roman": "lān-pha",
+   "meaning": "陰囊。雄性外生殖器的一部分，包藏睪丸的囊。",
+   "category": "身體構造"
+  },
+  {
+   "word": "𡳞𦉎",
+   "roman": "lān-sui",
+   "meaning": "雄性動物被包皮包覆的陰莖。",
+   "category": "身體構造"
+  },
+  {
+   "word": "𡳞鳥",
+   "roman": "lān-tsiáu",
+   "meaning": "陰莖、陽具。雄性生殖器官長在體外的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "人頭",
+   "roman": "lâng-thâu",
+   "meaning": "人的頭部。\n人數。\n為了逃避法律責任所設置的負責人。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腡",
+   "roman": "lê",
+   "meaning": "手指上螺旋狀的指紋。",
+   "category": "身體構造"
+  },
+  {
+   "word": "奶",
+   "roman": "ling/ni",
+   "meaning": "哺乳動物的乳房。\n由乳房所分泌出來的汁液。\n用穀物所磨製的乳狀飲品。",
+   "category": "身體構造"
+  },
+  {
+   "word": "奶齒",
+   "roman": "ling-khí/ni-khí",
+   "meaning": "乳牙。小兒最初生長，未經脫換的牙齒。",
+   "category": "身體構造"
+  },
+  {
+   "word": "奶頭",
+   "roman": "ling-thâu/ni-thâu",
+   "meaning": "乳頭。乳房中央突起的尖端部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "龍骨",
+   "roman": "liông-kut",
+   "meaning": "脊椎骨。\n一種中藥。古代動物骨骼的化石，有鎮靜、收斂的功效。\n船體的中樑。",
+   "category": "身體構造"
+  },
+  {
+   "word": "脈",
+   "roman": "me̍h",
+   "meaning": "分布在人與動物全身，使血液流通而循環不窮的血管。\n指像血脈一樣，有條理分支的事物。\n脈搏。",
+   "category": "身體構造"
+  },
+  {
+   "word": "毛尾仔",
+   "roman": "mn̂g-bué-á/mn̂g-bé-á",
+   "meaning": "辮子、馬尾。將頭髮束起或分股交叉編成長條狀。\n毛髮的末端。",
+   "category": "身體構造"
+  },
+  {
+   "word": "毛跤",
+   "roman": "mn̂g-kha",
+   "meaning": "毛髮的邊際。",
+   "category": "身體構造"
+  },
+  {
+   "word": "毛管",
+   "roman": "mn̂g-kńg/môo-kńg",
+   "meaning": "毛孔。汗腺在皮膚表面上的細孔。",
+   "category": "身體構造"
+  },
+  {
+   "word": "毛繐",
+   "roman": "mn̂g-sui",
+   "meaning": "瀏海、劉海。垂在額頭上的短髮。\n鬢毛。兩鬢周圍的短毛。",
+   "category": "身體構造"
+  },
+  {
+   "word": "盲腸",
+   "roman": "môo-tn̂g",
+   "meaning": "大腸的上段，在人體腹腔右邊，為食物由小腸進入大腸的門戶。",
+   "category": "身體構造"
+  },
+  {
+   "word": "𢯾鼻",
+   "roman": "mooh-phīnn",
+   "meaning": "鼻梁不高。\n鼻子下陷。",
+   "category": "身體構造"
+  },
+  {
+   "word": "嚨喉",
+   "roman": "nâ-âu",
+   "meaning": "咽喉、喉嚨。",
+   "category": "身體構造"
+  },
+  {
+   "word": "嚨喉空",
+   "roman": "nâ-âu-khang",
+   "meaning": "咽喉、喉管。位於嘴、鼻孔後面；食道和氣管之間，具有多個孔道的囊狀區域。",
+   "category": "身體構造"
+  },
+  {
+   "word": "嚨喉管",
+   "roman": "nâ-âu-kńg",
+   "meaning": "位於口腔、鼻腔後面；食道、氣管之間，具有多個孔道的囊狀區域。",
+   "category": "身體構造"
+  },
+  {
+   "word": "嚨喉蒂仔",
+   "roman": "nâ-âu-tì-á",
+   "meaning": "小舌、懸壅垂。位於口內上顎，軟口蓋後端的小肌肉，呈圓錘形狀。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腦",
+   "roman": "náu",
+   "meaning": "頭髓，為高等動物神經系統的主要部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "五臟",
+   "roman": "ngóo-tsōng",
+   "meaning": "指心、肝、脾、肺、腎等五大器官，也可泛指一切內臟。",
+   "category": "身體構造"
+  },
+  {
+   "word": "耳",
+   "roman": "ní",
+   "meaning": "耳朵。\n形狀像耳朵的東西。",
+   "category": "身體構造"
+  },
+  {
+   "word": "耳目",
+   "roman": "ní-bo̍k",
+   "meaning": "耳朵和眼睛。\n代人打探消息的人。",
+   "category": "身體構造"
+  },
+  {
+   "word": "軟骨",
+   "roman": "nńg-kut",
+   "meaning": "形容骨頭柔軟而有彈性。\n骨頭關節連接處的膠質部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "瀾鬚",
+   "roman": "nuā-tshiu",
+   "meaning": "口沫。",
+   "category": "身體構造"
+  },
+  {
+   "word": "旺",
+   "roman": "ōng",
+   "meaning": "火勢猛烈。\n興盛的。\n植物生長茂盛。\n聲音洪亮。\n香火鼎盛。\n頭髮多。",
+   "category": "身體構造"
+  },
+  {
+   "word": "烏仁",
+   "roman": "oo-jîn/oo-lîn",
+   "meaning": "黑眼珠、黑眼球。\n墨鏡、太陽眼鏡的鏡片。",
+   "category": "身體構造"
+  },
+  {
+   "word": "烏痣",
+   "roman": "oo-kì",
+   "meaning": "黑色的痣。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腹",
+   "roman": "pak",
+   "meaning": "肚子。\n物體的中間部位。\n內容、容納的東西。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腹內",
+   "roman": "pak-lāi",
+   "meaning": "動物的內臟。\n體內。\n指一個人的內在才學。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腹腸",
+   "roman": "pak-tn̂g",
+   "meaning": "肚子。\n心胸、度量。\n心機。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腹肚",
+   "roman": "pak-tóo",
+   "meaning": "肚子。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腹肚尾",
+   "roman": "pak-tóo-bué/pak-tóo-bé",
+   "meaning": "指下腹部。",
+   "category": "身體構造"
+  },
+  {
+   "word": "白仁",
+   "roman": "pe̍h-jîn/pe̍h-lîn",
+   "meaning": "眼白、白眼球。\n蛋白。",
+   "category": "身體構造"
+  },
+  {
+   "word": "白斑",
+   "roman": "pe̍h-pan",
+   "meaning": "指人體皮膚上的白色斑點。",
+   "category": "身體構造"
+  },
+  {
+   "word": "骿支骨",
+   "roman": "phiann-ki-kut",
+   "meaning": "肋骨。人或高等動物胸腔兩側弓形的扁骨。前端有軟骨連接兩邊，後端和脊柱相接，形成胸廓，有保護胸腔內臟及控制呼吸的作用。",
+   "category": "身體構造"
+  },
+  {
+   "word": "骿條骨",
+   "roman": "phiann-liâu-kut",
+   "meaning": "肋骨。人或高等動物胸腔兩側弓形的扁骨。前端有軟骨連接兩邊，後端和脊柱相接，形成胸廓，有保護胸腔內臟及控制呼吸的作用。",
+   "category": "身體構造"
+  },
+  {
+   "word": "魄",
+   "roman": "phik",
+   "meaning": "人體中的精氣或靈魂。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鼻",
+   "roman": "phīnn",
+   "meaning": "人體的呼吸及嗅覺器官。\n聞氣味。\n鼻涕。\n物體突出而像鼻子的部分，如草鞋、木屐等夾腳鞋帶的繫紐。\n嗅覺。\n小孔。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鼻仔",
+   "roman": "phīnn-á",
+   "meaning": "鼻子。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鼻目喙",
+   "roman": "phīnn-ba̍k-tshuì",
+   "meaning": "五官。人面目上的眼睛、嘴巴、鼻子等器官的總稱。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鼻空",
+   "roman": "phīnn-khang",
+   "meaning": "鼻孔。鼻子的孔道，為呼吸時氣息出入的通道。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鼻龍",
+   "roman": "phīnn-liông",
+   "meaning": "鼻瘜肉。指鼻腔內的贅生物，形狀像葡萄子，顏色呈灰白色或淡紅色，半透明狀，摸起來感覺柔軟但卻不會痛。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鼻翼",
+   "roman": "phīnn-si̍t",
+   "meaning": "鼻尖兩旁的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鼻頭",
+   "roman": "phīnn-thâu",
+   "meaning": "鼻梁下端高起處，靠鼻孔的尖端。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鼻刀",
+   "roman": "phīnn-to",
+   "meaning": "鼻梁。鼻子正面豎直隆起的部位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "膀胱",
+   "roman": "phông-kong",
+   "meaning": "泌尿系統中儲存尿液的器官。為肌肉與膜質形成的囊，呈卵圓形，位在骨盤腔的前方和腹腔的下方。又作「小肚」(sió-tōo)。",
+   "category": "身體構造"
+  },
+  {
+   "word": "䫌",
+   "roman": "phué",
+   "meaning": "臉頰或臀部整片肌肉的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "皮",
+   "roman": "phuê/phê",
+   "meaning": "動物肌膚的表面，覆蓋在肌肉上。\n覆蓋在物體表面上的皮質，可以保護物體免於受損。\n皮製的。\n像皮的東西。",
+   "category": "身體構造"
+  },
+  {
+   "word": "皮膚",
+   "roman": "phuê-hu/phê-hu",
+   "meaning": "覆蓋在身體外部的皮膜。具有保護、排泄和調節體溫等功用。",
+   "category": "身體構造"
+  },
+  {
+   "word": "盆跤骨",
+   "roman": "phûn-kha-kut",
+   "meaning": "恥骨。人體骨盆中的一部分，位於髖骨前部下方，生殖器上方。形狀不規則，左右兩塊結合在一起。",
+   "category": "身體構造"
+  },
+  {
+   "word": "脾",
+   "roman": "pî",
+   "meaning": "內臟之一。在左腹上方，負責製造白血球及淋巴球、分解紅血球、調節脂肪、蛋白質的新陳代謝等。\n引申為胃口。",
+   "category": "身體構造"
+  },
+  {
+   "word": "脾土",
+   "roman": "pî-thóo",
+   "meaning": "胃口、食慾。\n脾與胃。舊時誤以為脾能幫助胃來消化食物，所以兩者往往合稱。\n指水土。",
+   "category": "身體構造"
+  },
+  {
+   "word": "脾胃",
+   "roman": "pî-uī",
+   "meaning": "脾和胃，消化器官。引申為胃口食慾。",
+   "category": "身體構造"
+  },
+  {
+   "word": "箅仔骨",
+   "roman": "pín-á-kut",
+   "meaning": "肋骨。人或高等動物胸腔兩側弓形的扁骨。前端有軟骨連接兩邊，後端和脊柱相接，形成胸廓，有保護胸腔內臟及控制呼吸的作用。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鬢角",
+   "roman": "pìn-kak",
+   "meaning": "兩鬢下垂的部位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鬢跤",
+   "roman": "pìn-kha",
+   "meaning": "鬢腳、鬢角。耳朵前長毛髮的部位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鬢邊",
+   "roman": "pìn-pinn",
+   "meaning": "太陽穴。位於鬢角前方的動脈搏動處。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鬢繐",
+   "roman": "pìn-sui",
+   "meaning": "鬢角下垂的一小撮頭髮。",
+   "category": "身體構造"
+  },
+  {
+   "word": "飯匙骨",
+   "roman": "pn̄g-sî-kut",
+   "meaning": "肩胛骨。人體背部上方外側的骨頭，左右各一，呈三角扁平形，與鎖骨、肱骨構成肩關節。",
+   "category": "身體構造"
+  },
+  {
+   "word": "玻璃清",
+   "roman": "po-lê-tshing",
+   "meaning": "玻璃體。指眼球內水晶體後方的無色透明黏稠液膠狀物質，和睫狀體及網膜連接，有支撐眼球內壁的作用。",
+   "category": "身體構造"
+  },
+  {
+   "word": "捗",
+   "roman": "pôo",
+   "meaning": "臉或手腳的形狀、模型。",
+   "category": "身體構造"
+  },
+  {
+   "word": "半身",
+   "roman": "puànn-sin",
+   "meaning": "全身的一半。",
+   "category": "身體構造"
+  },
+  {
+   "word": "背",
+   "roman": "puē",
+   "meaning": "背地裡、人後。\n違反。\n記憶、背誦。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肥肉",
+   "roman": "puî-bah",
+   "meaning": "多脂肪質的肉類。\n比喻有利可圖的人、事或物。",
+   "category": "身體構造"
+  },
+  {
+   "word": "糞口",
+   "roman": "pùn-kháu",
+   "meaning": "肛門。",
+   "category": "身體構造"
+  },
+  {
+   "word": "獅仔鼻",
+   "roman": "sai-á-phīnn",
+   "meaning": "鼻子的形狀與獅鼻相似，鼻翼大。",
+   "category": "身體構造"
+  },
+  {
+   "word": "屎桮齒",
+   "roman": "sái-pue-khí",
+   "meaning": "門牙。屎桮是早期沒有衛生紙的時代，用來刮屁股的竹片，以此稱呼門牙是帶有嘲笑意味的。",
+   "category": "身體構造"
+  },
+  {
+   "word": "瘦肉",
+   "roman": "sán-bah",
+   "meaning": "瘦肉、精肉。",
+   "category": "身體構造"
+  },
+  {
+   "word": "生張",
+   "roman": "senn-tiunn/sinn-tiunn",
+   "meaning": "體格、相貌。與生俱來的外貌、個性。\n習性。",
+   "category": "身體構造"
+  },
+  {
+   "word": "雙手",
+   "roman": "siang-tshiú",
+   "meaning": "兩手。二隻手。",
+   "category": "身體構造"
+  },
+  {
+   "word": "消化",
+   "roman": "siau-huà",
+   "meaning": "食物在消化器官中轉化成養料時的分解、吸收作用。\n表示對所學知識的理解、吸收。",
+   "category": "身體構造"
+  },
+  {
+   "word": "潲",
+   "roman": "siâu",
+   "meaning": "精液。\n引申為無聊、無用的事，加在詞句中使之成為粗俗的用語。\n用於動詞或形容詞後，有不愉快或不合理的意思。",
+   "category": "身體構造"
+  },
+  {
+   "word": "心",
+   "roman": "sim",
+   "meaning": "人體器官之一。\n思想、意念。\n心地、心性。\n意志力量。\n意願。\n物體的中央或內部。",
+   "category": "身體構造"
+  },
+  {
+   "word": "心肝窟仔",
+   "roman": "sim-kuann-khut-á",
+   "meaning": "心窩、心坎。胸部的中央、胸口。",
+   "category": "身體構造"
+  },
+  {
+   "word": "心腹",
+   "roman": "sim-pak",
+   "meaning": "親信。十分信任的人、忠誠可靠的人。\n臟腑。人體的重要內臟器官。",
+   "category": "身體構造"
+  },
+  {
+   "word": "心臟",
+   "roman": "sim-tsōng",
+   "meaning": "中空、紅色的肌肉質器官，如拳頭般大小，主掌全身血液的循環。\n核心。常用來比喻事物或地區的核心及重要地帶。",
+   "category": "身體構造"
+  },
+  {
+   "word": "身",
+   "roman": "sin",
+   "meaning": "軀體。\n自己。\n物體的中心或主要部分。\n懷孕。\n身分來歷。",
+   "category": "身體構造"
+  },
+  {
+   "word": "身軀",
+   "roman": "sin-khu",
+   "meaning": "身體。",
+   "category": "身體構造"
+  },
+  {
+   "word": "身體",
+   "roman": "sin-thé",
+   "meaning": "人的軀體。",
+   "category": "身體構造"
+  },
+  {
+   "word": "囟",
+   "roman": "sìn",
+   "meaning": "剛出生嬰兒因臚骨尚未成熟密合，所以可看到腦部血管跳動，這個頭頂前部的地方叫做「囟」。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腎",
+   "roman": "sīn",
+   "meaning": "腎臟。器官名。位於腰部，在脊柱的兩側，左右對稱，蠶豆狀。過濾體內廢料為尿液，是重要的排泄器官。或稱「腰子」(io-tsí)。",
+   "category": "身體構造"
+  },
+  {
+   "word": "小腸",
+   "roman": "sió-tn̂g",
+   "meaning": "在腸的上部，較大腸細長，上接胃部，下連大腸，有消化和吸收的功用，是人體最重要的消化器官。",
+   "category": "身體構造"
+  },
+  {
+   "word": "小肚",
+   "roman": "sió-tōo",
+   "meaning": "膀胱。泌尿系統中儲存尿液的器官。為肌肉與膜質形成的囊，呈卵圓形，位在骨盤腔的前方和腹腔的下方。",
+   "category": "身體構造"
+  },
+  {
+   "word": "相",
+   "roman": "siòng",
+   "meaning": "狀貌、儀態。\n照片。\n宰相。\n盯視。\n算命、占卜。\n趁、看準、算準。",
+   "category": "身體構造"
+  },
+  {
+   "word": "十二指腸",
+   "roman": "si̍p-jī-tsí-tn̂g/si̍p-lī-tsí-tn̂g",
+   "meaning": "小腸的上段部分，上接胃，下連空腸，長度大約是十二個指頭長，形狀為Ｃ形，是小腸最主要的吸收養分的地方。",
+   "category": "身體構造"
+  },
+  {
+   "word": "軀",
+   "roman": "su",
+   "meaning": "身體。\n計算成套衣服的單位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "四肢",
+   "roman": "sù-ki",
+   "meaning": "人體兩手兩腳的總稱。",
+   "category": "身體構造"
+  },
+  {
+   "word": "巡",
+   "roman": "sûn",
+   "meaning": "往來察看、檢查。\n紋路、線條。\n眼皮。\n計算條狀痕跡的單位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "丹田",
+   "roman": "tan-tiân",
+   "meaning": "指人肚臍下面一寸半或三寸的地方。",
+   "category": "身體構造"
+  },
+  {
+   "word": "膽",
+   "roman": "tánn",
+   "meaning": "人體內臟之一。靠近肝的右半葉，所存的膽汁為黃綠色，味道極苦，用來協助消化。\n勇氣。古人認為勇氣由膽發出。",
+   "category": "身體構造"
+  },
+  {
+   "word": "斗",
+   "roman": "táu",
+   "meaning": "計算容量的單位。十升為一斗。\n形狀似斗的盛物器具及身體部位。\n次、回。計算次數的單位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "坦敧身",
+   "roman": "thán-khi-sin",
+   "meaning": "側身。形容人的身體向左右兩邊偏斜的狀態。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頭",
+   "roman": "thâu",
+   "meaning": "首、腦袋。\n第一的、最初的。\n表示方位、地方或場所的詞尾。\n居前的領導人物。\n詞綴，可加於某些詞語後。\n根本、源頭。\n事情的開端。\n時間的開始階段。\n碎屑、一點點。\n事、物的前端。\n最初得到的東西。\n果菜或貨物批發時，大、中盤商用來計算一大籮菜或是一批貨的單位。一頭等於半擔或一籮，一擔就是兩頭。\n一方、一邊。\n指頭髮。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頭額",
+   "roman": "thâu-hia̍h",
+   "meaning": "額頭。眉毛上方，頭髮下方的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頭殼",
+   "roman": "thâu-khak",
+   "meaning": "頭顱、腦袋。\n頭腦、腦筋。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頭殼額仔",
+   "roman": "thâu-khak-hia̍h-á",
+   "meaning": "額頭。眉毛上方，頭髮下方的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頭殼髓",
+   "roman": "thâu-khak-tshué/thâu-khak-tshé",
+   "meaning": "腦髓、頭髓。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頭殼碗",
+   "roman": "thâu-khak-uánn",
+   "meaning": "頭蓋骨。位於脊椎動物的頭部，以八片扁平骨合成，具有保護腦髓的作用。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頭毛",
+   "roman": "thâu-mn̂g",
+   "meaning": "頭髮。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頭腦",
+   "roman": "thâu-náu/thâu-nóo",
+   "meaning": "頭顱。\n腦筋、思想。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頭麩",
+   "roman": "thâu-phoo",
+   "meaning": "頭皮屑。一種頭部皮膚的分泌物，成碎屑狀。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頭鬃",
+   "roman": "thâu-tsang",
+   "meaning": "頭髮。從前指可以梳辮子的長髮，現在一般指頭髮。",
+   "category": "身體構造"
+  },
+  {
+   "word": "體格",
+   "roman": "thé-keh",
+   "meaning": "身材、體格。",
+   "category": "身體構造"
+  },
+  {
+   "word": "拆扦",
+   "roman": "thiah-tshuann",
+   "meaning": "肉刺、指甲刺。指甲周圍的角質因為乾裂而翹起來。",
+   "category": "身體構造"
+  },
+  {
+   "word": "天庭",
+   "roman": "thian-tîng",
+   "meaning": "天界。神佛居住的地方。\n額頭眉間。面相家或醫生稱人額頭兩眉之間為天庭，認為其間的氣色好壞和人的運氣及健康有很大的關係。",
+   "category": "身體構造"
+  },
+  {
+   "word": "挑俍",
+   "roman": "thiau-lāng",
+   "meaning": "形容建築物的空間寬敞，光線明亮。\n人的身材高挑。",
+   "category": "身體構造"
+  },
+  {
+   "word": "抽長",
+   "roman": "thiu-tn̂g",
+   "meaning": "長長、拉長。東西或植物的莖幹拉長。",
+   "category": "身體構造"
+  },
+  {
+   "word": "褪齒",
+   "roman": "thǹg-khí",
+   "meaning": "換牙。乳齒逐一脫落，由恆齒長出替換的現象。一般人在六歲到八歲時開始換牙，十二歲到十四歲時全部換成恆齒。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腿",
+   "roman": "thuí",
+   "meaning": "動物的下肢。",
+   "category": "身體構造"
+  },
+  {
+   "word": "豬哥牙",
+   "roman": "ti-ko-gê/tu-ko-gê",
+   "meaning": "犬齒、虎牙。橫生的牙齒。",
+   "category": "身體構造"
+  },
+  {
+   "word": "津",
+   "roman": "tin",
+   "meaning": "唾液、口水。\n滴。\n薪水。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頂𦜆",
+   "roman": "tíng-ham",
+   "meaning": "上顎。口腔上壁的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頂肱骨",
+   "roman": "tíng-kong-kut",
+   "meaning": "肱骨。上肢最大的長骨，上端和肩部相連，下端和尺骨和橈骨相連。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頂腹蓋",
+   "roman": "tíng-pak-kuà",
+   "meaning": "腹腔以上，與下腹相對，即胸部。",
+   "category": "身體構造"
+  },
+  {
+   "word": "頂半身",
+   "roman": "tíng-puànn-sin",
+   "meaning": "上半身。",
+   "category": "身體構造"
+  },
+  {
+   "word": "重巡",
+   "roman": "tîng-sûn",
+   "meaning": "雙眼皮。",
+   "category": "身體構造"
+  },
+  {
+   "word": "中指",
+   "roman": "tiong-tsáinn",
+   "meaning": "第三根手指頭。",
+   "category": "身體構造"
+  },
+  {
+   "word": "轉成",
+   "roman": "tńg-tsiânn",
+   "meaning": "發育。指青春期的兒童身體各部位發育成熟，逐漸長大為成人。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腸",
+   "roman": "tn̂g",
+   "meaning": "腹腔消化器官之一，有消化及吸收的功能。\n度量。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腸仔",
+   "roman": "tn̂g-á",
+   "meaning": "腸子。腹腔消化器官之一，有消化及吸收的功能。",
+   "category": "身體構造"
+  },
+  {
+   "word": "腸仔𣻸",
+   "roman": "tn̂g-á-siûnn",
+   "meaning": "腸子的黏液。",
+   "category": "身體構造"
+  },
+  {
+   "word": "斷掌",
+   "roman": "tn̄g-tsiúnn",
+   "meaning": "掌紋呈一直線橫貫手掌。手紋橫斷的人。",
+   "category": "身體構造"
+  },
+  {
+   "word": "倒手",
+   "roman": "tò-tshiú",
+   "meaning": "左手。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肚",
+   "roman": "tóo",
+   "meaning": "腹部、肚子。\n稍微突起的肌肉。\n護腰帶、荷包。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肚",
+   "roman": "tōo",
+   "meaning": "腹部、肚子。\n牲畜的胃。\n心腸、肚量。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肚腸",
+   "roman": "tōo-tn̂g",
+   "meaning": "度量。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肚臍",
+   "roman": "tōo-tsâi",
+   "meaning": "肚臍眼。",
+   "category": "身體構造"
+  },
+  {
+   "word": "肚臍空",
+   "roman": "tōo-tsâi-khang",
+   "meaning": "肚臍眼。",
+   "category": "身體構造"
+  },
+  {
+   "word": "臍",
+   "roman": "tsâi",
+   "meaning": "人與其他哺乳動物腹部中央的皺摺圓點，在胎兒時期有臍帶與母體相連。\n螃蟹腹部近尾端處的一片甲殼。",
+   "category": "身體構造"
+  },
+  {
+   "word": "指",
+   "roman": "tsáinn",
+   "meaning": "指頭。\n以指寬作為計算寬度的單位。",
+   "category": "身體構造"
+  },
+  {
+   "word": "鬃",
+   "roman": "tsang",
+   "meaning": "人或動物的毛髮。",
+   "category": "身體構造"
+  },
+  {
+   "word": "青筋",
+   "roman": "tshenn-kin/tshinn-kun",
+   "meaning": "靜脈。皮膚下顏色較暗的靜脈血管。",
+   "category": "身體構造"
+  },
+  {
+   "word": "刺酸",
+   "roman": "tshiah-sng",
+   "meaning": "胃酸。胃液中所含的鹽酸。可殺死食物中的微生物，胃內的食物就在此酸性的情況中被消化。",
+   "category": "身體構造"
+  },
+  {
+   "word": "七孔",
+   "roman": "tshit-khóng",
+   "meaning": "七竅。指人臉部的七個孔穴，包括兩眼、兩耳、兩鼻孔和嘴巴。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手",
+   "roman": "tshiú",
+   "meaning": "指人體的上肢部分。\n引申作擅長某種技術的人。\n指事物的一部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手目",
+   "roman": "tshiú-ba̍k",
+   "meaning": "手腕關節突起的骨頭。\n手指關節。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手面",
+   "roman": "tshiú-bīn",
+   "meaning": "手掌。\n在盥洗時用來統稱手、臉、腳等部位。\n現金。手頭上現有的財物。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手模",
+   "roman": "tshiú-bôo",
+   "meaning": "整個手掌的形狀外觀。\n手指紋路的印痕。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手尾",
+   "roman": "tshiú-bué/tshiú-bé",
+   "meaning": "指尖。手掌的指頭、指尖部分。\n遺產。先人的遺產、遺物。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手痕",
+   "roman": "tshiú-hûn",
+   "meaning": "指紋。\n手印、手模。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手爪",
+   "roman": "tshiú-jiáu/tshiú-niáu",
+   "meaning": "原意為手指，引申為「行為、習慣」的意思。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手曲",
+   "roman": "tshiú-khiau",
+   "meaning": "整個手臂彎曲起來所形成的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手股",
+   "roman": "tshiú-kóo",
+   "meaning": "上臂。上肢的一部分，位於肩膀與下臂之間。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手骨",
+   "roman": "tshiú-kut",
+   "meaning": "指人體上肢胳臂的骨頭部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手門",
+   "roman": "tshiú-mn̂g",
+   "meaning": "虎口。手部大拇指與食指相連的部位。\n虎口、手臂的力量。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手盤",
+   "roman": "tshiú-puânn",
+   "meaning": "手背。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手底",
+   "roman": "tshiú-té/tshiú-tué",
+   "meaning": "手掌。\n遺產。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手蹄仔",
+   "roman": "tshiú-tê-á/tshiú-tuê-á",
+   "meaning": "手心。手的中心部分。也說成「手蹄」(tshiú-tê)。\n引申指手的癖性。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手肚",
+   "roman": "tshiú-tóo",
+   "meaning": "手臂凸起的肌肉。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手肚仁",
+   "roman": "tshiú-tóo-jîn/tshiú-tóo-lîn",
+   "meaning": "上臂內側的肌肉。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手節",
+   "roman": "tshiú-tsat",
+   "meaning": "手腕。手掌與手臂相接的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手指頭仔",
+   "roman": "tshiú-tsíng-thâu-á",
+   "meaning": "手指。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手碗",
+   "roman": "tshiú-uánn",
+   "meaning": "手肘的關節。",
+   "category": "身體構造"
+  },
+  {
+   "word": "手碗骨",
+   "roman": "tshiú-uánn-kut",
+   "meaning": "手肘關節的骨頭。",
+   "category": "身體構造"
+  },
+  {
+   "word": "粗糠耳",
+   "roman": "tshoo-khng-hīnn/tshoo-khng-hī",
+   "meaning": "乾耳朵。易排出乾性耳垢的耳朵。",
+   "category": "身體構造"
+  },
+  {
+   "word": "髓",
+   "roman": "tshué/tshé",
+   "meaning": "骨頭中的膠狀物質，也指魚、雞等動物的腦。",
+   "category": "身體構造"
+  },
+  {
+   "word": "喙",
+   "roman": "tshuì",
+   "meaning": "嘴巴。\n口。計算口數的單位。\n東西的形狀或功用像嘴巴一樣的地方。\n引申為說出來的話。",
+   "category": "身體構造"
+  },
+  {
+   "word": "喙下斗",
+   "roman": "tshuì-ē-táu",
+   "meaning": "下巴、下顎。",
+   "category": "身體構造"
+  },
+  {
+   "word": "喙角",
+   "roman": "tshuì-kak",
+   "meaning": "嘴角。",
+   "category": "身體構造"
+  },
+  {
+   "word": "喙空",
+   "roman": "tshuì-khang",
+   "meaning": "口腔、嘴巴。",
+   "category": "身體構造"
+  },
+  {
+   "word": "喙齒",
+   "roman": "tshuì-khí",
+   "meaning": "牙齒。",
+   "category": "身體構造"
+  },
+  {
+   "word": "喙齒根",
+   "roman": "tshuì-khí-kin/tshuì-khí-kun",
+   "meaning": "牙根。牙齒藏在齒槽內的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "喙箍",
+   "roman": "tshuì-khoo",
+   "meaning": "嘴巴的四周圍。",
+   "category": "身體構造"
+  },
+  {
+   "word": "喙瀾",
+   "roman": "tshuì-nuā",
+   "meaning": "口水、唾液。由口腔黏膜與唾腺分泌液混合而成的黏液。",
+   "category": "身體構造"
+  },
+  {
+   "word": "喙䫌",
+   "roman": "tshuì-phué",
+   "meaning": "臉頰、面頰。",
+   "category": "身體構造"
+  },
+  {
+   "word": "喙鬚",
+   "roman": "tshuì-tshiu",
+   "meaning": "鬍鬚。",
+   "category": "身體構造"
+  },
+  {
+   "word": "喙舌",
+   "roman": "tshuì-tsi̍h",
+   "meaning": "舌頭。口腔裡頭具有攝食、分辨滋味、協助發音、咀嚼等功能的器官。",
+   "category": "身體構造"
+  },
+  {
+   "word": "喙脣",
+   "roman": "tshuì-tûn",
+   "meaning": "嘴脣。",
+   "category": "身體構造"
+  },
+  {
+   "word": "膣",
+   "roman": "tsi",
+   "meaning": "女性生殖器。常用於罵人，是很粗俗的用法。",
+   "category": "身體構造"
+  },
+  {
+   "word": "膣屄",
+   "roman": "tsi-bai",
+   "meaning": "屄。指女子的外生殖器官。",
+   "category": "身體構造"
+  },
+  {
+   "word": "指",
+   "roman": "tsí",
+   "meaning": "指頭。\n用手指將目標、東西表示出來。",
+   "category": "身體構造"
+  },
+  {
+   "word": "指紋",
+   "roman": "tsí-bûn",
+   "meaning": "人手指尖內側表面的紋路。",
+   "category": "身體構造"
+  },
+  {
+   "word": "正面",
+   "roman": "tsiànn-bīn",
+   "meaning": "身體五官的那一面、物體的外表或上層。\n直接面對面。\n比喻富有教育性或積極的一面。",
+   "category": "身體構造"
+  },
+  {
+   "word": "正手",
+   "roman": "tsiànn-tshiú",
+   "meaning": "右手。",
+   "category": "身體構造"
+  },
+  {
+   "word": "舌",
+   "roman": "tsi̍h",
+   "meaning": "口腔內識別味道及發音的器官。\n像舌頭般的部分。\n比喻講話。",
+   "category": "身體構造"
+  },
+  {
+   "word": "指甲",
+   "roman": "tsíng-kah",
+   "meaning": "手指或腳趾尖上所生的角質物。",
+   "category": "身體構造"
+  },
+  {
+   "word": "指甲扦",
+   "roman": "tsíng-kah-tshuann",
+   "meaning": "肉刺。指甲周圍的角質因為乾裂而翹起來。",
+   "category": "身體構造"
+  },
+  {
+   "word": "指頭仔",
+   "roman": "tsíng-thâu-á",
+   "meaning": "手或腳的指頭。正常情況下手腳左、右各五根指頭。",
+   "category": "身體構造"
+  },
+  {
+   "word": "指頭拇公",
+   "roman": "tsíng-thâu-bú-kong",
+   "meaning": "大拇指。",
+   "category": "身體構造"
+  },
+  {
+   "word": "前擴",
+   "roman": "tsîng-khok",
+   "meaning": "前額凸出的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "足",
+   "roman": "tsiok",
+   "meaning": "完滿，滿意。\n夠量的、不缺乏的。\n整整的、完全的。\n非常、很、十分。也可唸作tsok。\n步行。\n腳。",
+   "category": "身體構造"
+  },
+  {
+   "word": "掌",
+   "roman": "tsióng",
+   "meaning": "手或腳的中心部分。\n管理、掌管。",
+   "category": "身體構造"
+  },
+  {
+   "word": "酒窟仔",
+   "roman": "tsiú-khut-á",
+   "meaning": "酒窩。笑時臉頰上出現如窩狀的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "掌",
+   "roman": "tsiúnn",
+   "meaning": "手或腳的中心部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "珠淚",
+   "roman": "tsu-luī",
+   "meaning": "眼淚、淚珠。",
+   "category": "身體構造"
+  },
+  {
+   "word": "硃砂痣",
+   "roman": "tsu-se-kì",
+   "meaning": "生在皮膚上的紅痣。",
+   "category": "身體構造"
+  },
+  {
+   "word": "子宮",
+   "roman": "tsú-kiong",
+   "meaning": "雌性動物生殖器的主要部分。位於小骨盤內膀胱與直腸之間，以子宮頸與陰道相連，底部兩側與輸卵管相通，為胎兒發育的場所。",
+   "category": "身體構造"
+  },
+  {
+   "word": "水雞",
+   "roman": "tsuí-ke/tsuí-kue",
+   "meaning": "青蛙。兩棲類動物。腳上有蹼，擅長跳躍、游泳。多生活在水邊，常在夜間活動。\n女人的生殖器。臺灣南部的「水雞」又指女性的生殖器，為了避諱，便把青蛙叫做「四跤仔」(sì-kha-á)。",
+   "category": "身體構造"
+  },
+  {
+   "word": "水帕",
+   "roman": "tsuí-phè",
+   "meaning": "羊水、胎膜。",
+   "category": "身體構造"
+  },
+  {
+   "word": "帶膭",
+   "roman": "tuà-kuī",
+   "meaning": "懷孕。",
+   "category": "身體構造"
+  },
+  {
+   "word": "大目",
+   "roman": "tuā-ba̍k",
+   "meaning": "大眼睛。用來嘲諷人沒有看到近在眼前或目標明顯的東西。",
+   "category": "身體構造"
+  },
+  {
+   "word": "大細目",
+   "roman": "tuā-sè-ba̍k/tuā-suè-ba̍k",
+   "meaning": "本義為兩眼一大一小，大小眼。引申為用不公平的角度看待他人。",
+   "category": "身體構造"
+  },
+  {
+   "word": "大頭拇",
+   "roman": "tuā-thâu-bú",
+   "meaning": "大拇指。",
+   "category": "身體構造"
+  },
+  {
+   "word": "大腿",
+   "roman": "tuā-thuí",
+   "meaning": "為下肢的一部分，在臀與膝蓋之間。",
+   "category": "身體構造"
+  },
+  {
+   "word": "大腿骨",
+   "roman": "tuā-thuí-kut",
+   "meaning": "股骨。大腿裡的骨頭，是全身最長的骨，約占身長的四分之一。",
+   "category": "身體構造"
+  },
+  {
+   "word": "大腸",
+   "roman": "tuā-tn̂g",
+   "meaning": "腸的下部。上接小腸，下連肛門，較小腸粗大而短，可依次分為盲腸、結腸與直腸三部分。大腸可吸收水分和一部分養分，並主宰排泄作用。\n糯米腸。是一種臺灣傳統食品，將蒸熟的糯米飯拌入佐料，再灌入豬腸內而成。",
+   "category": "身體構造"
+  },
+  {
+   "word": "大肚胿",
+   "roman": "tuā-tōo-kui",
+   "meaning": "指很大的肚子。\n指一個人的食量很大。\n指懷孕。",
+   "category": "身體構造"
+  },
+  {
+   "word": "脣",
+   "roman": "tûn",
+   "meaning": "嘴脣。\n邊緣突起的部分。",
+   "category": "身體構造"
+  },
+  {
+   "word": "衣",
+   "roman": "ui",
+   "meaning": "胎盤。介於子宮內壁和胎兒之間的圓餅狀組織，中央有臍帶和胎兒相連，胎兒可藉此取得氧氣、養分，並可排出二氧化碳及廢物到母體血液內。有時也分泌激素促進子宮和乳腺的生長。",
+   "category": "身體構造"
+  },
+  {
+   "word": "胃",
+   "roman": "uī",
+   "meaning": "動物的消化器官之一。上接食道，下接十二指腸，能分泌胃液，消化食物。",
+   "category": "身體構造"
+  },
+  {
+   "word": "紅血球",
+   "roman": "âng-hueh-kiû/âng-huih-kiû",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "肉體",
+   "roman": "bah-thé",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "面相",
+   "roman": "bīn-siòng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "肺部",
+   "roman": "hì-pōo",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "血液",
+   "roman": "hueh-i̍k/huih-i̍k",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "血球",
+   "roman": "hueh-kiû/huih-kiû",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "血絲",
+   "roman": "hueh-si/huih-si",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "血清",
+   "roman": "hueh-tshing/huih-tshing",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "血水",
+   "roman": "hueh-tsuí/huih-tsuí",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "人身",
+   "roman": "jîn-sin/lîn-sin",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "幹細胞",
+   "roman": "kàn-sè-pau/kàn-suè-pau",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "氣管",
+   "roman": "khì-kńg",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "基因",
+   "roman": "ki-in",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "激素",
+   "roman": "kik-sòo",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "肝臟",
+   "roman": "kuann-tsōng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "骨架",
+   "roman": "kut-kè",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "骨骼",
+   "roman": "kut-keh",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "骨頭",
+   "roman": "kut-thâu",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "骨髓",
+   "roman": "kut-tshué/kut-tshé",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "內分泌",
+   "roman": "lāi-hun-pì",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "黏膜",
+   "roman": "liâm-mo̍oh",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "內臟",
+   "roman": "luē-tsōng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "腦部",
+   "roman": "náu-pōo",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "腦神經",
+   "roman": "náu-sîn-king",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "五官",
+   "roman": "ngóo-kuan",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "五臟六腑",
+   "roman": "ngóo-tsōng-lio̍k-hú",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "染色體",
+   "roman": "ní-sik-thé",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "卵巢",
+   "roman": "nn̄g-tsâu",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "包皮",
+   "roman": "pau-phuê/pau-phê",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "白血球",
+   "roman": "pe̍h-hueh-kiû/pe̍h-huih-kiû",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "細胞",
+   "roman": "sè-pau/suè-pau",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "雙腿",
+   "roman": "siang-thuí",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "身心",
+   "roman": "sin-sim",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "膽汁",
+   "roman": "tánn-tsiap",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "頭皮",
+   "roman": "thâu-phuê/thâu-phê",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "體內",
+   "roman": "thé-lāi",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "動脈",
+   "roman": "tōng-me̍h",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "手心",
+   "roman": "tshiú-sim",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "手掌",
+   "roman": "tshiú-tsiúnn",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "精子",
+   "roman": "tsing-tsú",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "全身",
+   "roman": "tsuân-sin",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "大腦",
+   "roman": "tuā-náu",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "胃腸",
+   "roman": "uī-tn̂g",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "身體構造"
+  },
+  {
+   "word": "鴨母蹄",
+   "roman": "ah-bó-tê",
+   "meaning": "扁平足。病名。一種內縱足弓平坦的病。形成的原因有先天和後天兩種因素。罹患此病，腳掌會向外側旋轉，以致足弓消失，腳心扁平，形成八字腳。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "暗毿病",
+   "roman": "àm-sàm-pēnn/àm-sàm-pīnn",
+   "meaning": "隱疾。難以啟齒的病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "齆鼻",
+   "roman": "àng-phīnn",
+   "meaning": "鼻塞。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "齆鼻聲",
+   "roman": "àng-phīnn-siann",
+   "meaning": "因鼻塞而使說話帶有鼻音。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "齆聲",
+   "roman": "àng-siann",
+   "meaning": "因鼻塞而使說話帶有鼻音。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "紅目",
+   "roman": "âng-ba̍k",
+   "meaning": "紅眼睛。一種眼疾，眼睛發紅的病症。\n眼紅、嫉妒。因他人勝過自己而心生妒恨。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "紅目墘",
+   "roman": "âng-ba̍k-kînn",
+   "meaning": "結膜炎。病名。多由細菌感染或物理、化學的刺激而引起。通常有結膜紅腫、流淚或化膿等病症。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "嘔",
+   "roman": "áu",
+   "meaning": "吐、嘔吐。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "嘔紅",
+   "roman": "áu-hông",
+   "meaning": "吐血。消化道內出血，而嘔出來的現象。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "嘔血",
+   "roman": "áu-hueh/áu-huih",
+   "meaning": "吐血。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "肉瘤",
+   "roman": "bah-liû",
+   "meaning": "生物體內組織細胞因為某些因素刺激，失去正常的生長狀態，形成一個塊狀的贅瘤，即俗稱的「肉瘤」。肉瘤可分為良性和惡性兩種，惡性的肉瘤會對人體造成極大的傷害。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "目花",
+   "roman": "ba̍k-hue",
+   "meaning": "老花眼。因水晶體彈性減弱，調度力減退所引起的視力不良。\n眼花。視力模糊，看不清楚。引申喻人觀察能力不靈敏。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "目狗針",
+   "roman": "ba̍k-káu-tsiam",
+   "meaning": "麥粒腫、針眼、瞼腺炎 。病名。 眼瞼周緣腺體排泄脂質受阻，並造成細菌感染的症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "目針",
+   "roman": "ba̍k-tsiam",
+   "meaning": "麥粒腫、針眼、瞼腺炎。病名。眼瞼周緣腺體排泄脂質受阻，並造成細菌感染的症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "蠻皮癬",
+   "roman": "bân-phuê-sián/bân-phê-sián",
+   "meaning": "頑癬。頑強而長久不癒的皮膚病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "盲",
+   "roman": "bông",
+   "meaning": "眼睛看不見。\n比喻不明事理。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "啞口",
+   "roman": "é-káu",
+   "meaning": "啞巴。\n指生物失去其機能。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "癌",
+   "roman": "gâm",
+   "meaning": "病名。人體細胞產生不正常增生，成為惡性腫瘤，會在體內轉移，並危及性命。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "夯",
+   "roman": "giâ",
+   "meaning": "扛。以肩舉物。\n發作。\n漲、上昇。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "錦痀",
+   "roman": "gìm-ku",
+   "meaning": "駝背。形容（人或雞等）脖子前伸且背部彎拱的樣子。\n形容衰弱萎縮狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "凝血",
+   "roman": "gîng-hueh/gîng-huih",
+   "meaning": "瘀血。因為擦撞傷而皮下出血或是血液凝滯不通。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "楞",
+   "roman": "gông",
+   "meaning": "頭暈。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "外痔",
+   "roman": "guā-tī",
+   "meaning": "病名。生在肛門外面的痔瘡。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "月內風",
+   "roman": "gue̍h-lāi-hong/ge̍h-lāi-hong",
+   "meaning": "產褥熱。病名。產婦在生產後產道因病菌感染而引起的疾病。主要症狀為發燒、下腹疼痛、陰道流血等。最常感染的部位為子宮內膜。亦稱為「月子病」。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "下痟",
+   "roman": "hā-siau",
+   "meaning": "傳統中醫對消渴症的三種辨證法之一，又稱「腎消」，症狀為多尿且傷腎水。\n形容其人無用、無能。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "哈啾",
+   "roman": "hah-tshiùnn",
+   "meaning": "打噴嚏的聲音。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "熁",
+   "roman": "hannh",
+   "meaning": "被熱氣燙到。\n利用陽光或火等熱氣烘晒、加熱。\n天氣炎熱，熱氣逼人。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痚",
+   "roman": "he",
+   "meaning": "哮喘。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痚呴",
+   "roman": "he-ku",
+   "meaning": "氣喘病、哮喘病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痚呴嗽",
+   "roman": "he-ku-sàu",
+   "meaning": "因氣喘而引起的咳嗽。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "虛火",
+   "roman": "hi-hué/hi-hé",
+   "meaning": "中醫的說法，指真陰虧損引起的病症，容易口乾舌燥。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "虛弱",
+   "roman": "hi-jio̍k/hi-lio̍k",
+   "meaning": "衰微，沒有力氣的。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "肺炎",
+   "roman": "hì-iām",
+   "meaning": "病名。由細菌、病毒感染所引起肺臟發炎的病症，會出現發燒、發冷、咳嗽、喀痰和呼吸困難等症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "肺癆",
+   "roman": "hì-lô",
+   "meaning": "肺結核。病名。一種由結核桿菌所引起的慢性傳染病。病人容易疲憊，並有發燒、夜間盜汗、咳嗽、多痰等症狀，嚴重時會咯血。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "魚鱗𤺅仔",
+   "roman": "hî-lân-tshè-á/hû-lân-tshè-á",
+   "meaning": "病名。一種皮膚病。患者皮膚因病毒感染而產生病變，長出一顆顆贅疣，狀如魚鱗。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "眩",
+   "roman": "hîn",
+   "meaning": "眼睛昏花，看東西晃動不定。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "眩車",
+   "roman": "hîn-tshia",
+   "meaning": "暈車。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "眩船",
+   "roman": "hîn-tsûn",
+   "meaning": "暈船。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "耳空吼",
+   "roman": "hīnn-khang-háu/hī-khang-háu",
+   "meaning": "耳鳴。病名。外界無聲音來源，患者自己感覺耳中有蟬鳴或其他聲響。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "耳空重",
+   "roman": "hīnn-khang-tāng/hī-khang-tāng",
+   "meaning": "耳背、重聽。聽覺遲鈍、不靈敏。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "香港跤",
+   "roman": "hiong-káng-kha",
+   "meaning": "香港腳、腳癬。病名。一種因為溼熱環境所引起的腳部皮膚癬，具有傳染性。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "風邪",
+   "roman": "hong-siâ",
+   "meaning": "受到外界風寒溼熱侵身，引起的各種疾病，多指傷風感冒。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "風溼",
+   "roman": "hong-sip",
+   "meaning": "風溼症。病名。因自體免疫細胞失調，侵犯體內組織，而導致長期、慢性的發炎狀態，形成風溼症。患者在遇到低溫或溼度高時，身體的關節、肌肉、或柔軟組織，就容易感到酸痛，而且還有可能引發結締組織疾病，如全身性紅斑性狼瘡、類風溼性關節炎等。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "癀",
+   "roman": "hông",
+   "meaning": "毒素，也指因毒素引發的發炎症狀。\n銅綠。銅氧化後產生的鏽。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "化",
+   "roman": "hua",
+   "meaning": "燈或火熄滅。\n病情嚴重，瀕臨死亡。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "反症",
+   "roman": "huán-tsìng",
+   "meaning": "指病情轉好又惡化的轉變。引申為事情變化得很快。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "患者",
+   "roman": "huān-tsiá",
+   "meaning": "病人。患有某種疾病的人。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "發癀",
+   "roman": "huat-hông",
+   "meaning": "發炎。傷口因感染而產生發紅、腫脹或疼痛等症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "發炎",
+   "roman": "huat-iām",
+   "meaning": "傷口感染細菌而紅腫。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "發燒",
+   "roman": "huat-sio",
+   "meaning": "因生病而造成身體發熱。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "花袂牢枝",
+   "roman": "hue-bē-tiâu-ki/hue-buē-tiâu-ki",
+   "meaning": "習慣性流產。因為先天性的染色體異常或產婦本身子宮異常等不明原因，造成多次自然流產即稱為習慣性流產，這種情形，俗稱「花袂牢枝」。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "火",
+   "roman": "hué/hé",
+   "meaning": "物體燃燒所產生的光熱現象，也用來指可發光的電器。\n引申為怒氣、熱情等與冰、冷相對的事物。\n中醫所指引起發炎、煩燥等症狀的病因。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "火燒心",
+   "roman": "hué-sio-sim/hé-sio-sim",
+   "meaning": "胸悶。心口有灼熱感。\n胃食道逆流。指人體中胃酸逆流的現象。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "血角",
+   "roman": "hueh-kak/huih-kak",
+   "meaning": "血塊。凝成塊狀的血。\n血栓。發生在動脈或靜脈血管中的血塊。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "血崩山",
+   "roman": "hueh-pang-suann/huih-pang-suann",
+   "meaning": "血崩。指婦女生殖器官內大量出血的症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "楦",
+   "roman": "hùn",
+   "meaning": "模子。用來製作鞋子的木頭模型。\n撐大、擴大。\n膿瘡等化膿、腫脹。\n向外擴張，例如邊界。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "昏",
+   "roman": "hūn",
+   "meaning": "昏厥、暈倒。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "昏迷",
+   "roman": "hūn-bê",
+   "meaning": "思緒昏亂迷惘，分不清事理。\n大腦因為受傷而失去知覺、意識，無法行動。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "昏倒",
+   "roman": "hūn--tó",
+   "meaning": "暈倒。因為失去意識控制而不能站立。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "炎",
+   "roman": "iām",
+   "meaning": "形容火勢或陽光猛烈。\n全身或局部因感染而產生發紅、腫脹或疼痛等症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "溢刺酸",
+   "roman": "ik-tshiah-sng",
+   "meaning": "指人體中胃酸逆流的現象。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "癰",
+   "roman": "ing",
+   "meaning": "病名。一種範圍較大的惡性膿瘡，為皮膚及皮下組織發炎化膿引起，局部紅腫疼痛。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "癰仔",
+   "roman": "ing-á",
+   "meaning": "一種惡性膿瘡，多長於頸、背、臀部，表皮多破孔出膿。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "腰子病",
+   "roman": "io-tsí-pēnn/io-tsí-pīnn",
+   "meaning": "腎臟病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "幽幽仔疼",
+   "roman": "iu-iu-á-thiànn",
+   "meaning": "隱隱作痛。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "羊眩",
+   "roman": "iûnn-hîn",
+   "meaning": "癲癇。一種反覆出現陣發性的疾病。有時患者會突然昏倒，出現咬牙、口吐白沫、四肢抽搐等症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "染",
+   "roman": "jiám/liám",
+   "meaning": "沾染。指人與人之間因為互相接觸，使行為、習慣影響。\n傳染。指疾病由一個體侵入另一個體。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "熱嗽",
+   "roman": "jia̍t-sàu/lia̍t-sàu",
+   "meaning": "熱咳。一般人認為咳嗽無痰即為熱咳。通常熱咳者會口乾、喉癢、痰少，但痰黃且濃稠，嚴重時還會呈現黃綠色。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "熱毒",
+   "roman": "jia̍t-to̍k/lia̍t-to̍k",
+   "meaning": "中醫認為人體內因火氣大所引起生瘡發病的現象。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "尿苴仔𩛩",
+   "roman": "jiō-tsū-á-kauh/liō-tsū-á-kauh",
+   "meaning": "尿布疹。病名。出現在尿布包裹部位的疾病。因尿或糞便與皮膚接觸過久，細菌將尿液分解成強刺激性的氨所引起。皮膚會有發紅、破損、發炎、化膿的現象。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "熱著",
+   "roman": "jua̍h--tio̍h/lua̍h--tio̍h",
+   "meaning": "中暑。曝露於太陽底下所引起的病症，出現痙攣、昏睡、體溫升高等症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "交落身",
+   "roman": "ka-la̍uh-sin",
+   "meaning": "流產。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "咳嗽",
+   "roman": "ka-sàu",
+   "meaning": "喉部或氣管的黏膜受痰或氣體的刺激，引起反射作用，把氣體用力排出。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "疳瘡",
+   "roman": "kam-tshng",
+   "meaning": "潰瘍。病名。中醫所說各種生於皮膚或黏膜上的小疹丘所產生紅腫、化膿等潰瘍現象，尤其是小孩子容易長在臉上。\n下疳、梅毒。病名。中醫上又特指性交後陰部產生的潰瘍，其中「硬性」者為梅毒初期症狀，「軟性」者為一種流行於熱帶地區的性病。臺灣稱這兩種症狀皆為「疳瘡」。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "疳積",
+   "roman": "kam-tsik",
+   "meaning": "疾病名。指小孩面黃肌瘦、肚子膨脹的症狀。一般臨床徵狀有毛髮稀落、容易發怒、吸吮手指、腹瀉等。多因斷奶過早、飲食不節制、腹中有寄生蟲所引起。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "感染",
+   "roman": "kám-jiám/kám-liám",
+   "meaning": "被別人所傳染。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "感冒",
+   "roman": "kám-mōo",
+   "meaning": "病名。由濾過性病毒引起的上呼吸道感染，會出現氣管發炎、咳嗽、鼻塞、發燒等症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "感著",
+   "roman": "kám--tio̍h",
+   "meaning": "感冒。吹風受涼、染病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "厚尿",
+   "roman": "kāu-jiō/kāu-liō",
+   "meaning": "頻尿。小便的次數頻繁。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "厚事路",
+   "roman": "kāu-sū-lōo",
+   "meaning": "事情進行中頗多阻撓或橫逆而不順遂。\n形容人身體多病痛，病魔纏身。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "雞仔目",
+   "roman": "ke-á-ba̍k/kue-á-ba̍k",
+   "meaning": "夜盲症。病名。大多是由於遺傳或缺乏維他命A，造成眼睛的視網膜桿狀細胞機能障礙，使人在昏暗的地方或光線不足時，看不見東西。\n雞眼。因為角質層增生形成的小圓硬塊，常生在腳掌或腳趾，樣子像雞的眼睛，所以稱為「雞仔目」。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "雞胸",
+   "roman": "ke-hing/kue-hing",
+   "meaning": "病名。孩童發育時，因為缺乏維他命Ｄ或鈣質，造成胸骨及肋骨前部突出，像雞胸一樣。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "雞災",
+   "roman": "ke-tse/kue-tse",
+   "meaning": "雞瘟、禽流感，可造成雞隻大量死亡的傳染病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "疥",
+   "roman": "kè/kuè",
+   "meaning": "由疥癬蟲寄生引起的皮膚病。症狀是局部起丘疹，皮膚會覺得刺癢，具傳染性。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "咯血",
+   "roman": "kha̍k-hueh/kha̍k-huih",
+   "meaning": "吐血。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "牽核仔",
+   "roman": "khan-ha̍t-á",
+   "meaning": "淋巴腺發炎引起的腫大。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "空喙",
+   "roman": "khang-tshuì",
+   "meaning": "傷口。指身體上因受傷而破裂的地方。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "喀",
+   "roman": "khe̍nnh",
+   "meaning": "咳嗽、雷聲等的擬聲詞。\n引申為咳嗽。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "齒包",
+   "roman": "khí-pau",
+   "meaning": "牙齦上所生的膿包。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "起凊瘼",
+   "roman": "khí-tshìn-mo̍oh",
+   "meaning": "蕁麻疹，病名。一種常見的兒科疾病，特徵是皮膚上出現很多形狀不一的丘疹。丘疹出現後，會有明顯的搔癢，同時在出現四十八小時內大部分會消失，但舊疹子消失了，新的又繼續長出來。常因食物或藥物過敏而引起，可注射腎上腺素或給予抗組織胺藥物治療。也稱為「風疹塊」。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "疧",
+   "roman": "khî",
+   "meaning": "疤痕、傷疤、胎記。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "欠安",
+   "roman": "khiàm-an",
+   "meaning": "不平安、身體不適、生病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "欠血",
+   "roman": "khiàm-hueh/khiàm-huih",
+   "meaning": "貧血。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "缺喙",
+   "roman": "khih-tshuì",
+   "meaning": "兔脣。一種先天性的臉部畸形。指上嘴脣縱裂或缺損，多有顎裂，以男性居多。可用整形手術來矯正。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "襟胸",
+   "roman": "khim-hing",
+   "meaning": "雞胸肉。鳥禽類胸腹之間的肌肉。\n雞胸、漏斗胸。孩子在胎兒或嬰幼兒時期因發育不良，胸骨、脊椎骨、肋骨發展不完全，導致胸廓凸起畸形。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "靠著",
+   "roman": "khò-tio̍h",
+   "meaning": "身體或其他東西受到碰撞，感覺不舒服或受傷。語氣完結時唸作khò--tio̍h。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "瘸",
+   "roman": "khuê/khê",
+   "meaning": "指手腳有問題，行動不便的樣子。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "瘸跤",
+   "roman": "khuê-kha/khê-kha",
+   "meaning": "瘸腿、跛腳。腳有毛病，走路不方便。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "瘸手",
+   "roman": "khuê-tshiú/khê-tshiú",
+   "meaning": "手部有毛病不靈活，也用來罵人行動笨拙。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "呿呿嗽",
+   "roman": "khuh-khuh-sàu",
+   "meaning": "咳個不停。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "攪絞",
+   "roman": "kiáu-ká",
+   "meaning": "絞痛。通常指胃腸絞痛。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "近視",
+   "roman": "kīn-sī/kūn-sī",
+   "meaning": "醫學上指由於眼球的前後徑過長，使得焦點落於視網膜之前，造成影像模糊不清。目前還沒有完全抑止的方法，可配戴眼鏡矯正。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "急症",
+   "roman": "kip-tsìng",
+   "meaning": "突然發作，緊急的病症。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "糾筋",
+   "roman": "kiù-kin/kiù-kun",
+   "meaning": "抽筋。肌肉發生痙攣抽痛。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "高血壓",
+   "roman": "ko-hueh-ap/ko-huih-ap",
+   "meaning": "病名。一種血壓偏高的病症。血壓會隨著年齡而增加，但若在六十歲前，收縮壓超過一百六十公釐水銀柱，或舒張壓超過九十五公釐水銀柱，即患有高血壓。此症會加速血管硬化，造成心室肥大而衰竭。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痀",
+   "roman": "ku",
+   "meaning": "形容背微駝的樣子。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "久長病",
+   "roman": "kú-tn̂g-pēnn/kú-tn̂g-pīnn",
+   "meaning": "久病、慢性病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "舊症頭",
+   "roman": "kū-tsìng-thâu",
+   "meaning": "老毛病、宿疾。有時也指過去的壞習癖。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "關節炎",
+   "roman": "kuan-tsat-iām",
+   "meaning": "病名。因關節發炎而引起的紅、腫、熱、痛等現象的病症。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "肝炎",
+   "roman": "kuann-iām",
+   "meaning": "病名。肝臟受到濾過性病毒的感染或某些化學物的刺激所引起的炎症。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "寒熱仔",
+   "roman": "kuânn-jia̍t-á/kuânn-lia̍t-á",
+   "meaning": "瘧疾、冷熱病。病名。以瘧蚊為媒介而散播的急性傳染病，其症狀為週期性的發冷發熱。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "寒著",
+   "roman": "kuânn--tio̍h",
+   "meaning": "著了涼，傷風感冒。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "過",
+   "roman": "kuè/kè",
+   "meaning": "經過、通過或度過某個空間、時間。\n轉讓、移轉財產。\n傳染。\n過意。\n過繼。\n超過。\n過度地、太。\n用在動詞後，表示曾經或已做過的行為動作、經驗。\n次、回。\n使經過。\n錯誤。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "鬼剃頭",
+   "roman": "kuí-thì-thâu",
+   "meaning": "斑禿、圓禿。病名。指一種部分頭髮突然脫落，經過一段時間能自然痊癒的病症。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "劌",
+   "roman": "kuì",
+   "meaning": "被鐵釘等尖物割到。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "膭",
+   "roman": "kuī",
+   "meaning": "脹大凸起的肚子，指家畜類懷有身孕，若用於人則有嘲笑意謂。\n穀類植物的莖稈因花穗在葉鞘裡生長，而呈現膨脹的樣子。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "膭水",
+   "roman": "kuī-tsuí",
+   "meaning": "水腫、浮腫。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "內傷",
+   "roman": "lāi-siong",
+   "meaning": "指身體內部器官所受的傷害。\n內心感情受到的傷害。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "荏身",
+   "roman": "lám-sin",
+   "meaning": "身體虛弱。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "膿",
+   "roman": "lâng",
+   "meaning": "機體組織發炎後，壞死分解而成的黃綠色汁液，是死亡的白血球、細菌、蛋白質、脂肪的混合物。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "落下頦",
+   "roman": "làu-ē-hâi",
+   "meaning": "下巴脫臼。\n引申為笑話說得很精彩，讓人笑得下巴都要掉了。\n指人在撒謊。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "落屎",
+   "roman": "làu-sái",
+   "meaning": "拉肚子、腹瀉。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "落胎",
+   "roman": "làu-the",
+   "meaning": "流產。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "落吐症",
+   "roman": "làu-thòo-tsìng",
+   "meaning": "霍亂。病名。一種霍亂弧菌引起的急性傳染病，會有嚴重的腹瀉、嘔吐、脫水及尿毒症等症狀，嚴重者可能會休克致命。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "流血",
+   "roman": "lâu-hueh/lâu-huih",
+   "meaning": "出血。血像水一般流出來。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "流血流滴",
+   "roman": "lâu-hueh-lâu-tih/lâu-huih-lâu-tih",
+   "meaning": "頭破血流、鮮血淋漓。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "流鼻",
+   "roman": "lâu-phīnn",
+   "meaning": "流鼻涕。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "流鼻水",
+   "roman": "lâu phīnn-tsuí",
+   "meaning": "流鼻涕。也指傷風感冒。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "流湯",
+   "roman": "lâu-thng",
+   "meaning": "流出湯汁。\n流膿，傷口流出體液。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "流凊汗",
+   "roman": "lâu-tshìn-kuānn",
+   "meaning": "冒冷汗。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "粒仔",
+   "roman": "lia̍p-á",
+   "meaning": "皮膚病。由葡萄球菌或鏈狀菌侵入毛囊內所引起的。症狀是局部出現充血硬塊、化膿、紅腫、疼痛，嚴重時全身會發熱而且感覺疲倦。\n膿瘡。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "奶癌",
+   "roman": "ling-gâm/ni-gâm",
+   "meaning": "乳癌。病名。乳房發生的病變，多由乳管或乳腺引發。症狀為可觸摸硬塊、乳頭凹陷或有異樣分泌物、腫大的腋下淋巴腺、乳房皮膚有橘皮樣變化，紅腫或潰爛等。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "遛皮",
+   "roman": "liù-phuê/liù-phê",
+   "meaning": "脫皮、破皮。皮膚脫離掉落。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "瘤",
+   "roman": "liû",
+   "meaning": "皮膚表面或筋骨之間的贅生物。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "落跤氣",
+   "roman": "lo̍h-kha-khì",
+   "meaning": "腳氣病。病名。因缺乏維生素B所引起的多發性神經炎。症狀有疲勞軟弱、小腿沉重、肌肉疼痛萎縮、手足痙攣、頭痛失眠、下肢水腫、心力衰竭等等。以白米為主食的亞洲地區最為常見。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "軟弱",
+   "roman": "luán-jio̍k/luán-lio̍k",
+   "meaning": "體質虛弱沒力氣。\n個性柔弱畏怯。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "癗",
+   "roman": "luî",
+   "meaning": "因為撞傷腫脹，而產生的腫塊或包包。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "毋知人",
+   "roman": "m̄-tsai-lâng",
+   "meaning": "昏迷不醒人事。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "毛病",
+   "roman": "môo-pēnn/môo-pīnn",
+   "meaning": "指人或事有不正常的現象。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "盲腸炎",
+   "roman": "môo-tn̂g-iām",
+   "meaning": "病名。由闌尾炎引起，蔓延到整個盲腸，就成盲腸炎。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痲",
+   "roman": "muâ",
+   "meaning": "麻疹。病名。一種由麻疹病毒傳播的急性傳染病，患過一次可終生免疫，今已有疫苗。\n痲瘋。病名。由痲瘋桿菌引起的慢性病，會侵犯皮膚黏膜及末稍神經，又稱「癩𰣻病」(thái-ko pēnn)。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痲仔",
+   "roman": "muâ-á",
+   "meaning": "病名，是一種由痲疹病毒感染的疾病，好發於兒童，現今已有疫苗可預防。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "梅毒",
+   "roman": "muî-to̍k",
+   "meaning": "病名。性病的一種。由梅毒螺旋體侵入人體所引起。初期先在局部發生潰瘍，第二期會產生全身性紅疹，第三期則會造成循環系統和中樞神經系統發生病變。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "腦膜炎",
+   "roman": "náu-mo̍oh-iām",
+   "meaning": "流行性腦脊髓膜炎的通稱。由腦膜炎球菌引起腦膜發炎的疾病，主要經由咳嗽、噴嚏等傳播。病徵為發高燒、劇烈頭痛等，會引致腦部受損而死亡。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "腦貧血",
+   "roman": "náu-pîn-hiat",
+   "meaning": "因腦部血流不足所引起的症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "黃疸",
+   "roman": "n̂g-thán",
+   "meaning": "病名。因血中膽紅素含量增加，導致人體皮膚、眼白、黏膜變黃的病症。多發生於新生兒身上。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "鳥鼠仔症",
+   "roman": "niáu-tshí-á-tsìng/niáu-tshú-á-tsìng",
+   "meaning": "病名。一種死亡率很高的急性細菌性傳染病。常由老鼠身上的跳蚤傳入人體。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "軟𩛩𩛩",
+   "roman": "nńg-kauh-kauh",
+   "meaning": "形容身體疲倦而全身無力。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "軟荍荍",
+   "roman": "nńg-siô-siô",
+   "meaning": "有氣無力的樣子。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "軟汫",
+   "roman": "nńg-tsiánn",
+   "meaning": "指人的個性軟弱。\n指身體上的脆弱。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "爛癬",
+   "roman": "nuā-sián",
+   "meaning": "溼疹、皮膚炎。皮膚因磨擦、日晒、冷熱等原因導致的炎症。患者皮膚會發紅、腫大、疹塊、流水、有痂皮、或鱗片等症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "爛𤶃仔",
+   "roman": "nuā-thiāu-á",
+   "meaning": "發炎紅腫，甚至有膿包的青春痘。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "烏暗眩",
+   "roman": "oo-àm-hîn",
+   "meaning": "眩暈。眼前發黑，覺得自己或周圍的東西在旋轉而感到頭暈。多因內耳、小腦、延髓等機能障礙所引起。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "烏滓血",
+   "roman": "oo-lái-hueh/oo-lái-huih",
+   "meaning": "因為血液循環不好、流通不佳而造成發黑的血液。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "烏斑",
+   "roman": "oo-pan",
+   "meaning": "黑斑。常見的黑斑有肝斑、雀斑、曬斑、顴骨母斑及發炎後形成的黑色素沉澱。形成原因可能和遺傳、內分泌、或長期曝曬於陽光下有關。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "烏青",
+   "roman": "oo-tshenn/oo-tshinn",
+   "meaning": "瘀血。皮膚因受傷而呈現紫青色。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "烏青凝血",
+   "roman": "oo-tshenn gîng-hueh/oo-tshinn gîng-huih",
+   "meaning": "瘀血。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "疤",
+   "roman": "pa",
+   "meaning": "瘡口或傷口癒合後所留下的痕跡。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "飽脹",
+   "roman": "pá-tiùnn",
+   "meaning": "發脹。形容吃太飽，胃腸不舒服。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "百日嗽",
+   "roman": "pah-ji̍t-sàu/pah-li̍t-sàu",
+   "meaning": "百日咳。病名。潛伏期約七至十天，前驅期則呈感冒病狀，約一至二週後，咳嗽逐漸加劇，慢慢的出現抽筋性咳嗽的痙咳期，咳聲連續，而且發出特殊的哮喘聲。持續三、四月始漸痊癒，約經百日之久，故以此命名之。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "跛跤",
+   "roman": "pái-kha",
+   "meaning": "跛腳。形容人腳有殘疾，不能正常走路。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "敗腎",
+   "roman": "pāi-sīn",
+   "meaning": "腎虧。病名。中醫的名詞，為腎臟精氣不足引起的病症。症狀包括頭昏耳鳴、精神疲乏、失眠、健忘、腰酸、腿軟、遺精、陽痿等等。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "白喉",
+   "roman": "pe̍h-âu",
+   "meaning": "病名。由白喉桿菌引起的急性傳染病，以咽頭、喉頭為主要患部。症狀包括發燒、咽喉腫脹、失音、呼吸困難或嚴重虛脫等，最明顯的症狀是在咽、喉部位產生一層白膜，故稱為白喉。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "白內障",
+   "roman": "pe̍h-lāi-tsiàng",
+   "meaning": "病名。眼睛的水晶體因為老化、外傷或是其他疾病所引起的模糊、不透明的現象。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "白癬",
+   "roman": "pe̍h-sián",
+   "meaning": "病名。一種頭癬。患者多為幼兒，因黴菌感染而引發，會使毛髮脫落。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "白癜",
+   "roman": "pe̍h-tiō",
+   "meaning": "白癜風、白斑。病名。是一種後天的慢性皮膚病，因缺乏黑色素，而在皮膚上形成不規則的乳白色斑紋。每位患者白斑部位的大小不一，但不會傳染。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "病",
+   "roman": "pēnn/pīnn",
+   "meaning": "指生理或心理方面所產生的不正常狀態。\n指生理或心理方面發生了不正常的狀況。\n形容人又笨又傻，不聰明。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "病人",
+   "roman": "pēnn-lâng/pīnn-lâng",
+   "meaning": "生病的人。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "病相思",
+   "roman": "pēnn-siunn-si/pīnn-siunn-si",
+   "meaning": "指有情人因故分離不得見面，思念過深而生相思病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "病體",
+   "roman": "pēnn-thé/pīnn-thé",
+   "meaning": "因生病而顯得虛弱的身體。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "病疼",
+   "roman": "pēnn-thiànn/pīnn-thiànn",
+   "meaning": "因疾病而引起的痛苦。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "病情",
+   "roman": "pēnn-tsîng/pīnn-tsîng",
+   "meaning": "病狀、病況。疾病變化的狀況。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "拍咳啾",
+   "roman": "phah-kha-tshiùnn",
+   "meaning": "打噴嚏。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "歹囝症",
+   "roman": "pháinn-kiánn-tsìng",
+   "meaning": "花柳病。性病的俗稱。由性接觸引起的傳染病，包括梅毒、淋病、軟性下疳、腹股溝肉芽腫等。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "歹腹肚",
+   "roman": "pháinn-pak-tóo",
+   "meaning": "拉肚子、肚子痛。通常指因為飲食不潔而引起的肚痛、胃痛問題。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "歹手爪",
+   "roman": "pháinn-tshiú-jiáu/pháinn-tshiú-niáu",
+   "meaning": "形容手部因為受傷而行動不便。\n手腳不乾淨。形容人有好偷竊的習慣。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "歹症頭",
+   "roman": "pháinn-tsìng-thâu",
+   "meaning": "頑疾、不治之症。難以痊癒的惡疾。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "疕",
+   "roman": "phí",
+   "meaning": "痂。指傷口或瘡口癒合時所凝結的疤。\n粑。因為乾燥、失去水分所結成薄薄塊狀的東西。\n通常擺在詞尾，表示「小」的意思。\n螺類動物保護自己的硬塊。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "癖",
+   "roman": "phia̍h",
+   "meaning": "麻疹。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "鼻水",
+   "roman": "phīnn-tsuí",
+   "meaning": "鼻腔黏膜因發炎現象所分泌的無色水狀黏液。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "破傷風",
+   "roman": "phò-siong-hong",
+   "meaning": "病名。一種由破傷風桿菌在體內產生毒素所引起的急性傳染病。症狀是先出現咀嚼肌的痙攣，引起牙關緊閉，次出現其他肌肉的痙攣，常能致命。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "抱心",
+   "roman": "phō-sim",
+   "meaning": "心悸。因為心血循環系統、神經系統失調或過度疲累而引起心律不整、心跳加速的症狀。\n豎心旁。以形象化來指稱漢字的一个部首。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "膨風",
+   "roman": "phòng-hong",
+   "meaning": "脹氣。\n吹牛。誇口說大話。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "膨疱",
+   "roman": "phòng-phā",
+   "meaning": "起水泡。起潦泡、潦漿泡。皮膚因火傷、燙傷或磨傷而形成水泡。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "破病",
+   "roman": "phuà-pēnn/phuà-pīnn",
+   "meaning": "生病、得病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "破相",
+   "roman": "phuà-siùnn",
+   "meaning": "殘障。容貌受損或五官肢體有所殘缺。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "呸血",
+   "roman": "phuì-hueh/phuì-huih",
+   "meaning": "吐血。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "祕結",
+   "roman": "pì-kiat",
+   "meaning": "便秘。病名。一種消化性疾病的名稱，因糞便在大腸停留的時間過長，使得大量乾硬的糞便堆積在降結腸，造成大便不暢通。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "拚血",
+   "roman": "piànn-hiat",
+   "meaning": "血崩。生產或流產時引發大出血。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "拚汗",
+   "roman": "piànn-kuānn",
+   "meaning": "冒冷汗。一種不自覺流汗的症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "貧血",
+   "roman": "pîn-hiat",
+   "meaning": "血液中紅血球的數目不夠，血紅素不足或紅血球不成熟，使血液無法攜帶足夠氧氣的疾病。其症狀有臉色蒼白、容易疲勞、心跳氣短、噁心、頭痛、眩暈等。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "反肚痧",
+   "roman": "píng-tōo-sua",
+   "meaning": "絞腸痧。病名。多因飲食不潔引起胃腸閉塞所造成，患者會有腹中絞痛，吐不出、瀉不出的症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "必",
+   "roman": "pit",
+   "meaning": "皮膚因為缺乏滋潤而皸裂。\n東西產生裂痕。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "孵",
+   "roman": "pū",
+   "meaning": "指蟲、鳥或魚類利用體溫使卵內的胚胎發育成形。也有指用人工方法調節溫度和溼度，使胚胎發育成形。\n化膿。\n同一窩的蛋或孵化的動物。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "孵膿",
+   "roman": "pū-lâng",
+   "meaning": "化膿、長膿包。身體組織受到感染後，化為膿液。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "半身不隨",
+   "roman": "puàn-sin-put-suî",
+   "meaning": "癱瘓、半身不遂。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痱仔",
+   "roman": "puì-á",
+   "meaning": "痱子。夏天常見的皮膚病，由於出汗不暢而引起的小紅疹。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "煞",
+   "roman": "sannh",
+   "meaning": "岔氣。激烈運動後，氣凝在胸口，造成呼吸困難。\n心理受到強烈衝擊，或渴望、迷戀某些事物。\n被風迎面掃到而感到氣息不順。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "塞鼻",
+   "roman": "sat-phīnn",
+   "meaning": "鼻塞。指鼻子因為過敏或感冒而導致鼻腔黏膜腫大，甚至感覺呼吸困難。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "梢聲",
+   "roman": "sau-siann",
+   "meaning": "聲音沙啞。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "嗽",
+   "roman": "sàu",
+   "meaning": "咳、咳嗽。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "生粒仔",
+   "roman": "senn-lia̍p-á/sinn-lia̍p-á",
+   "meaning": "身體組織發炎化膿後，膿液未排出所形成隆起現象。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "生癬",
+   "roman": "senn sián/sinn sián",
+   "meaning": "長癬。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "生檨仔",
+   "roman": "senn-suāinn-á/sinn-suāinn-á",
+   "meaning": "橫痃。病名。性病引起的腹股溝淋巴腺發炎及腫大，為第一期梅毒病癥。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "死肉",
+   "roman": "sí-bah",
+   "meaning": "沒有神經、失去感覺的肉。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "死症",
+   "roman": "sí-tsìng",
+   "meaning": "無法治癒的絕症。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "瀉",
+   "roman": "sià",
+   "meaning": "水向下急流。\n拉肚子，是比較文雅的說法。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "斜視",
+   "roman": "siâ-sī",
+   "meaning": "一種眼睛疾病，大多由眼肌失衡所造成，當眼睛注視目標時，一眼直視，另一眼斜向一方。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "閃",
+   "roman": "siám",
+   "meaning": "躲避、避開。\n扭傷腰背筋骨。\n光線明亮、迅速跳動的樣子。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "閃著",
+   "roman": "siám-tio̍h",
+   "meaning": "筋骨扭傷。語氣完結時唸作siám--tio̍h。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "癬",
+   "roman": "sián",
+   "meaning": "一種皮膚病。患處發癢，生鱗狀皮，會傳染。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "𤺪",
+   "roman": "siān",
+   "meaning": "身體上疲倦、疲憊的樣子。\n心理上覺得厭倦、厭煩。指經常或過多的接觸而產生。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痟狗病",
+   "roman": "siáu-káu-pēnn/siáu-káu-pīnn",
+   "meaning": "狂犬病。由病毒引起的急性傳染病，常見於狗、貓、牛羊等家畜，被染有此症的牲畜咬傷時，人或其他牲畜也會感染。症狀為發燒、頭痛等，見水即產生咽喉痙孿，最後全身麻痺而死，可注射抗毒血清治療。又叫做「恐水病」。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痟狗症",
+   "roman": "siáu-káu-tsìng",
+   "meaning": "狂犬病。由病毒引起的急性傳染病，常見於狗、貓、牛羊等家畜，被染有此症的牲畜咬傷時，人或其他牲畜也會感染。症狀為發燒、頭痛等，見水即產生咽喉痙孿，最後全身麻痺而死，可注射抗毒血清治療。又叫做「恐水病」。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "色盲",
+   "roman": "sik-bông",
+   "meaning": "病名。一種眼睛不能辨別顏色的疾病。常見的色盲是紅綠色盲，患者無法區別紅綠兩種顏色。另一種為全色盲，只能區別明暗，不能區別色彩。色盲多為先天性遺傳，患者常為男性。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "心臟病",
+   "roman": "sim-tsōng-pēnn/sim-tsōng-pīnn",
+   "meaning": "病名。各種心臟疾病的總稱，多因心臟的本質或功能的異常所引起。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "燒熱",
+   "roman": "sio-jua̍h/sio-lua̍h",
+   "meaning": "溫暖。\n極為炎熱的。\n指發燒。\n因嫉妒或焦急而使得心裡有不舒服的感覺。\n因高溫灼燒、鞭打或傷口發炎時所產生的灼熱感。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "燒著",
+   "roman": "sio-tio̍h",
+   "meaning": "燙到。被火燙到。語氣完結時唸作sio--tio̍h。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "小兒麻痺",
+   "roman": "sió-jî-bâ-pì/sió-lî-bâ-pì",
+   "meaning": "急性脊髓灰白質炎。病名。由濾過性病毒所引發的急性傳染病，病毒侵入中樞神經系統，破壞脊椎前角的神經，致使肌肉麻痺萎縮。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "傷",
+   "roman": "siong",
+   "meaning": "皮肉破損的地方。\n受傷、有害於。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "傷害",
+   "roman": "siong-hāi",
+   "meaning": "指生理或心理受到損害。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "傷痕",
+   "roman": "siong-hûn",
+   "meaning": "受傷後所留下的痕跡。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "傷跡",
+   "roman": "siong-jiah/siong-liah",
+   "meaning": "傷疤。傷口癒合後留下的疤痕。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "傷口",
+   "roman": "siong-kháu",
+   "meaning": "指身體上因受傷而破裂的地方。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "傷重",
+   "roman": "siong-tiōng",
+   "meaning": "費用昂貴。\n病情嚴重。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "失明",
+   "roman": "sit-bîng",
+   "meaning": "失明、瞎眼。指眼睛失去視覺能力。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "收喙",
+   "roman": "siu-tshuì",
+   "meaning": "收口。傷口癒合。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痠",
+   "roman": "sng",
+   "meaning": "痠痛、微痛無力。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痠軟",
+   "roman": "sng-nńg",
+   "meaning": "因肌肉過度勞累或疾病引起全身酸痛無力的感覺。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痠疼",
+   "roman": "sng-thiànn",
+   "meaning": "痠軟疼痛。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痠抽疼",
+   "roman": "sng-thiu-thiànn",
+   "meaning": "筋骨或肌肉酸痛、抽痛。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痧",
+   "roman": "sua",
+   "meaning": "中醫上指中暑、痧氣等疾病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "沙肺",
+   "roman": "sua-hì",
+   "meaning": "塵肺症、矽肺症。一種職業病，因長期吸入各種塵埃、微粒，所引起肺部病變的統稱。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "帶病",
+   "roman": "tài-pēnn/tài-pīnn",
+   "meaning": "患病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "帶身命",
+   "roman": "tài-sin-miā",
+   "meaning": "罹患難以治癒的慢性病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "丹毒",
+   "roman": "tan-to̍k",
+   "meaning": "病名。一種散播性鏈球菌所引起的組織炎及淋巴管炎。患部皮膚紅腫、疼痛、易蔓延，多半引起高燒、淋巴腺腫及腦膜炎等併發症。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "重病",
+   "roman": "tāng-pēnn/tāng-pīnn",
+   "meaning": "嚴重而危險的病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "重傷",
+   "roman": "tāng-siong",
+   "meaning": "很嚴重的傷勢。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "癩𰣻",
+   "roman": "thái-ko",
+   "meaning": "痲瘋病。病名。\n骯髒。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "癩𰣻病",
+   "roman": "thái-ko-pēnn/thái-ko-pīnn",
+   "meaning": "痲瘋病。\n也用來稱呼性病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "頭眩目暗",
+   "roman": "thâu-hîn-ba̍k-àm",
+   "meaning": "頭暈目眩、頭昏眼花。頭腦昏沉，視覺模糊。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "頭疼",
+   "roman": "thâu-thiànn",
+   "meaning": "頭痛。頭部因為外傷或其他因素所引起的疼痛。\n比喻事情很麻煩、難以解決，令人感到煩惱或討厭。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "牚腿",
+   "roman": "thènn-thuí/thìnn-thuí",
+   "meaning": "因為劇烈運動而導致腿部肌肉酸疼。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "天狗熱",
+   "roman": "thian-káu-jia̍t/thian-káu-lia̍t",
+   "meaning": "登革熱、骨痛熱。病名。由白線斑蚊或埃及斑蚊將病原傳入人體的急性傳染病。患者會有全身疲倦、發燒、畏寒、頭痛及全身肌肉痠痛及皮膚出現紅疹等症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "疼風",
+   "roman": "thiànn-hong",
+   "meaning": "痛風。病名。是一種因嘌呤代謝障礙，尿酸的結晶沉積在關節內，進而產生嚴重的關節發炎反應。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "𤶃",
+   "roman": "thiāu",
+   "meaning": "青春痘、面皰。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "𤶃仔",
+   "roman": "thiāu-á",
+   "meaning": "青春痘。病名。因皮脂腺分泌過多脂肪，及皮膚毛囊的角質異化使角質素、細菌堵塞毛孔，而在皮膚上產生小痘或黑頭的疾病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "𤶃仔子",
+   "roman": "thiāu-á-tsí",
+   "meaning": "青春痘。病名。因皮脂腺分泌過多脂肪，及皮膚毛囊的角質異化使角質素、細菌堵塞毛孔，而在皮膚上產生小痘或黑頭的疾病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "抽疼",
+   "roman": "thiu-thiànn",
+   "meaning": "一陣一陣間歇性的抽搐疼痛。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "湯",
+   "roman": "thng",
+   "meaning": "湯，即食材加水煮成的食物。\n傷口或膿瘡因細菌感染，組織遭腐敗分解而成的黃白色汁液。\n水果所含的水份。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "燙",
+   "roman": "thǹg",
+   "meaning": "一種烹調方法。將材料在滾水中快煮後撈出。\n被高熱的東西或火所傷。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "糖尿病",
+   "roman": "thn̂g-jiō-pēnn/thn̂g-liō-pīnn",
+   "meaning": "病名。因胰島素分泌不足，導致消化及血糖值不正常的慢性疾病。會引起心臟、腎臟、高血壓等併發症。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "吐肉箭",
+   "roman": "thóo-bah-tsìnn",
+   "meaning": "傷口治療不當，以致於癒合的時候，長出了部分的新肉。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "吐腸頭",
+   "roman": "thóo-tn̂g-thâu",
+   "meaning": "脫肛。病名。直腸或乙狀結腸從肛門脫出的病症。大多是由於長期便秘、腹瀉、內痔等狀況引起。嚴重時必須用手術切除。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "吐",
+   "roman": "thòo",
+   "meaning": "嘔、反胃。\n發芽、冒出來。\n吐出。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "吐血",
+   "roman": "thòo-hueh/thòo-huih",
+   "meaning": "嘔出血來。\n形容情緒激動或生氣。\n說謊的。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "拖身拖命",
+   "roman": "thua-sin-thua-miā",
+   "meaning": "長期生病無法治癒或身體狀況很差，多用於形容人在這種狀態下還必須極度辛苦地過日子。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "挩窗",
+   "roman": "thuah-thang",
+   "meaning": "一種眼睛的毛病，指斜視或鬥雞眼 。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "脫輪",
+   "roman": "thu̍t-lûn",
+   "meaning": "脫臼。因為碰撞到關節而使骨頭脫離。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "豬母癲",
+   "roman": "ti-bó-tian/tu-bú-tian",
+   "meaning": "癲癇。一種反覆出現陣發性的疾病。有時患者會突然昏倒，出現咬牙、口吐白沫、四肢抽搐等症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "豬頭皮",
+   "roman": "ti-thâu-phuê/tu-thâu-phê",
+   "meaning": "豬頭部分的皮肉。\n腮腺炎。病名。一種由病毒引發急性傳染病。患部通常在耳下的腮腺。發病時會發燒，腮腺所在位置會浮腫、疼痛。五到十歲小孩最容易感染，患過一次就終身免疫。成人若染上，有時會有其他併發症。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "豬頭爿",
+   "roman": "ti-thâu-pîng/tu-thâu-pîng",
+   "meaning": "腮腺炎。病名。一種由病毒引發急性傳染病。患部通常在耳下的腮腺。發病時會發燒，腮腺所在位置會浮腫、疼痛。五到十歲小孩最容易感染，患過一次就終身免疫。成人若染上，有時會有其他併發症。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "豬頭肥",
+   "roman": "ti-thâu-puî/tu-thâu-puî",
+   "meaning": "腮腺炎。病名。一種由病毒引發急性傳染病。患部通常在耳下的腮腺。發病時會發燒，腮腺所在位置會浮腫、疼痛。五到十歲小孩最容易感染，患過一次就終身免疫。成人若染上，有時會有其他併發症。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "致",
+   "roman": "tì",
+   "meaning": "罹患疾病。\n以致於、導致。\n盡心、專心。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "致病",
+   "roman": "tì-pēnn/tì-pīnn",
+   "meaning": "生病、染病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "致身命",
+   "roman": "tì-sin-miā",
+   "meaning": "得到難治的慢性病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痔",
+   "roman": "tī",
+   "meaning": "直腸末端或肛門附近的靜脈曲張，而形成的突出物，會造成疼痛及血便。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "痔瘡",
+   "roman": "tī-tshng",
+   "meaning": "病名。主要是由於直腸內靜脈血管擴大曲張而成，因發生部位不同，有內痔與外痔之分。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "沉重",
+   "roman": "tîm-tāng",
+   "meaning": "形容病勢嚴重或壓力、負擔很大。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "疔",
+   "roman": "ting",
+   "meaning": "病名。一種毒瘡，常生於表皮內毛囊汗腺，剛開始時形如粟粒，上有白色膿頭，腫硬劇疼。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "疔仔",
+   "roman": "ting-á",
+   "meaning": "膿瘡、疔瘡。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "重句",
+   "roman": "tîng-kù",
+   "meaning": "口吃。形容不能夠一口氣把話說完，容易有字音重複或詞句中斷的現象。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "擢舌根",
+   "roman": "tioh-tsi̍h-kin/tioh-tsi̍h-kun",
+   "meaning": "大舌頭。病名。因為舌繫帶太短，而導致口齒不清楚，發音不標準，可以開刀改善。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "著寒熱仔",
+   "roman": "tio̍h kuânn-jia̍t-á/tio̍h kuânn-lia̍t-á",
+   "meaning": "得瘧疾。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "著病",
+   "roman": "tio̍h-pēnn/tio̍h-pīnn",
+   "meaning": "生病、得病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "著傷",
+   "roman": "tio̍h-siong",
+   "meaning": "受傷。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "著痧",
+   "roman": "tio̍h-sua",
+   "meaning": "中暑。曝露於太陽底下所引起的病症，會出現痙攣、昏睡、體溫升高等症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "著銃",
+   "roman": "tio̍h-tshìng",
+   "meaning": "中彈。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "著水蛆",
+   "roman": "tio̍h-tsuí-tshi/tio̍h-tsuí-tshu",
+   "meaning": "被水中的小蟲咬傷潰爛。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "中風",
+   "roman": "tiòng-hong",
+   "meaning": "腦溢血、腦中風。病名。因腦血管硬化、破裂，造成腦內出血，壓迫到腦神經。往往會使病人昏迷、死亡或肢體麻木、言語行動不便。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "中毒",
+   "roman": "tiòng-to̍k",
+   "meaning": "有害的物質進入人體或動物體內，造成生物體機能障礙或死亡。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "脹",
+   "roman": "tiùnn",
+   "meaning": "腹部鼓起，也引申為物體體積變大。\n吃得過飽而造成腸胃不適的樣子。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "脹氣",
+   "roman": "tiùnn-khì",
+   "meaning": "胃部充滿氣體而膨脹。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "脹膿",
+   "roman": "tiùnn-lâng",
+   "meaning": "膿腫。一種病理現象。指組織發炎後，部分壞死，形成膿液，積存於發炎的組織內。通常以發熱、紅腫、疼痛為症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "腸仔炎",
+   "roman": "tn̂g-á-iām",
+   "meaning": "腸炎。病名。由不易消化或刺激性食物、毒物等，或因過敏及壓力引起的腸道炎症。急性者多由細菌或攝食不當引起，症狀為發病急驟、腹痛劇烈、腹瀉頻繁。慢性者多由慢性細菌性痢疾或阿米巴痢疾引起，症狀為長期腹瀉、腹痛。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "腸仔熱",
+   "roman": "tn̂g-á-jia̍t/tn̂g-á-lia̍t",
+   "meaning": "傷寒、腸傷寒。病名。由沙門氏傷寒桿菌經飲水或食物傳染所引起。症狀為發燒、頭痛、發冷、腹痛，甚至有肝脾腫大，胸腹部有玫瑰疹等病症。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "斷根",
+   "roman": "tn̄g-kin/tn̄g-kun",
+   "meaning": "根治疾病或缺點。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "斷腦筋",
+   "roman": "tn̄g-náu-kin/tn̄g-náu-kun",
+   "meaning": "大腦出血性中風。病名。因中風引起腦出血，導致不省人事或身體癱瘓，甚至死亡的疾病。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "刀喙",
+   "roman": "to-tshuì",
+   "meaning": "刀口。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "肚脹",
+   "roman": "tóo-tiòng",
+   "meaning": "肚子脹大。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "𪐞",
+   "roman": "tòo",
+   "meaning": "染、傳染。\n暈開。液體滴在紙或布上而散開、滲透。\n描。以半透明紙覆蓋原圖上，照著線條畫。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "嗾",
+   "roman": "tsa̍k",
+   "meaning": "嗆到、岔到。被液體或氣體嗆到或咳嗽。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "實鼻",
+   "roman": "tsa̍t-phīnn",
+   "meaning": "鼻塞。因感冒或過敏等原因使得鼻子阻塞，呼吸不順。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "菜花",
+   "roman": "tshài-hue",
+   "meaning": "花椰菜。葉菜類。為甘藍的變種，莖硬而肥大，葉寬大，基部鈍形，邊緣呈波狀，平滑無毛。花部成肉質塊狀，可供食用。\n尖銳溼疣，也稱性器疣或性病疣，俗稱椰菜花或菜花，是一種性傳播疾病。\n臺南、高雄一帶，對韭菜花的簡稱。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "鑿鑿",
+   "roman": "tsha̍k-tsha̍k",
+   "meaning": "刺激、不舒服的感覺。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "臭耳甕仔",
+   "roman": "tshàu-hīnn-àng-á/tshàu-hī-àng-á",
+   "meaning": "耳漏、耳膿。病名。慢性中耳炎，耳朵會流出有臭味的膿液，嚴重時會造成重聽。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "臭耳聾",
+   "roman": "tshàu-hīnn-lâng/tshàu-hī-lâng",
+   "meaning": "耳聾。指人因聽覺障礙而失去聽力。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "臭頭",
+   "roman": "tshàu-thâu",
+   "meaning": "癩痢頭。也就是頭上生癬或疥瘡而導致部分毛髮脫落。\n狗血淋頭。形容被責備得很不堪。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "臭喙角",
+   "roman": "tshàu-tshuì-kak",
+   "meaning": "病名，口角炎。多因缺乏維他命Ｂ群而引起。患者的口角和脣紅部位發生潰爛和乾裂。張嘴時有刺痛的感覺。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "青盲",
+   "roman": "tshenn-mê/tshinn-mî",
+   "meaning": "失明、瞎眼。指眼睛失去視覺能力。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "生傷",
+   "roman": "tshenn-siong/tshinn-siong",
+   "meaning": "新傷。剛受的傷、新的傷口。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "青恂恂",
+   "roman": "tshenn-sún-sún/tshinn-sún-sún",
+   "meaning": "指因為受到驚嚇，而使得臉色發青、蒼白。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "凊汗",
+   "roman": "tshìn-kuānn",
+   "meaning": "冷汗。由於恐懼、驚駭或體弱等情況而冒冷汗。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "雀斑",
+   "roman": "tshiok-pan",
+   "meaning": "人的皮膚上長出的褐色斑點。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "上水",
+   "roman": "tshiūnn-tsuí",
+   "meaning": "從水井裡取水上來。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "瘡",
+   "roman": "tshng",
+   "meaning": "皮膚或黏膜上的潰瘍的總稱。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "創",
+   "roman": "tshong",
+   "meaning": "傷口、傷處。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "泄",
+   "roman": "tshuā",
+   "meaning": "不自覺地排尿。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "疶",
+   "roman": "tshuah",
+   "meaning": "無法控制地排泄屎尿。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "疶屎",
+   "roman": "tshuah-sái",
+   "meaning": "不自覺或無法控制地排洩出糞便。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "喙臭",
+   "roman": "tshuì-tshàu",
+   "meaning": "口臭。引申形容人常口出惡言。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "出膿",
+   "roman": "tshut-lâng",
+   "meaning": "流膿。傷口流出膿汁。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "出癖",
+   "roman": "tshut-phia̍h",
+   "meaning": "出麻疹。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "出珠",
+   "roman": "tshut-tsu",
+   "meaning": "長水痘、出天花。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "折",
+   "roman": "tsi̍h",
+   "meaning": "折斷、斷裂。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "腫",
+   "roman": "tsíng",
+   "meaning": "皮肉浮脹。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "症",
+   "roman": "tsìng",
+   "meaning": "疾病的跡象、徵候。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "症頭",
+   "roman": "tsìng-thâu",
+   "meaning": "指病症。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "蛀齒",
+   "roman": "tsiù-khí",
+   "meaning": "蛀牙。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "蛀鼻",
+   "roman": "tsiù-phīnn",
+   "meaning": "塌鼻。指鼻梁從中間凹陷下去，多半由於細菌感染，如梅毒，結核病所造成。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "慒",
+   "roman": "tso",
+   "meaning": "心煩意亂、心中或胸口氣悶不順像針刺般難受。\n胃氣不順，消化不良而覺得刺割、嘔酸的感覺。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "做痢",
+   "roman": "tsò-lī",
+   "meaning": "患瘧疾、得瘧疾。「痢」指的是由瘧蚊傳播的急性傳染病「瘧疾」、「下痢」，而不是「痢疾」。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "水疱",
+   "roman": "tsuí-phā",
+   "meaning": "水泡。潦漿泡、潦泡。皮膚表皮因為受傷而形成的淋巴液泡。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "水珠",
+   "roman": "tsuí-tsu",
+   "meaning": "病名。由濾過性病毒引發的急性傳染病。通常經由接觸或飛沫傳染，潛伏期約二至三週，症狀為出疱疹、發燒、全身無力、食慾不振等。流行季節約在初春，以二至六歲的幼童較易感染，病癒後具有終生免疫力。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "陣疼",
+   "roman": "tsūn-thiànn",
+   "meaning": "一陣一陣，斷斷續續的疼痛。多指產婦分娩過程中，因子宮規則收縮所造成的疼痛。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "大頷胿",
+   "roman": "tuā-ām-kui",
+   "meaning": "指甲狀腺腫大，也就是甲狀腺內分泌系統中缺碘的一種代償性反應，若是甲狀腺機能亢進症，則不宜吃海帶、紫菜、鹽等或含碘高的食物。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "大氣喘",
+   "roman": "tuā-khuì-tshuán",
+   "meaning": "哮喘、氣喘。一種呼吸困難的症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "墜跤氣",
+   "roman": "tuī-kha-khì",
+   "meaning": "腳氣病。病名。因缺乏維生素B所引起的多發性神經炎。症狀有疲勞軟弱、小腿沉重、肌肉疼痛萎縮、手足痙攣、頭痛失眠、下肢水腫、心力衰竭等等。以白米為主食的亞洲地區最為常見。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "𨂿",
+   "roman": "uáinn",
+   "meaning": "足踝扭到。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "𨂿著",
+   "roman": "uáinn-tio̍h",
+   "meaning": "手腳扭傷。語氣完結時唸作uáinn--tio̍h。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "穢人",
+   "roman": "uè--lâng/è--lâng",
+   "meaning": "傳染給人。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "畏熱",
+   "roman": "uì-jua̍h/uì-lua̍h",
+   "meaning": "因為身體不適，而感覺發熱的狀態。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "畏寒",
+   "roman": "uì-kuânn",
+   "meaning": "怕冷。因疾病引起怕冷的症狀。\n打冷顫。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "胃癌",
+   "roman": "uī-gâm",
+   "meaning": "病名。發生於胃部的癌症，可依癌細胞侵襲的程度，分為早期性胃癌和進行性胃癌。患者有噁心、嘔吐、腹脹、食慾不振、體重減輕、貧血、上腹部硬塊等症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "胃下垂",
+   "roman": "uī-hā-suî",
+   "meaning": "病名。因身體衰弱，使固定胃的韌帶鬆弛無力，引起胃降至比正常位置還為低的現象。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "胃潰瘍",
+   "roman": "uī-khuì-iông",
+   "meaning": "病名。因胃黏膜被破壞，胃壁受到胃酸和胃液侵蝕、消化的疾病。有燒痛、噁心、空腹感、飢餓感或吐酸水等症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "胃病",
+   "roman": "uī-pēnn/uī-pīnn",
+   "meaning": "所有胃部疾病的通稱。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "胃出血",
+   "roman": "uī-tshut-hueh/uī-tshut-huih",
+   "meaning": "病名。常因胃潰瘍、十二指腸潰瘍、胃炎、胃癌等等重大疾病引起的胃部出血狀況，會因症狀嚴重而有吐血、大便黑色等症狀。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "瘟疫",
+   "roman": "un-i̍k",
+   "meaning": "指流行性急性傳染病的統稱。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "隱痀",
+   "roman": "ún-ku",
+   "meaning": "駝背。背部因為脊椎等病變而變形彎拱。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "鬱傷",
+   "roman": "ut-siong",
+   "meaning": "鬱症。中醫名詞，因為長期心理或生理勞累、姿勢不良，使身體不能舒展而引起的內傷。",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "免疫力",
+   "roman": "bián-i̍k-li̍k",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "無力",
+   "roman": "bô-la̍t",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "癌症",
+   "roman": "gâm-tsìng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "外傷",
+   "roman": "guā-siong",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "肺癌",
+   "roman": "hì-gâm",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "復發",
+   "roman": "ho̍k-huat",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "副作用",
+   "roman": "hù-tsok-iōng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "發病",
+   "roman": "huat-pēnn/huat-pīnn",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "血癌",
+   "roman": "hueh-gâm/huih-gâm",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "疫情",
+   "roman": "i̍k-tsîng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "加害",
+   "roman": "ka-hāi",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "輕傷",
+   "roman": "khin-siong",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "潰瘍",
+   "roman": "khuì-iông",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "結石",
+   "roman": "kiat-tsio̍h",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "肝癌",
+   "roman": "kuann-gâm",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "肝病",
+   "roman": "kuann-pēnn/kuann-pīnn",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "過敏",
+   "roman": "kuè-bín/kè-bín",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "骨折",
+   "roman": "kut-tsi̍h",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "內痔",
+   "roman": "lāi-tī",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "流感",
+   "roman": "liû-kám",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "腦瘤",
+   "roman": "náu-liû",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "腦充血",
+   "roman": "náu-tshiong-hiat",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "惡化",
+   "roman": "ok-huà",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "敗血症",
+   "roman": "pāi-hueh-tsìng/pāi-huih-tsìng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "病源",
+   "roman": "pēnn-guân/pīnn-guân",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "病患",
+   "roman": "pēnn-huān/pīnn-huān",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "病根",
+   "roman": "pēnn-kin/pīnn-kun",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "病變",
+   "roman": "pēnn-piàn/pīnn-piàn",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "病態",
+   "roman": "pēnn-thài/pīnn-thài",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "病症",
+   "roman": "pēnn-tsìng/pīnn-tsìng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "鼻血",
+   "roman": "phīnn-hueh/phīnn-huih",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "鼻炎",
+   "roman": "phīnn-iām",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "併發症",
+   "roman": "pìng-huat-tsìng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "小產",
+   "roman": "siáu-sán",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "傷亡",
+   "roman": "siong-bông",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "傷寒",
+   "roman": "siong-hân",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "傷風",
+   "roman": "siong-hong",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "傷勢",
+   "roman": "siong-sè",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "傷者",
+   "roman": "siong-tsiá",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "溼疹",
+   "roman": "sip-tsín",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "失調",
+   "roman": "sit-tiâu",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "受傷",
+   "roman": "siū-siong",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "退燒",
+   "roman": "thè-sio",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "傳染病",
+   "roman": "thuân-jiám-pēnn/thuân-liám-pīnn",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "脫水",
+   "roman": "thuat-tsuí",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "腸病毒",
+   "roman": "tn̂g-pēnn-to̍k/tn̂g-pīnn-to̍k",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "毒素",
+   "roman": "to̍k-sòo",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "殘障",
+   "roman": "tsân-tsiòng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "青光眼",
+   "roman": "tshenn-kong-gán/tshinn-kong-gán",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "車禍",
+   "roman": "tshia-hō",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "出血",
+   "roman": "tshut-hueh/tshut-huih",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "出院",
+   "roman": "tshut-īnn",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "遠視",
+   "roman": "uán-sī",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "傷疾病痛"
+  },
+  {
+   "word": "鴉片",
+   "roman": "a-phiàn",
+   "meaning": "從罌粟果實中取出乳汁，待乾燥後製成毒品。在醫學上可用來鎮痛和止咳。源自英語。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "愛睏藥仔",
+   "roman": "ài-khùn-io̍h-á",
+   "meaning": "安眠藥。一種幫助人睡眠的藥物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "暗作期",
+   "roman": "àm-tsoh-kî",
+   "meaning": "潛伏期。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "安養",
+   "roman": "an-ióng",
+   "meaning": "安頓照顧。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "按脈",
+   "roman": "àn-me̍h",
+   "meaning": "把脈。一種診察脈象的方法。用食指、中指和無名指三指端，按在被檢查者橈動脈約手掌後一寸的地方，探查脈象變化。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "紅藥水",
+   "roman": "âng-io̍h-tsuí",
+   "meaning": "紅汞水、汞溴紅。一種紅色消毒藥水。用於消毒傷口，無刺激性，有殺菌及防腐的作用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "紅膏赤蠘",
+   "roman": "âng-ko-tshiah-tshi̍h",
+   "meaning": "臉色紅潤，形容身體健康。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "紅棗",
+   "roman": "âng-tsó",
+   "meaning": "瓜果類。一種棗類。晒乾之後表皮呈紅色，所以叫做「紅棗」，可入藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "麻藥",
+   "roman": "bâ-io̍h",
+   "meaning": "內服或外用後使人失去感覺的藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "麻射",
+   "roman": "bâ-siā",
+   "meaning": "麻醉針。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "麻醉",
+   "roman": "bâ-tsuì",
+   "meaning": "使用藥物誘生局部性或全身性喪失感覺的方法。\n使用某種方法使人意志消沉或沉迷。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "目藥水",
+   "roman": "ba̍k-io̍h-tsuí",
+   "meaning": "眼藥水。治療眼睛疾病或保養眼睛的藥水。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "挽喙齒",
+   "roman": "bán tshuì-khí",
+   "meaning": "拔牙齒。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "馬齒豆",
+   "roman": "bé-khí-tāu",
+   "meaning": "蠶豆。豆類，莖粗大，偶數羽狀複葉，互生。春天開蝶形花，莢果為狹長橢圓形、稍扁平、肥厚、被細毛。種子橢圓形，可食用及入藥，莖葉可作綠肥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "木瓜",
+   "roman": "bo̍k-kue",
+   "meaning": "番木瓜。植物名，也稱為「木瓜」。番瓜木科番木瓜屬，草質小喬木。葉具長柄，掌狀分裂。全株有乳汁，雌雄異株，果實卵圓形或橢圓形，成熟後為黃色。供生食或製果汁，可入藥。\n薔薇科木瓜屬，落葉灌木或小喬木。葉橢圓，花分紅白，梨果也稱為「木瓜」，橢圓形。原產於中國大陸湖北、湖南、四川等地，可食亦可供藥用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "牡丹",
+   "roman": "bóo-tan",
+   "meaning": "木科植物。落葉灌木，葉子呈羽狀，春季發葉後開花，有紅、白、黃、紫等顏色。除供觀賞外，其根還可做為藥用。\n地名。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "茉草",
+   "roman": "bua̍h-tsháu",
+   "meaning": "銳葉小槐花。木本植物。長一到兩公尺，葉子互生，三出複葉，葉片披針形，花黃色或綠白色，產在臺灣中北部的山野。主要治療吐血、肝病、婦女病、腹痛、燙傷潰爛等。民間也作為避邪草。浸泡在熱水後，擦拭手腳或全身，以求消災去厄。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "眼科",
+   "roman": "gán-kho",
+   "meaning": "專門研究、治療眼睛生理及病理疾病的醫學分科。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "月桃",
+   "roman": "ge̍h-thô",
+   "meaning": "虎子花、良薑。草本植物。高約一至三公尺，葉鞘很長，質地堅韌，可以當作繩索用，葉子可以用來包粽子。種子成分含有健胃劑，可以加工製成強胃散或口味兒仁丹。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "撠刺",
+   "roman": "giah tshì",
+   "meaning": "剔刺、挑刺。將扎在肉裡的刺剔出來。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "驗血",
+   "roman": "giām-hueh/giām-huih",
+   "meaning": "檢驗血液。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "驗屍",
+   "roman": "giām-si",
+   "meaning": "法醫檢驗屍體，用來判斷死亡的原因和過程。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "驗傷",
+   "roman": "giām siong",
+   "meaning": "檢查身體損傷的程度。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "研槌",
+   "roman": "gíng-thuî",
+   "meaning": "研藥用的小棒槌。\n擀麵杖。擀麵時所用的短木棍。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "研槽",
+   "roman": "gíng-tsô",
+   "meaning": "研磨中藥的船形工具。把藥物放置在槽中，藉由雙腳的力量來搖動碾輪將藥碾碎。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "牛角花",
+   "roman": "gû-kak-hue",
+   "meaning": "金合歡。木本植物。可入藥，根部可治瘧疾，樹皮可作收斂劑，治咳嗽。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "外科",
+   "roman": "guā-kho",
+   "meaning": "臨床醫學的一大分支。主要處理身體的急性損傷，以及一些非手術治療不可的慢性疾病。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "月經",
+   "roman": "gue̍h-king/ge̍h-king",
+   "meaning": "指月經來潮，生理成熟的女人每月子宮黏膜脫落，所發生的週期性陰道流血現象，通常約在十四歲到四十五歲之間。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "月內",
+   "roman": "gue̍h-lāi/ge̍h-lāi",
+   "meaning": "月子。指婦人生產後一個月之內的時期。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "漢醫",
+   "roman": "hàn-i",
+   "meaning": "中醫。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "漢藥",
+   "roman": "hàn-io̍h",
+   "meaning": "中藥。中醫所用的藥物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "漢藥店",
+   "roman": "hàn-io̍h-tiàm",
+   "meaning": "中藥鋪。中醫診治疾病和販賣中藥材的地方。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "候脈",
+   "roman": "hāu-me̍h",
+   "meaning": "把脈。一種診察脈象的方法。用食指、中指和無名指三指端，按在被檢查者橈動脈約手掌後一寸的地方，探查脈象變化。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "艾",
+   "roman": "hiānn",
+   "meaning": "草本植物。莖質硬，葉子有香氣、互生，呈長卵形，葉背密生白毛。秋天開淡黃或淡褐色花。葉揉成艾絨，可作印泥，也可以針灸治病。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "熊膽",
+   "roman": "hîm-tánn",
+   "meaning": "熊的膽，是一種中藥藥材，現在因生態保育，已經禁止販售。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "行醫",
+   "roman": "hîng-i",
+   "meaning": "從事醫療的工作。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "杏",
+   "roman": "hīng",
+   "meaning": "木本植物。落葉喬木，樹皮帶赤色，葉卵形，春天開淡紅色的花，花、葉像梅，果實扁圓、肥厚，味酸甜，可食，核仁還可以入藥。花和果實都稱「杏」。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "杏仁",
+   "roman": "hīng-jîn/hīng-lîn",
+   "meaning": "杏核中的仁，是杏樹的種子，形狀扁圓像心臟，味道甜的可以炒食，味道苦的可入藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "耳屎",
+   "roman": "hīnn-sái/hī-sái",
+   "meaning": "耳內皮脂腺所分泌的汙垢。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "雄黃",
+   "roman": "hiông-hông",
+   "meaning": "礦物名。主要成分為二硫化二砷，可用來製作火藥，也可當作中藥材，主要功效為解毒、驅蟲。又稱為雞冠石。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "茅仔草",
+   "roman": "hm̂-á-tsháu",
+   "meaning": "茅草。多年生草本，花序穗狀，密生白色柔毛。根莖有甜味，供藥用，有利尿、止血等作用，莖葉可供蓋屋、製繩等用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "方",
+   "roman": "hng",
+   "meaning": "配藥的單子。\n地區、定點。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "復原",
+   "roman": "ho̍k-guân",
+   "meaning": "恢復。恢復原狀、恢復元氣。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "服藥",
+   "roman": "ho̍k-io̍h",
+   "meaning": "吃藥。\n賠償醫藥費。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "風蔥",
+   "roman": "hong-tshang",
+   "meaning": "百合科蔥屬。一種藥用蔥，開圓形花，外型似食用蔥但稍小，可治風疾。在澎湖則指洋蔥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "虎骨酒",
+   "roman": "hóo-kut-tsiú",
+   "meaning": "以虎骨泡製的中藥藥酒，主要療效為止痛、鎮靜和健骨，過去曾為臺灣菸酒公賣局的產品，現在因為保育觀念不再以虎骨為藥材。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "胡椒",
+   "roman": "hôo-tsio",
+   "meaning": "多年生藤本植物，果實成熟時呈紅色，味道辛辣 ，可用來調味，也可藥用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "護理",
+   "roman": "hōo-lí",
+   "meaning": "醫療工作中的一項，包括照顧傷患及預防保健等。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "化驗",
+   "roman": "huà-giām",
+   "meaning": "利用化學或物理方法將物質分解試驗，以分析物質的成分和性質。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "淮山",
+   "roman": "huâi-san",
+   "meaning": "山藥。根莖類。一種高級的薯類食品，為中藥帖所謂四神之一，以往曾以中國河南淮陽的淮山地區所產山藥最具代表性，於是將山藥稱為淮山。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "患者",
+   "roman": "huān-tsiá",
+   "meaning": "病人。患有某種疾病的人。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "血壓",
+   "roman": "hueh-ap/huih-ap",
+   "meaning": "血液施於血管壁的壓力。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "血氣",
+   "roman": "hueh-khì/huih-khì",
+   "meaning": "血液的運行。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "血路",
+   "roman": "hueh-lōo/huih-lōo",
+   "meaning": "血液循環的系統。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "醫",
+   "roman": "i",
+   "meaning": "治療、救治。\n醫生。以不同方式治療病患的人。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "醫學",
+   "roman": "i-ha̍k",
+   "meaning": "醫治病人的學問。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "醫生",
+   "roman": "i-sing",
+   "meaning": "醫師、大夫。經政府相關單位核可，發給證照，可以替人治病的人。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "醫生館",
+   "roman": "i-sing-kuán",
+   "meaning": "醫院、診所。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "醫術",
+   "roman": "i-su̍t",
+   "meaning": "治病的技術。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "醫治",
+   "roman": "i-tī",
+   "meaning": "診斷治療疾病。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "薏仁",
+   "roman": "ì-jîn/ì-lîn",
+   "meaning": "穀類。葉呈現細長披針形，穎果呈卵圓形，種皮和果皮密合，形成淡褐色的外殼，形狀像麥粒。去掉外殼，內部即為白色的薏仁。薏仁含有豐富的蛋白質，在中藥上有利尿、健胃、鎮咳、抗癌等功效。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "燕窩",
+   "roman": "iàn-o",
+   "meaning": "金絲燕或同屬雨燕科的燕類以唾液吐出來築的窩巢。含有豐富的膠質、蛋白質、糖等，在中醫上是上等的補品，價格昂貴。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥",
+   "roman": "io̍h",
+   "meaning": "用來治病的物質。\n有化學作用的物質。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥仔",
+   "roman": "io̍h-á",
+   "meaning": "藥的通稱。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥方",
+   "roman": "io̍h-hng",
+   "meaning": "處方。醫師針對病症所開具的藥單。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥粉",
+   "roman": "io̍h-hún",
+   "meaning": "粉末狀的藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥局",
+   "roman": "io̍h-kio̍k",
+   "meaning": "泛指一般的西藥房。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥膏",
+   "roman": "io̍h-ko",
+   "meaning": "經煎煉或調配，用於外敷，黏膩如膏狀的藥物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥鈷仔",
+   "roman": "io̍h-kóo-á",
+   "meaning": "藥壺。熬藥用的藥罐子。通常用來熬中藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥房",
+   "roman": "io̍h-pâng",
+   "meaning": "出售藥品的店舖。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥包",
+   "roman": "io̍h-pau",
+   "meaning": "包裝成袋的藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥片",
+   "roman": "io̍h-phìnn",
+   "meaning": "片狀的藥物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥粕",
+   "roman": "io̍h-phoh",
+   "meaning": "藥渣。中藥藥材熬煮過後的殘渣。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥餅",
+   "roman": "io̍h-piánn",
+   "meaning": "藥錠、藥片。泛指扁狀錠劑的藥物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥洗",
+   "roman": "io̍h-sé/io̍h-sué",
+   "meaning": "推拿用的藥劑，可以治療筋骨扭傷等。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥丹",
+   "roman": "io̍h-tan",
+   "meaning": "藥丸。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥茶",
+   "roman": "io̍h-tê",
+   "meaning": "添加某種藥材，具有藥效的茶。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥頭",
+   "roman": "io̍h-thâu",
+   "meaning": "藥頭。中藥材第一次熬煮出來的湯藥。\n草藥的根部，也泛指養生草藥材。說的時候常加小稱後綴「仔」(á)。\n販毒者。販賣毒品的毒犯。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥頭仔",
+   "roman": "io̍h-thâu-á",
+   "meaning": "專指第一次熬煮的中藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥材",
+   "roman": "io̍h-tsâi",
+   "meaning": "可供製藥的材料。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥渣",
+   "roman": "io̍h-tse",
+   "meaning": "特指煎煮過第一次以後的中藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥劑",
+   "roman": "io̍h-tse",
+   "meaning": "根據藥方配出的藥物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥劑師",
+   "roman": "io̍h-tsè-su",
+   "meaning": "有調配藥物能力的專業人士。需先接受大專藥學教育，經考試及格，取得證書，才具有藥劑師資格。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥草",
+   "roman": "io̍h-tsháu",
+   "meaning": "可供治病的草本植物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥酒",
+   "roman": "io̍h-tsiú",
+   "meaning": "以各種藥材浸泡製成的酒。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥水",
+   "roman": "io̍h-tsuí",
+   "meaning": "治病的藥物溶液。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥櫥",
+   "roman": "io̍h-tû",
+   "meaning": "放藥的櫥子。\n藥罐子。比喻常常服藥的人。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥單",
+   "roman": "io̍h-tuann",
+   "meaning": "處方箋。醫生診斷完畢後，開給病患的藥單子。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥丸",
+   "roman": "io̍h-uân",
+   "meaning": "製成圓粒形的成藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "勇",
+   "roman": "ióng",
+   "meaning": "健康、強壯。\n物品堅固耐用。\n不懼怕。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "勇健",
+   "roman": "ióng-kiānn",
+   "meaning": "健朗。形容身體健康硬朗。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "養神",
+   "roman": "ióng-sîn",
+   "meaning": "休養精神。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "羊角豆仔",
+   "roman": "iûnn-kak-tāu-á",
+   "meaning": "決明、望江南。豆類。莢果狹長，種子較綠豆小，有清肝明目、健胃潤腸之效。原產於美洲，清末時引入臺灣地區種植。嫩苗葉必須熟食，否則有毒素。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "楊桃",
+   "roman": "iûnn-tô",
+   "meaning": "楊桃。瓜果類。為漿果，於七月至十二月成熟，呈黃色或黃綠色，多汁，味道甘酸，氣味芳香，可供食用及藥用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "人參",
+   "roman": "jîn-sim/lîn-sim",
+   "meaning": "草本植物。根和葉都可以做藥，是昂貴的中藥材。因為形狀像人，所以稱為「人參」。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "仁丹",
+   "roman": "jîn-tan/lîn-tan",
+   "meaning": "一種含於口中的小藥丸，清涼提神。源自日語「仁丹（じんたん）」。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "肉桂",
+   "roman": "jio̍k-kuì/lio̍k-kuì",
+   "meaning": "木本植物。氣味辛烈，種子、根皮、嫩枝等均可作成香料，或磨碎製成桂油，可入藥，具有止痛、健胃、驅寒等的療效。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "入院",
+   "roman": "ji̍p-īnn/li̍p-īnn",
+   "meaning": "住院。因為生病住進醫院就醫。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "解毒",
+   "roman": "kái-to̍k",
+   "meaning": "解除毒素。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "甘草",
+   "roman": "kam-tshó",
+   "meaning": "草本植物。奇數羽狀複葉，藍紫色蝶形花。根與地下莖都可以入藥，有益氣、瀉火、解毒等功用，味道甘甜。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "敆藥仔",
+   "roman": "kap-io̍h-á",
+   "meaning": "抓藥、買藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "雞毛管仔",
+   "roman": "ke-mn̂g-kóng-á/kue-mn̂g-kóng-á",
+   "meaning": "膠囊。指中、西醫為方便患者服用，將粉狀或液狀藥物填裝於膠囊中而製成。外形類似家禽的羽毛根管，故有此稱。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "假喙齒",
+   "roman": "ké-tshuì-khí",
+   "meaning": "假牙。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "齒抿仔",
+   "roman": "khí-bín-á",
+   "meaning": "牙刷。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "齒粉",
+   "roman": "khí-hún",
+   "meaning": "牙粉。刷牙時用來清潔牙齒的粉狀物。主要原料為碳酸鎂、碳酸鈣等，能強固牙齒並達到清潔的功用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "起藥蛆",
+   "roman": "khí-io̍h-tshi/khí-io̍h-tshu",
+   "meaning": "起藥布疹。指貼膏藥過後引發皮膚的發炎紅腫。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "齒科",
+   "roman": "khí-kho",
+   "meaning": "牙科。有關牙齒醫療保健的醫學部門。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "齒膏",
+   "roman": "khí-ko",
+   "meaning": "牙膏。刷牙時所用的清潔軟膏。有清潔和保護牙齒的功效。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "齒𣻸",
+   "roman": "khí-siûnn",
+   "meaning": "牙垢。積存在牙齒上的汙穢物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "氣",
+   "roman": "khì",
+   "meaning": "發怒、憤怒。\n物體三態之一，有別於固體、液體，是一種沒有固定的形狀、體積，能自由流散的物體。\n中醫指充塞於人體中的一種生物能。\n人的情緒或表現出來的精神狀態。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "去傷解鬱",
+   "roman": "khì-siong-kái-ut",
+   "meaning": "解除因為受內外傷而產生的血氣鬱結。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "輕健",
+   "roman": "khin-kiānn",
+   "meaning": "輕爽靈活。精神爽快而身體硬朗，敏捷健康的樣子。通常形容病人或老人病好後的樣子。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "噤喙",
+   "roman": "khiūnn-tshuì",
+   "meaning": "忌口。因病或其他因素而禁吃不相宜的食物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "苦瓜",
+   "roman": "khóo-kue",
+   "meaning": "瓜果類。帶有苦味的瓜類植物，果實是長圓形或卵圓形，兩頭尖，表面有許多瘤狀突起，用來燉湯或炒鹹蛋、豆豉等。也可入藥，做成苦瓜丹。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "苦茶油",
+   "roman": "khóo-tê-iû",
+   "meaning": "由苦茶樹的種子壓榨製成的油。具有潤肝、清血、健胃整腸的功用。可當作一般食用油烹煮食物，也可製成護髮劑或治療燙傷的藥膏。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "看醫生",
+   "roman": "khuànn-i-sing",
+   "meaning": "看病。找醫生診病。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "看病",
+   "roman": "khuànn-pēnn/khuànn-pīnn",
+   "meaning": "醫生為病人診療。\n病人找醫生診療。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "開藥仔",
+   "roman": "khui-io̍h-á",
+   "meaning": "開藥方。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "開刀",
+   "roman": "khui-to",
+   "meaning": "外科醫生為病人動手術。\n懲罰、訓誡。\n指拔刀的動作。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "寄藥包",
+   "roman": "kià-io̍h-pau",
+   "meaning": "早期因醫藥不發達，家中會有藥廠「寄放」的藥包，裡面有各種治療一般疾病的成藥，藥廠定期至家中補充藥品並收取費用，是鄉村地區重要的醫療資源。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "檢驗",
+   "roman": "kiám-giām",
+   "meaning": "檢查、查驗。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "堅血",
+   "roman": "kian-hueh/kian-huih",
+   "meaning": "血液凝固。傷口不再流血。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "健康",
+   "roman": "kiān-khong",
+   "meaning": "形容人的生理及心理機能正常而強壯，沒有缺陷和疾病。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "行氣",
+   "roman": "kiânn-khì",
+   "meaning": "有效。發生功效、有作用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "行經",
+   "roman": "kiânn-king",
+   "meaning": "指女性月經來潮。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "金線蓮",
+   "roman": "kim-suànn-liân",
+   "meaning": "草本植物。為裂脣屬多年生草本地生蘭，葉子的背面呈酒紅色，葉面則為墨綠色，表面有金黃色的網脈條紋相連，所以取名為「金線蓮」。經農委會研究後發現，金線蓮具有抗癌、抗氧化、抗菌、預防動脈硬化等藥效。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "金針",
+   "roman": "kim-tsiam",
+   "meaning": "草本植物。葉子細長，花形和百合相似，有橙紅或黃紅色。一般在花尚未全開時就採下來，經過日晒、蒸熟、烘乾後，便是食用的金針。\n針灸時用來刺激穴道的長針。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "禁喙",
+   "roman": "kìm-tshuì",
+   "meaning": "在某些狀況之下，禁吃某些食物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "急燒仔",
+   "roman": "kip-sio-á",
+   "meaning": "以瓷做成的藥壺。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "九芎仔",
+   "roman": "kiú-kiong-á",
+   "meaning": "九芎樹。木本植物。木質堅韌，可以拿來做手杖，根部可以拿來入藥，治瘧疾。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "救",
+   "roman": "kiù",
+   "meaning": "幫助人或動物等脫離困境、險境或是解除生命危機。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "救護車",
+   "roman": "kiù-hōo-tshia",
+   "meaning": "用來運載傷患的專用車，車上有急救設備。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "救人",
+   "roman": "kiù-lâng",
+   "meaning": "救命。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "薑",
+   "roman": "kiunn",
+   "meaning": "根莖類。作為辛香料的一種植物地下莖，呈不規則圓塊狀，色黃味辛，除了當食物的佐料外也可入藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "膏藥",
+   "roman": "koo-io̍h",
+   "meaning": "傳統中醫把藥物浸於麻油內，再放於鍋中煎熬、去渣至濃稠狀。加入黃丹拌勻，離火後等藥物凝固，而放置涼水中去火毒，即成膏藥。使用時先加熱使其軟化，平鋪於布或薄油紙上，再貼上患部。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "枸杞",
+   "roman": "kóo-kí",
+   "meaning": "植物名。落葉灌木，葉子為披針形，花為淡紫色，果實為枸杞子也稱為「枸杞」，為圓形或橢圓形的紅色漿果。可入藥，具有滋補作用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "龜",
+   "roman": "ku",
+   "meaning": "爬蟲類動物。身體呈橢圓而扁，腹、背皆有硬殼，四肢短，頭、尾和四肢都可縮入殼中。行動遲緩，壽命長達百年之上。其肉可食，殼可入藥。\n製作成龜形的糕品。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "灌腸",
+   "roman": "kuàn tn̂g",
+   "meaning": "將水、液體藥物或營養物注入腸內，以清洗腸道、治療疾病或供給養料。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "來洗",
+   "roman": "lâi-sé",
+   "meaning": "指女性月經來潮。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "內科",
+   "roman": "lāi-kho",
+   "meaning": "依照病人對症狀的敘述，以用藥、打針來治療身體內部的各種疾病，而不動外科手術。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "老康健",
+   "roman": "lāu-khong-kiān",
+   "meaning": "形容人雖年老但是身體還是一樣健康，是一種祝賀語。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "檸檬",
+   "roman": "lê-bóng",
+   "meaning": "瓜果類，產於熱帶，果實為橢圓形，味道酸，可作飲料，也可以作藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "掠筋",
+   "roman": "lia̍h-kin/lia̍h-kun",
+   "meaning": "按摩、推拿。經絡按摩法，以放鬆經絡，促進循環，消除疲勞或鬆弛組織黏連，來達到減輕神經酸痠痛的方法，是一種中國傳統的醫療方式。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "掠龍",
+   "roman": "lia̍h-lîng",
+   "meaning": "按摩。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "掠痧",
+   "roman": "lia̍h-sua",
+   "meaning": "刮痧。一種傳統民俗醫療方式。用錢幣或小圓餅狀的東西蘸水或油刮擦患者的胸部、背部和頸部，使皮膚紅紫，局部充血，以減輕中暑現象和疼痛。其原理就是利用按摩人體的胸腺而增加血液循環及產生免疫力。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "蓮藕",
+   "roman": "liân-ngāu",
+   "meaning": "根莖類。生於水底汙泥中，肥大而長，有明顯的節，節間多縱行管狀空隙。可食用和入藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "蓮子",
+   "roman": "liân-tsí",
+   "meaning": "蓮的果實。呈橢圓形、乳白色。除食用外，尚可入藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "療養",
+   "roman": "liâu-ióng",
+   "meaning": "治療調養。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "靈丹",
+   "roman": "lîng-tan",
+   "meaning": "可以讓人長生不死或有神奇療效的仙丹。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "靈芝",
+   "roman": "lîng-tsi",
+   "meaning": "蕈菇類。實體有一長柄，上面有一腎形菌蓋，呈現黑褐色，有環形雲紋。蓋上有許多細孔，呈白色或淡褐色。古代以靈芝為仙草，服食後可駐顏不老，具起死回生的神效。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "龍骨",
+   "roman": "liông-kut",
+   "meaning": "脊椎骨。\n一種中藥。古代動物骨骼的化石，有鎮靜、收斂的功效。\n船體的中樑。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "鹿茸",
+   "roman": "lo̍k-jiông/lo̍k-liông",
+   "meaning": "未長成硬骨、有茸毛、含血液、色如瑪瑙紅玉的雄鹿角。它是一種珍貴的中藥材，中醫常用來滋補養身。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "鹿角",
+   "roman": "lo̍k-kak",
+   "meaning": "雄鹿的角。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "蘆薈",
+   "roman": "lôo-huē",
+   "meaning": "植物名。為常綠植物，葉肥厚多肉，邊緣呈銳鋸齒狀。產於熱帶。從葉中採汁，可以入藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "門診",
+   "roman": "mn̂g-tsín",
+   "meaning": "醫生在醫院或診所中為病人看病。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "麻油酒",
+   "roman": "muâ-iû-tsiú",
+   "meaning": "麻油雞。以薑及大量的麻油、米酒燉雞，是一道常見食補，產婦坐月子時必備的藥膳。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "腦髓",
+   "roman": "náu-tshué/náu-tshé",
+   "meaning": "大腦、中腦、小腦、延腦的總稱。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "黃連",
+   "roman": "n̂g-nî",
+   "meaning": "草本植物。結黃色果實。根莖味苦，可入藥， 有健胃、抗菌消炎的療效。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "軟轎",
+   "roman": "nńg-kiō",
+   "meaning": "擔架。以雙棍為抬桿，棍間裹布，形似床，用來抬送傷患的長條形架子。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "軟床",
+   "roman": "nńg-tshn̂g",
+   "meaning": "擔架、急診推床。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "烏麻油",
+   "roman": "oo-muâ-iû",
+   "meaning": "胡麻油。從胡麻的種子中所提煉出來的精製油。可以做為製藥輔助劑、肌肉注射劑的溶媒，具有營養補助、助瀉、滑潤、潤膚的功效。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "烏豆",
+   "roman": "oo-tāu",
+   "meaning": "黑豆。草本豆科植物。莢果有短柄，扁平線狀呈長橢圓形。可製成醬油做為調味料，或於中醫入藥，有解毒利尿的功效。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "烏甜仔菜",
+   "roman": "oo-tinn-á-tshài",
+   "meaning": "龍葵。草本植物。葉互生，橢圓形，葉緣也有呈波狀，花白色，漿果球形，成熟時為黑色。可用做藥物。嫩葉為一種野生蔬菜，炒或作湯皆可。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "烏棗",
+   "roman": "oo-tsó",
+   "meaning": "黑棗。瓜果類。呈球形或橢圓形，原色為黃色，貯藏一段時間後就會變成黑褐色，味甜。可食及作藥用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "放血",
+   "roman": "pàng-hueh/pàng-huih",
+   "meaning": "排泄物中有血。\n醫學上利用排血來醫病。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "八珍",
+   "roman": "pat-tin",
+   "meaning": "漢方藥劑的名稱，包含：當歸、川芎、白芍、熟地、人參、白朮、茯苓、甘草。\n三八。形容人的言行不莊重。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "鮑魚",
+   "roman": "pau-hî/pau-hû",
+   "meaning": "黑鮑、石決明。軟體動物。外殼為橢圓形，肉為扁平形狀像耳朵，生活在淺海岩礁底，肉可食，外殼可入藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "白虎湯",
+   "roman": "pe̍h-hóo-thng",
+   "meaning": "中藥的一種處方，成分為：知母、甘草、石膏、粳米。有解熱退燒的功效，屬於猛藥，使用不當可能致命。\n通稱猛藥，引申指不得已時所採取的激烈手段。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "白帶",
+   "roman": "pe̍h-tài",
+   "meaning": "陰道流出的白色分泌物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "病院",
+   "roman": "pēnn-īnn/pīnn-īnn",
+   "meaning": "醫院。源自日語「病院（びょういん）」。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "病床",
+   "roman": "pēnn-tshn̂g/pīnn-tshn̂g",
+   "meaning": "醫療場所讓病人臥躺兩用的床。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "蜂蜜",
+   "roman": "phang-bi̍t",
+   "meaning": "蜜蜂採花液所釀成的黃白色黏稠蜜汁，可供食用和藥用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "破腹",
+   "roman": "phuà-pak",
+   "meaning": "即開刀，多用在孕婦剖腹生產。\n真誠相對。\n解剖。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "祕方",
+   "roman": "pì-hng",
+   "meaning": "私人保密不輕易公開的藥方。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "便藥仔",
+   "roman": "piān-io̍h-á",
+   "meaning": "成藥。藥料加工調製完成的藥物。明示劑量、效能、用法，經藥劑師建議後，即可供治療疾病用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "保重",
+   "roman": "pó-tiōng",
+   "meaning": "珍重。希望別人注重身體健康。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "薄荷",
+   "roman": "po̍k-hô",
+   "meaning": "草本植物。莖和葉子有清涼的香味，可以入藥，也可提煉成芳香化合物加在食品中。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "埔姜",
+   "roman": "poo-kiunn",
+   "meaning": "蔓荊。植物名。全株布滿灰白色柔毛，揉汁會散發濃厚芳香。花形如脣，為深藍色或紫色。果實則呈球狀，乾燥後稱為「蔓荊子」，可做藥材。因生長遍及海濱沙地，有定沙作用，故也稱為「海埔姜」。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "補喙齒",
+   "roman": "póo tshuì-khí",
+   "meaning": "鑲牙。修補牙齒。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "痱仔粉",
+   "roman": "puì-á-hún",
+   "meaning": "痱子粉、爽身粉。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "沙龍巴斯",
+   "roman": "sa-long-pa-suh",
+   "meaning": "一種醫治酸痛用的貼布品牌。借自日語傷痛貼布商標「サロンパス」。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "散",
+   "roman": "sán",
+   "meaning": "藥粉。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "產婆",
+   "roman": "sán-pô",
+   "meaning": "舊時社會中，幫忙產婦分娩的婦女。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "西醫",
+   "roman": "se-i",
+   "meaning": "採用西洋醫術的醫生或醫療方法。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "西藥",
+   "roman": "se-io̍h",
+   "meaning": "西醫所用的藥品，通常多為合成方法製成。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "西藥房",
+   "roman": "se-io̍h-pâng",
+   "meaning": "販賣西洋藥物的商店。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "洗面",
+   "roman": "sé-bīn/sué-bīn",
+   "meaning": "洗臉。\n用言語挖苦別人。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "洗喙",
+   "roman": "sé-tshuì/sué-tshuì",
+   "meaning": "刷牙。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "視力",
+   "roman": "sī-li̍k",
+   "meaning": "常人在一定距離內，眼睛辨識物體形像的能力。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "瀉藥仔",
+   "roman": "sià-io̍h-á",
+   "meaning": "服用後引起腹瀉的藥。主治便祕，用以清除腸內穢物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "射",
+   "roman": "siā",
+   "meaning": "用推力或彈力等送出炮彈、箭或某種物體。\n針劑。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "麝香",
+   "roman": "siā-hiunn",
+   "meaning": "雄麝腹部麝腺的分泌物。呈黃褐色或暗赤色，香味濃烈，乾燥後可製成香料，也可以入藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "射筒",
+   "roman": "siā-tâng",
+   "meaning": "針筒。西醫所用注射器裝藥液的地方。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "消毒",
+   "roman": "siau-to̍k",
+   "meaning": "用物理方法或化學藥品殺死致病的微生物。也引申為用具體的事證、言語來澄清他人的毀謗、誣衊。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "石",
+   "roman": "si̍k",
+   "meaning": "由礦物集結而成的堅硬塊狀物。\n砭石。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "參仔",
+   "roman": "sim-á",
+   "meaning": "人參。根莖類。多年生宿根草本植物。主根較為肥大，而且形狀像人形，所以叫「人參」。葉與根皆可入藥，在中藥裡是高級的滋補藥材。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "參茸",
+   "roman": "sim-jiông/sim-liông",
+   "meaning": "人參跟鹿茸製成的藥酒。參茸藥酒的簡稱。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "身命",
+   "roman": "sin-miā",
+   "meaning": "體質。健康狀況。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "豉",
+   "roman": "sīnn",
+   "meaning": "把生鮮的食物如蔬果、肉類、海鮮等，醃漬成醃漬品。\n形容傷口或眼睛部位受到鹽或藥物刺激的刺痛感。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "燒酒雞",
+   "roman": "sio-tsiú-ke/sio-tsiú-kue",
+   "meaning": "將雞肉放入加有藥膳的米酒中燉煮而成，能促進新陳代謝、消化吸收及血液循環，是冬天活血暖身、舒筋養骨、溫補虛寒的最佳食補。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "小兒科",
+   "roman": "sió-jî-kho/sió-lî-kho",
+   "meaning": "專門診治兒童的醫學分科。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "小白菜",
+   "roman": "sió-pe̍h-tshài",
+   "meaning": "葉菜類。形似油菜，葉柄呈白色，可食用，也可以入藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "松梧",
+   "roman": "siông-ngôo",
+   "meaning": "檜木。木本植物。高約二十公尺，樹幹挺直，葉形小，鱗片狀，花單性，雌雄同株，實為球果。葉可入藥，木材很貴重，是高級的木料，可供建築、家具、造船、雕刻以及栽培盆景以觀賞，用途甚廣。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "十全",
+   "roman": "si̍p-tsuân",
+   "meaning": "用於中醫藥名。\n完美、齊全。完美無缺憾。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "食補",
+   "roman": "si̍t-póo",
+   "meaning": "以營養的食物滋補身體。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "收束",
+   "roman": "siu-sok",
+   "meaning": "縮小、縮減。\n收口。傷口癒合。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "獸醫",
+   "roman": "siù-i",
+   "meaning": "治療動物疾病的醫生。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "桑材",
+   "roman": "sng-tsâi",
+   "meaning": "桑樹。木本植物。葉子呈卵形，葉緣有粗鋸齒狀，可以用來飼蠶。樹皮可以製作紙張，材質堅硬，可以製作家具。果實可食用和製成中藥。\n桑椹、桑葚。桑樹的果實。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "輸血",
+   "roman": "su-hueh/su-huih",
+   "meaning": "把健康人的血漿，移注到病人體內。一般多由靜脈緩緩輸入，但對於病勢危急的患者，可由動脈進行輸血急救。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "四物仔",
+   "roman": "sù-bu̍t-á",
+   "meaning": "中藥裡一種補藥，合當歸、川芎、白芍、熟地為一劑，有補血的療效。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "山苳蒿",
+   "roman": "suann-tang-o",
+   "meaning": "昭和草。草本植物。莖葉鮮綠柔軟，葉緣呈鋸齒狀，花為紅褐色，果實被絨毛。春季為最佳的採集季節，可以食用。遭蟲咬傷或擦傷，也可將莖葉搗碎敷於患部。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "秮仔",
+   "roman": "tai-á",
+   "meaning": "小米。穀類。高約一點五公尺，花小而密集，呈圓錐花序。可以食用，也可以入藥，有清熱、解毒、滋補等療效。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "丹",
+   "roman": "tan",
+   "meaning": "精煉的藥劑。\n紅色。\n寺廟香爐中的香灰。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "苧仔",
+   "roman": "tē-á/tuē-á",
+   "meaning": "苧麻。草本植物。高約一公尺，葉呈卵形而尖，有鋸齒。夏秋間開小花，雌雄同株。莖的皮部可採纖維以供織布，根和葉則可供藥用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "硩嗽",
+   "roman": "teh-sàu",
+   "meaning": "止咳。治療咳嗽，使咳嗽停止。\n克制住癮頭。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "敨中氣",
+   "roman": "tháu tiong-khuì",
+   "meaning": "紓解鬱滯的中氣。中醫上認為中氣是由心所發出來，且不偏不倚的氣。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "毒",
+   "roman": "thāu",
+   "meaning": "施放毒劑以殺死動物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "退癀",
+   "roman": "thè-hông",
+   "meaning": "消炎、消腫。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "退火",
+   "roman": "thè-hué/thè-hé",
+   "meaning": "降火氣，中醫上指消除病理上口乾舌燥等現象。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "退熱",
+   "roman": "thè-jia̍t/thè-lia̍t",
+   "meaning": "退燒。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "拆藥仔",
+   "roman": "thiah-io̍h-á",
+   "meaning": "依照醫生給的藥方抓藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "疼某菜",
+   "roman": "thiànn-bóo-tshài",
+   "meaning": "牛蒡。草本植物。根及嫩葉可食，種子、根還可用做藥物，能降火解毒。因有滋陰補陽的功效，丈夫可多買給妻子吃，為妻子補身，且自己食用，也有助於房事，所以稱為「疼某菜」。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "鐵衫",
+   "roman": "thih-sann",
+   "meaning": "背架。給脊椎受傷，或是骨質脆弱、脊椎側彎的患者，用來固定上半身的支架。\n護腰；支撐腰部的醫療器材。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "湯頭",
+   "roman": "thng-thâu",
+   "meaning": "烹調後的湯汁。\n指中藥的配方。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "糖丹",
+   "roman": "thn̂g-tan",
+   "meaning": "糖精。一種合成的人工甘味劑，甜度是蔗糖的三百到五百倍，不易消化，且有致癌作用。在醫學用途上，可作糖尿病者的食糖代用品。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "土菝仔",
+   "roman": "thóo-pua̍t-á",
+   "meaning": "土芭樂。瓜果類。番石榴的一種，臺灣土生種，果實形體小，晒乾後可以泡茶，中醫療效上可以治糖尿病。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "傳染",
+   "roman": "thuân-jiám/thuân-liám",
+   "meaning": "疾病由某一個體侵入另外一個個體。可分為直接接觸的直接傳染，以及需靠媒介傳播病菌的間接傳染。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "治療",
+   "roman": "tī-liâu",
+   "meaning": "醫治疾病。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "治病",
+   "roman": "tī-pēnn/tī-pīnn",
+   "meaning": "醫治、醫療。治療疾病，使恢復健康。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "點穴",
+   "roman": "tiám-hia̍t",
+   "meaning": "地理師堪定的墓穴位置。\n指拳術師用手指點人身上的穴位，使其麻木。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "點痣",
+   "roman": "tiám-kì",
+   "meaning": "點上腐蝕性的藥水，以除掉皮膚上的痣。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "電光",
+   "roman": "tiān-kong",
+   "meaning": "X光。又稱X射線。是一種短波電磁波。它具有很強的穿透力，所以在醫學運用上，使用足夠劑量的X射線通過身體後，記錄在特殊的照片底片上，就可藉此而觀察體內骨骼或內臟的情況。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "吊",
+   "roman": "tiàu",
+   "meaning": "懸掛。\n取消、收回。\n一種傳統療法，在傷患處貼藥膏引流膿液。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "吊癀",
+   "roman": "tiàu-hông",
+   "meaning": "貼藥膏以消炎。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "吊膏",
+   "roman": "tiàu-ko",
+   "meaning": "藥膏、狗皮藥膏。一種治療疔瘡的藥膏，是中醫特有的醫療方式。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "吊傷",
+   "roman": "tiàu-siong",
+   "meaning": "中醫以貼藥膏來治療人體內傷。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "吊大筒",
+   "roman": "tiàu tuā-tâng",
+   "meaning": "吊點滴。將藥劑以慢速滴漏注入靜脈血管的注射方式。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "調養",
+   "roman": "tiâu-ióng",
+   "meaning": "調理保養。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "特效藥",
+   "roman": "ti̍k-hāu-io̍h",
+   "meaning": "對於某種疾病有特殊療效的藥物，常指抗生素。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "鎮靜劑",
+   "roman": "tìn-tsīng-tse",
+   "meaning": "一種可以使情緒平靜而不影響意識的藥物。常用來治療焦慮、緊張或精神疾病。只有暫時性效果，長期服用則會有不良的副作用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "等",
+   "roman": "tíng",
+   "meaning": "級次。\n表列舉不盡的刪略詞。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "中醫",
+   "roman": "tiong-i",
+   "meaning": "中國傳統的醫學。\n以中醫治療病人的醫生。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "毒藥",
+   "roman": "to̍k-io̍h",
+   "meaning": "含有毒性，能危害生物生理機能的藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "當歸",
+   "roman": "tong-kui",
+   "meaning": "草本植物。夏秋間會開白色小花，有藥香味。根也稱為「當歸」，具補血等功效，所以常為婦女用藥。如當歸鴨麵線、當歸土虱等，更是一般大眾常吃的食補。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "度針",
+   "roman": "tōo-tsiam",
+   "meaning": "體溫計。用來測量體溫的儀器。有口溫計、肛溫計等。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "節脈",
+   "roman": "tsat-me̍h",
+   "meaning": "把脈。一種診察脈象的方法。用食指、中指和無名指三指端，按在被檢查者橈動脈約手掌後一寸的地方，探查脈象變化。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "差",
+   "roman": "tsha",
+   "meaning": "差別。\n錯誤、失誤。\n劣質、不好。\n不足。\n（疾病服藥後有無）起色。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "蠶豆",
+   "roman": "tshân-tāu",
+   "meaning": "豆類。春天開蝶形花，有清香。莢果為狹長橢圓形、稍扁平、肥厚。種子橢圓形，可食用及入藥，莖葉可作綠肥。也稱為「馬齒豆(bé-khí-tāu)」。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "草藥",
+   "roman": "tsháu-io̍h",
+   "meaning": "藥草。可供治病的草本植物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "臭藥丸仔",
+   "roman": "tshàu-io̍h-uân-á",
+   "meaning": "正露丸。原名征露丸，是日本征伐露西亞(俄羅斯)時，發給士兵食用，來治療水土不服、肚子痛的強效藥丸，副作用很大。因為味道又怪又臭，因此得名。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "青耆",
+   "roman": "tshenn-kî/tshinn-kî",
+   "meaning": "黃耆。草本植物。根莖部分常被中醫用以入藥，有利尿、補氣等作用。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "鼠麴草",
+   "roman": "tshí-khak-tsháu/tshú-khak-tsháu",
+   "meaning": "草本植物。高一尺多，葉長而互生，有白色的軟毛，春夏開小黃花，可作鎮咳、袪痰等藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "赤跤仙仔",
+   "roman": "tshiah-kha-sian-á",
+   "meaning": "蒙古大夫。指未受過正式的醫學訓練而幫人看病的人，通常醫術不精。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "淺眠",
+   "roman": "tshián-bîn",
+   "meaning": "入睡不深，容易醒來。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "清火",
+   "roman": "tshing-hué/tshing-hé",
+   "meaning": "去火。消除體內火氣。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "惝",
+   "roman": "tshíng",
+   "meaning": "心跳。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "手術",
+   "roman": "tshiú-su̍t",
+   "meaning": "開刀。醫生使用醫療器材在病患身上切割患處、縫合傷口以治療疾病的方法。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "手頭",
+   "roman": "tshiú-thâu",
+   "meaning": "指個人一時的經濟狀況。\n指正在掌握或正在進行的狀況。\n醫生在開立處方時所用藥劑的份量。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "處方",
+   "roman": "tshú-hng",
+   "meaning": "處方箋。醫師針對病人病症所開具有醫療處置的單子。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "川芎",
+   "roman": "tshuan-kiong",
+   "meaning": "芎藭。草本植物。可入藥，有調經、活血、潤燥、止痛等療效。大多產於四川，所以稱為「川芎」。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "川貝",
+   "roman": "tshuan-puè",
+   "meaning": "貝母、藥實。草本植物。地下鱗莖為白色，形狀像集貝子，可以入藥。主要產地在中國四川。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "川七",
+   "roman": "tshuan-tshit",
+   "meaning": "蔓生植物。可以入藥，有散血定痛的功效，常和杜仲相配合。嫩葉可以食用，是餐廳常見的野菜佳餚。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "止血",
+   "roman": "tsí-hueh/tsí-huih",
+   "meaning": "讓血液不再由傷口流出。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "止嗽",
+   "roman": "tsí-sàu",
+   "meaning": "止咳。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "止疼",
+   "roman": "tsí-thiànn",
+   "meaning": "使疼痛停止。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "食補",
+   "roman": "tsia̍h-póo",
+   "meaning": "進補。服用補品以調養身體。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "食清",
+   "roman": "tsia̍h-tshing",
+   "meaning": "吃飯不欠人情，不必感謝他人。\n吃有退熱傾向的食物或藥物。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "針灸",
+   "roman": "tsiam-kù",
+   "meaning": "用特製的金屬針，或燃燒的「艾絨」(艾葉陰乾搗碎、除去青渣製成)，刺激經脈穴道以治療疾病的療法。用針稱為「針」，燒艾稱為「灸」，針法和灸法合稱為「針灸」。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "接骨",
+   "roman": "tsiap-kut",
+   "meaning": "接合脫臼或斷裂的骨頭，使它逐漸復原。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "節育",
+   "roman": "tsiat-io̍k",
+   "meaning": "節制生育。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "診所",
+   "roman": "tsín-sóo",
+   "meaning": "醫生私人開設醫治病人的小型醫院。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "診察",
+   "roman": "tsín-tshat",
+   "meaning": "察視病情。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "診斷",
+   "roman": "tsín-tuàn",
+   "meaning": "醫生診視病患的症狀，以判定病情。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "種珠",
+   "roman": "tsìng-tsu",
+   "meaning": "種痘、種牛痘。把痘苗接種在人體上，以預防天花。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "靜養",
+   "roman": "tsīng-ióng",
+   "meaning": "安靜休養。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "助產士",
+   "roman": "tsōo-sán-sū",
+   "meaning": "受過專業的訓練，領有執照，從事接生工作的人。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "注血",
+   "roman": "tsù-hueh/tsù-huih",
+   "meaning": "輸血。將血液注到人體內。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "注射",
+   "roman": "tsù-siā",
+   "meaning": "打針。源自日語「注射（ちゅうしゃ）」。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "煎藥仔",
+   "roman": "tsuann io̍h-á",
+   "meaning": "以水煮藥。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "蹛院",
+   "roman": "tuà-īnn",
+   "meaning": "住院。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "大筒",
+   "roman": "tuā-tâng",
+   "meaning": "大筒子。\n靜脈注射、點滴。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "檀",
+   "roman": "tuânn",
+   "meaning": "木本植物。落葉喬木，分佈於亞洲東南部和南太平洋島上，質地堅硬，主幹與根部都可提煉出芳香油，可製成香料及藥材。木材質地細密，可做成家具、器物或雕刻等，香味可維持數年之久。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "對路",
+   "roman": "tuì-lōo",
+   "meaning": "對症、有效。\n面向馬路。\n陸運。從陸路運貨。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "有膭",
+   "roman": "ū-kuī",
+   "meaning": "專指人類以外的動物懷有身孕。後來也用來形容把未婚而懷孕的女人娶進來，叫「帶膭來的」(tuà-kuī lâi--ê)。",
+   "category": "醫療保健"
+  },
+  {
+   "word": "免疫",
+   "roman": "bián-i̍k",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "眼壓",
+   "roman": "gán-ap",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "義診",
+   "roman": "gī-tsín",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "驗尿",
+   "roman": "giām-jiō/giām-liō",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "驗光",
+   "roman": "giām-kng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "外用",
+   "roman": "guā-iōng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "月事",
+   "roman": "gue̍h-sū/ge̍h-sū",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "服用",
+   "roman": "ho̍k-iōng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "復健",
+   "roman": "ho̍k-kiān",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "防疫",
+   "roman": "hông-i̍k",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "護欄",
+   "roman": "hōo-lân",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "膚質",
+   "roman": "hu-tsit",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "婦產科",
+   "roman": "hū-sán-kho",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "回診",
+   "roman": "huê-tsín",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "血跡",
+   "roman": "hueh-jiah/huih-liah",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "血球",
+   "roman": "hueh-kiû/huih-kiû",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "血絲",
+   "roman": "hueh-si/huih-si",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "血清",
+   "roman": "hueh-tshing/huih-tshing",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "血水",
+   "roman": "hueh-tsuí/huih-tsuí",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "分泌",
+   "roman": "hun-pì",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "醫護",
+   "roman": "i-hōo",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "醫藥",
+   "roman": "i-io̍h",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "醫療",
+   "roman": "i-liâu",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "醫師",
+   "roman": "i-su",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "預防",
+   "roman": "ī-hông/ū-hông",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "預產期",
+   "roman": "ī-sán-kî/ū-sán-kî",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "疫苗",
+   "roman": "i̍k-biâu",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "營養師",
+   "roman": "îng-ióng-su",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥物",
+   "roman": "io̍h-bu̍t",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥效",
+   "roman": "io̍h-hāu",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥品",
+   "roman": "io̍h-phín",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "藥師",
+   "roman": "io̍h-su",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "約診",
+   "roman": "iok-tsín",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "養病",
+   "roman": "ióng-pēnn/ióng-pīnn",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "加護",
+   "roman": "ka-hōo",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "加護病房",
+   "roman": "ka-hōo pēnn-pâng/ka-hōo pīnn-pâng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "解藥",
+   "roman": "kái-io̍h",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "幹細胞",
+   "roman": "kàn-sè-pau/kàn-suè-pau",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "教養院",
+   "roman": "kàu-ióng-īnn",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "隔離",
+   "roman": "keh-lī",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "看護",
+   "roman": "khàn-hōo",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "口服",
+   "roman": "kháu-ho̍k",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "康復",
+   "roman": "khong-ho̍k",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "抗藥性",
+   "roman": "khòng-io̍h-sìng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "抗生素",
+   "roman": "khòng-sing-sòo",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "抗體",
+   "roman": "khòng-thé",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "基因",
+   "roman": "ki-in",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "檢疫",
+   "roman": "kiám-i̍k",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "減肥",
+   "roman": "kiám-puî",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "健保",
+   "roman": "kiān-pó",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "健保卡",
+   "roman": "kiān-pó-khah",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "矯正",
+   "roman": "kiáu-tsìng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "更年期",
+   "roman": "king-liân-kî",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "急救",
+   "roman": "kip-kiù",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "急診",
+   "roman": "kip-tsín",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "急診室",
+   "roman": "kip-tsín-sik",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "救命",
+   "roman": "kiù-miā",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "救治",
+   "roman": "kiù-tī",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "鋼牙",
+   "roman": "kǹg-gê",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "掛號",
+   "roman": "kuà-hō",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "掛號費",
+   "roman": "kuà-hō-huì",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "骨質",
+   "roman": "kut-tsit",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "內視鏡",
+   "roman": "lāi-sī-kiànn",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "利尿",
+   "roman": "lī-jiō/lī-liō",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "療法",
+   "roman": "liâu-huat",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "療養院",
+   "roman": "liâu-ióng-īnn",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "療程",
+   "roman": "liâu-tîng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "臨床",
+   "roman": "lîm-tshn̂g",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "輪椅",
+   "roman": "lûn-í",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "棉花",
+   "roman": "mî-hue",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "染色體",
+   "roman": "ní-sik-thé",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "病菌",
+   "roman": "pēnn-khún/pīnn-khún",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "病例",
+   "roman": "pēnn-lē/pīnn-lē",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "病理",
+   "roman": "pēnn-lí/pīnn-lí",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "病歷",
+   "roman": "pēnn-li̍k/pīnn-li̍k",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "病房",
+   "roman": "pēnn-pâng/pīnn-pâng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "病史",
+   "roman": "pēnn-sú/pīnn-sú",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "病毒",
+   "roman": "pēnn-to̍k/pīnn-to̍k",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "保養",
+   "roman": "pó-ióng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "保健",
+   "roman": "pó-kiān",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "產房",
+   "roman": "sán-pâng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "送醫",
+   "roman": "sàng-i",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "掃描",
+   "roman": "sàu-biâu",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "紗布",
+   "roman": "se-pòo",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "瀉藥",
+   "roman": "sià-io̍h",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "心跳",
+   "roman": "sim-thiàu",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "心電圖",
+   "roman": "sim-tiān-tôo",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "心導管",
+   "roman": "sim-tō-kńg",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "新陳代謝",
+   "roman": "sin-tîn-tāi-siā",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "成效",
+   "roman": "sîng-hāu",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "食療",
+   "roman": "si̍t-liâu",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "代謝",
+   "roman": "tāi-siā",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "體檢",
+   "roman": "thé-kiám",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "體重",
+   "roman": "thé-tāng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "體質",
+   "roman": "thé-tsit",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "體溫",
+   "roman": "thé-un",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "聽力",
+   "roman": "thiann-li̍k",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "鐵質",
+   "roman": "thih-tsit",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "抽血",
+   "roman": "thiu-hueh/thiu-huih",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "抽脂",
+   "roman": "thiu-tsi",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "中藥",
+   "roman": "tiong-io̍h",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "中藥店",
+   "roman": "tiong-io̍h-tiàm",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "劑量",
+   "roman": "tsè-liōng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "切除",
+   "roman": "tshiat-tû",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "超音波",
+   "roman": "tshiau-im-pho",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "初診",
+   "roman": "tshoo-tsín",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "針頭",
+   "roman": "tsiam-thâu",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "照護",
+   "roman": "tsiàu-hōo",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "診療",
+   "roman": "tsín-liâu",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "整型",
+   "roman": "tsíng-hîng",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "整容",
+   "roman": "tsíng-iông",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "酒精",
+   "roman": "tsiú-tsing",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "就醫",
+   "roman": "tsiū-i",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "諮商",
+   "roman": "tsu-siong",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "諮詢",
+   "roman": "tsu-sûn",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "主治",
+   "roman": "tsú-tī",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "水份",
+   "roman": "tsuí-hūn",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "大腸鏡",
+   "roman": "tuā-tn̂g-kiànn",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "追蹤",
+   "roman": "tui-tsong",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "維生素",
+   "roman": "uî-sing-sòo",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "遺傳",
+   "roman": "uî-thuân",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  },
+  {
+   "word": "胃藥",
+   "roman": "uī-io̍h",
+   "meaning": "（臺華共同詞 ，無義項）",
+   "category": "醫療保健"
+  }
+ ]
+}

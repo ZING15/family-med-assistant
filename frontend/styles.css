@@ -1153,3 +1153,9 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .voice-item { margin: 0; font-weight: 400; }
 .voice-item span span { font-weight: 400; }
 .rx-card-head .link-button { white-space: nowrap; flex: none; }
+
+/* 衛教單：病人熟悉的說法（俗稱、台語）；沒有內容時匯出圖片不顯示 */
+.edu-aka { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 10px 0 0; font-size: 19px; color: #2b3a44; }
+.edu-aka > span:first-child { padding: 2px 10px; border-radius: 999px; background: hsl(var(--hue) 35% 93%); color: hsl(var(--hue) 35% 28%); font-size: 14px; font-weight: 700; }
+.exporting .edu-aka:has(.edu-edit:empty) { display: none; }
+.edu-source { flex-basis: 100%; font-size: 12px; }

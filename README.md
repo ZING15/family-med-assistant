@@ -78,6 +78,13 @@ data/       TFDA／健保署原始資料、藥品參考表、上傳檔、app.sql
 |---|---|---|
 | `icd10cm_2023_tw.csv` | 2023年版_中文版ICD-10-CM（正式版），健保自 2025-01-01 起使用；用來核對病灶代碼 | https://data.gov.tw/dataset/177507 |
 
+### 衛教用語（`backend/app/data/`）
+
+| 檔案 | 內容 | 來源與授權 |
+|---|---|---|
+| `taiwanese_terms.json` | 台語詞條 1219 筆（身體構造、傷疾病痛、醫療保健），詞目、音讀、釋義為原文 | 教育部《臺灣台語常用詞辭典》https://sutian.moe.edu.tw ，CC BY-ND 3.0 TW；以 `scripts/build_taiwanese_terms.py` 下載 |
+| `colloquial_terms.json` | 台灣常見病名俗稱對照（例：皮蛇＝帶狀皰疹），標記容易混淆的說法 | 本專案整理，待醫師確認 |
+
 ### 產生的資料
 
 | 檔案 | 說明 |

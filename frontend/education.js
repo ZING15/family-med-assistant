@@ -176,6 +176,7 @@ function renderSheet() {
       <header class="edu-sheet-head">
         <p class="edu-sheet-topics">${topics.map(escapeHtml).join('・')}</p>
         ${editable('title', s.title, 'h2', '衛教單標題')}
+        <p class="edu-aka"><span>大家常說</span>${editable('aka', c.aka || '', 'span', '病人熟悉的說法，例：皮蛇、痚呴（台語）')}</p>
       </header>
 
       <figure class="edu-figure ${s.image_path ? '' : 'empty'}" id="eduFigure">
@@ -209,6 +210,7 @@ function renderSheet() {
       <footer class="edu-sheet-foot">
         <span id="eduFootStatus">${footStatus()}</span>
         <span>新手家醫看診助手・練習資料，非臨床建議</span>
+        ${c.term_source ? `<span class="edu-source">台語說法參考：${escapeHtml(c.term_source)}</span>` : ''}
       </footer>
     </article>`;
 }

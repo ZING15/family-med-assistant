@@ -18,6 +18,7 @@ from fastapi import APIRouter, HTTPException, Response
 from openai import OpenAIError
 from pydantic import BaseModel, Field
 
+from .. import terms
 from ..ai import ImageGenerationError, ai
 from ..config import UPLOAD_DIR, azure
 from ..db import app_db, now
@@ -88,9 +89,10 @@ def _medicines_from_record(record: dict) -> list[dict]:
 
 
 def _draft(topics: list[str], medicines: list[dict], audience: str) -> tuple[dict, dict]:
-    """AI 草稿；未設定 AI 時給空白範本，醫師仍可手動完成。"""
+    """AI 草稿；未設定 AI 時給空白範本，醫師仍可手動完成。病名搭配台灣常見說法（俗稱、台語），只從對照資料中挑選。"""
+    candidates = terms.for_topics(topics)
     try:
-        result, meta = ai.education_draft(topics, medicines, audience)
+        result, meta = ai.education_draft(topics, medicines, audience, candidates)
     except OpenAIError as error:
         raise HTTPException(502, f"AI 服務錯誤：{getattr(error, 'message', str(error))[:200]}")
     result = result or {}
@@ -107,6 +109,20 @@ def _draft(topics: list[str], medicines: list[dict], audience: str) -> tuple[dic
         "warnings": [str(x) for x in result.get("warnings", [])][:5],
         "image_scene": str(result.get("image_scene", "")) or "an elderly person resting at home with a cup of warm water",
     }
+    # 「大家常說」以內文真的用到的說法為準（AI 有時沒回傳 aka），再補 AI 回傳的；只保留對照資料裡有的、非單字、非容易混淆的說法。
+    # 用到台語辭典的詞時，衛教單需註明出處（CC BY-ND 3.0 TW）
+    allowed = {c["term"]: "華語" for c in candidates["colloquial"] if not c.get("confusable")}
+    allowed |= {t["word"]: "台語" for t in candidates["taiwanese"] if len(t["word"]) >= 2}
+    # 容易混淆的說法（例：雞眼與病毒疣）AI 常漏寫，由程式補上對照表裡的提醒
+    for c in candidates["colloquial"]:
+        if c.get("confusable") and c["term"] not in content["about"]:
+            content["about"] = f"{content['about'].rstrip()}提醒：{c['note']}，請讓醫師看過再處理。"
+    text = f"{result.get('title', '')}{content['about']}"
+    returned = [str(a.get("term", "")) for a in result.get("aka", []) if isinstance(a, dict)]
+    picked = [w for w in allowed if w in text] + [w for w in returned if w in allowed]
+    aka = list(dict.fromkeys(picked))[:3] or list(allowed)[:2]  # 都沒用到時，取對照資料中最相關的說法，醫師可再修改
+    content["aka"] = "、".join(f"{w}（台語）" if allowed[w] == "台語" else w for w in aka)
+    content["term_source"] = terms.MOE_SOURCE if any(allowed[w] == "台語" for w in aka) else ""
     title = str(result.get("title", "")) or f"{'、'.join(topics)}的衛教"
     return {"title": title[:60], "content": content}, meta
 

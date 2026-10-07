@@ -288,15 +288,19 @@ class AIService:
         return self.chat_json(system, user, max_tokens=1200)
 
     # ---- 衛教單 ----
-    def education_draft(self, topics: list[str], medicines: list[dict], audience: str = "") -> tuple[dict | None, dict]:
+    def education_draft(self, topics: list[str], medicines: list[dict], audience: str = "", terms: dict | None = None) -> tuple[dict | None, dict]:
         """產生長輩看得懂的衛教單草稿。用藥的頻率與天數由醫師決定，AI 不得更改或補充劑量。"""
         system = (
             "你協助台灣的家醫科醫師，為病人（多為長輩）寫中文衛教單草稿，醫師會再修改確認。"
             "用國小程度的白話繁體中文，短句、親切、具體，不用醫學術語（必要時加白話解釋）。"
             "不寫任何劑量數字（毫克、顆數）、不改變醫師開立的頻率與天數、不做診斷或保證療效。"
             "回傳 JSON：{"
+            "病名請搭配台灣病人熟悉的說法：只能從輸入的「可用的常見說法」裡挑（不可自行編造），"
+            "在 about 第一次提到病名時寫成「正式病名（俗稱××）」或「正式病名（台語叫××）」，例：帶狀皰疹（俗稱皮蛇）、氣喘（台語叫痚呴）；"
+            "清單中有標「容易混淆」的項目時，about 一定要加一句白話提醒（例：腳底的硬塊很多人叫雞眼，但有時其實是病毒疣，兩者處理不同，請讓醫師看過）。只挑和病名直接對應的說法，症狀、部位或藥品名稱不要放。"
             "\"title\": 衛教單標題(15字內，例：感冒咳嗽的居家照顧), "
             "\"about\": 2-3句說明這是什麼問題、通常會怎麼好轉, "
+            "\"aka\": [最多3個你用到的常見說法 {\"term\": 說法, \"lang\": \"華語\" 或 \"台語\"}]（沒有合適的就空陣列）, "
             "\"medicines\": [對每個輸入藥品回傳 {\"atc_code\": 原樣帶回, \"name_zh\": 台灣常用中文藥名, "
             "\"purpose\": 一句白話用途(15字內，例：止咳、讓喉嚨比較舒服), \"tip\": 一句服用提醒(飯前或飯後、常見副作用如想睡，20字內)}], "
             "\"care\": 3-5點在家照顧的做法(每點20字內), "
@@ -304,6 +308,14 @@ class AIService:
             "\"image_scene\": 一句英文，描述一個適合當衛教插圖的溫暖生活場景(長輩在家照顧自己，例如喝溫水、休息)，不要出現藥品、文字或醫療器材}"
         )
         lines = [f"病灶／主題：{'、'.join(topics)}"]
+        terms = terms or {}
+        if terms.get("colloquial") or terms.get("taiwanese"):
+            lines.append("可用的常見說法（只能從這裡挑）：")
+            lines += [f"- 容易混淆：病人常說「{c['term']}」，但不一定是{'、'.join(c['medical'])}（{c['note']}）。不可寫成俗稱，只能寫成提醒"
+                      if c.get("confusable") else
+                      f"- 華語俗稱「{c['term']}」＝{'、'.join(c['medical'])}{'；' + c['note'] if c.get('note') else ''}"
+                      for c in terms.get("colloquial", [])]
+            lines += [f"- 台語「{t['word']}」：{t['meaning']}" for t in terms.get("taiwanese", [])]
         if audience:
             lines.append(f"病人：{audience}")
         if medicines:
