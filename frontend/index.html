@@ -28,6 +28,7 @@
       <symbol id="i-external-link" viewBox="0 0 24 24"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></symbol>
       <symbol id="i-file-heart" viewBox="0 0 24 24"><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M2.62 13.8A2.25 2.25 0 1 1 6 10.836a2.25 2.25 0 1 1 3.38 2.966l-2.626 2.856a.998.998 0 0 1-1.507 0z" /><path d="M4 6.005V4a2 2 0 0 1 2-2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-1.9-1.376" /></symbol>
       <symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></symbol>
+      <symbol id="i-languages" viewBox="0 0 24 24"><path d="m5 8 6 6" /><path d="m4 14 6-6 2-3" /><path d="M2 5h12" /><path d="M7 2h1" /><path d="m22 22-5-10-5 10" /><path d="M14 18h6" /></symbol>
       <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 19v3" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><rect x="9" y="2" width="6" height="13" rx="3" /></symbol>
       <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /><path d="m15 5 4 4" /></symbol>
       <symbol id="i-pill" viewBox="0 0 24 24"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z" /><path d="m8.5 8.5 7 7" /></symbol>
@@ -113,13 +114,6 @@
 
             <div class="rx-layout">
               <section class="rx-card patient-card" aria-label="病人資料">
-                <div class="record-actions">
-                  <button class="primary-button voice-visit" id="voiceVisitButton" type="button"><svg class="icon" aria-hidden="true"><use href="#i-mic"/></svg>語音看診</button>
-                  <button class="secondary-button" id="completeButton" type="button"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>完成病歷</span></button>
-                  <span class="record-status" id="recordStatus" role="status"></span>
-                  <span class="save-state" id="saveState" role="status"></span>
-                  <button class="icon-button danger-icon" id="deleteRecordButton" type="button" aria-label="刪除這份病歷"><svg class="icon" aria-hidden="true"><use href="#i-trash-2"/></svg></button>
-                </div>
                 <div class="patient-body">
                   <div class="patient-row">
                     <label>代號<input id="pCode" maxlength="30" /></label>
@@ -151,6 +145,7 @@
                 <label><span>主訴</span><textarea id="rChief" rows="2" placeholder="例：咳嗽兩週，有痰"></textarea></label>
                 <label><span>現病史</span><textarea id="rHistory" rows="5" placeholder="現病史、過去病史、目前用藥、生活史（請去識別化）"></textarea></label>
                 <p class="soap-hint">輸入時會自動偵測問題（「無發燒」這類否定不會被當成問題）</p>
+                <div class="symptom-strip" id="symptomStrip" hidden></div>
               </section>
 
               <section class="rx-card soap-card soap-o" aria-labelledby="soapOTitle">
@@ -190,10 +185,6 @@
                     <input id="rxDrugSearch" placeholder="搜尋藥品加入（成分或商品名）" autocomplete="off" aria-label="搜尋藥品加入開藥區" />
                     <div class="search-results" id="rxDrugResults"></div>
                   </div>
-                <div class="rx-foot">
-                  <p>依問題與處方，產生給病人的白話衛教單</p>
-                  <button class="primary-button" id="makeEducation" type="button"><svg class="icon" aria-hidden="true"><use href="#i-file-heart"/></svg>產生衛教單</button>
-                </div>
               </section>
 
               <aside class="rx-recs" aria-label="推薦藥品">
@@ -213,6 +204,18 @@
               </aside>
               <!-- 窄螢幕單欄時，開藥區不在畫面上就顯示這個按鈕 -->
               <button type="button" class="tray-fab" id="trayFab" hidden><svg class="icon" aria-hidden="true"><use href="#i-clipboard-pen"/></svg><span></span></button>
+            </div>
+
+            <!-- 主要動作固定在畫面下方：未完成時「刪除／完成病歷」，完成後「產生衛教單／產生英文版」 -->
+            <div class="record-bar" id="recordBar" role="toolbar" aria-label="病歷動作">
+              <div class="record-bar-status">
+                <span class="record-status" id="recordState" role="status"></span>
+                <span class="save-state" id="saveState" role="status"></span>
+              </div>
+              <button class="bar-button danger" id="deleteRecordButton" type="button"><svg class="icon" aria-hidden="true"><use href="#i-trash-2"/></svg><span>刪除</span></button>
+              <button class="bar-button primary" id="completeButton" type="button"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>完成病歷</span></button>
+              <button class="bar-button education" id="makeEducation" type="button" hidden><svg class="icon" aria-hidden="true"><use href="#i-file-heart"/></svg><span>產生衛教單</span></button>
+              <button class="bar-button" id="englishButton" type="button" hidden><svg class="icon" aria-hidden="true"><use href="#i-languages"/></svg><span>產生英文版</span></button>
             </div>
           </section>
 
@@ -380,6 +383,31 @@
             <thead><tr><th>就診日期</th><th>代號</th><th>年齡／性別</th><th>主訴</th><th>問題與評估</th><th>狀態</th><th><span class="sr-only">動作</span></th></tr></thead>
             <tbody id="recordsTbody"></tbody>
           </table>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- 新病歷：選擇手動輸入或語音看診 -->
+    <dialog id="newRecordDialog" class="app-dialog new-record-dialog" aria-labelledby="newRecordTitle">
+      <div class="dialog-body">
+        <div class="dialog-head">
+          <div>
+            <h2 id="newRecordTitle" tabindex="-1">新病歷</h2>
+            <p class="dialog-meta">選擇這次怎麼記錄，之後都能再修改</p>
+          </div>
+          <button class="close-button" type="button" data-close aria-label="關閉"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+        </div>
+        <div class="new-record-options">
+          <button type="button" class="new-record-option" data-new-mode="manual">
+            <span class="option-icon"><svg class="icon" aria-hidden="true"><use href="#i-clipboard-pen"/></svg></span>
+            <b>手動輸入</b>
+            <span>自己寫 SOAP，輸入時自動偵測問題與症狀</span>
+          </button>
+          <button type="button" class="new-record-option voice" data-new-mode="voice">
+            <span class="option-icon"><svg class="icon" aria-hidden="true"><use href="#i-mic"/></svg></span>
+            <b>語音看診</b>
+            <span>錄下看診對話，AI 整理到 S、O、A/P 後由你確認</span>
+          </button>
         </div>
       </div>
     </dialog>

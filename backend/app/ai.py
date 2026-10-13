@@ -215,6 +215,18 @@ class AIService:
         )
         return self.chat_json(system, text[:6000], max_tokens=1200)
 
+    # ---- 病歷：現病史症狀（補對症用藥） ----
+    def extract_symptoms(self, text: str, names: list[str]) -> tuple[dict | None, dict]:
+        system = (
+            "你協助醫師從病歷的主訴與現病史（S）找出病人目前有的症狀，用來提示對症用藥，只做擷取，不下診斷。"
+            f"可用的症狀名稱：{'、'.join(names)}。病歷可能中英文混寫（例：rhinorrhea＝流鼻水、myalgia＝肌肉酸痛、odynophagia＝喉嚨痛）。"
+            "只回傳病人本人目前明確有的症狀；被否認的不算（例：no cough、無發燒、denies fever），"
+            "別人的症狀或接觸史也不算（例：「同學發燒」）。"
+            "evidence 必須逐字複製病歷中的原文片段（不可改寫、翻譯或補字）。"
+            "回傳 JSON：{\"symptoms\": [{\"name\": 必須是可用名稱之一, \"evidence\": 病歷原文片段}]}"
+        )
+        return self.chat_json(system, text[:6000], max_tokens=800)
+
     # ---- 病歷：看診錄音 → SOAP ----
     def soap_from_transcript(self, transcript: str, names: list[str]) -> tuple[dict | None, dict]:
         system = (

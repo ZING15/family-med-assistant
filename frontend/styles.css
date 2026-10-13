@@ -471,6 +471,9 @@ main { flex: 1; min-width: 0; }
 .rx-product { justify-self: start; max-width: 100%; padding: 0; border: 0; background: none; color: var(--accent); font-size: 13px; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rx-dose { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .rx-dose select { width: auto; padding: 7px 10px; font-size: 13px; }
+.rx-dose input.rx-dose-amount, .rx-dose input.rx-custom { width: 7.5em; padding: 7px 10px; font-size: 13px; }
+.rx-dose input[type="number"].rx-custom { width: 5em; }
+.rx-custom-days { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
 .rx-hint { color: var(--muted); font-size: 12px; }
 .rx-hint.warn { color: var(--warn); font-weight: 600; }
 .rx-for { justify-self: start; display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
@@ -830,10 +833,10 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .tray-safety .safety-scope { color: var(--muted); font-size: 12px; }
 
 /* 窄螢幕：回到本次處方 */
-.tray-fab { position: fixed; right: 16px; bottom: calc(92px + env(safe-area-inset-bottom)); z-index: 30; display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font-size: 14px; font-weight: 600; box-shadow: var(--shadow); }
+.tray-fab { position: fixed; right: 16px; bottom: calc(156px + env(safe-area-inset-bottom)); z-index: 30; display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font-size: 14px; font-weight: 600; box-shadow: var(--shadow); }
 .tray-fab[hidden] { display: none; }
 .tray-fab .icon { width: 17px; height: 17px; }
-@media (min-width: 641px) { .tray-fab { bottom: 28px; } }
+@media (min-width: 641px) { .tray-fab { bottom: 96px; } }
 
 /* 被排除清單補上類別；藥品卡外部連結加大點擊區 */
 .excluded-class { color: var(--ink-2); font-size: 12px; }
@@ -989,13 +992,9 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .danger-icon.confirming { background: var(--danger); color: #fff; }
 
 /* 病人資料列：動作在上、資料在下 */
-.record-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--line); }
-.record-actions .voice-visit { background: var(--accent); }
-.record-actions .voice-visit:hover { background: #194d74; }
 .record-status { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; }
 .record-status.done { color: var(--ok); }
 .record-status.changed { color: var(--warn); }
-.record-actions .danger-icon { margin-left: auto; }
 .record-status:empty { display: none; }
 .patient-row { grid-template-columns: 1.2fr .6fr .7fr 1.1fr; }
 
@@ -1054,10 +1053,6 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .custom-problem .chip-button { display: inline-flex; align-items: center; gap: 4px; }
 
 /* 衛教單入口：放在開藥區最後，開完藥接著做 */
-.rx-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 18px; padding: 14px 16px; border-radius: var(--radius-sm); background: var(--ok-soft); }
-.rx-foot p { margin: 0; color: var(--ok); font-size: 13px; font-weight: 600; }
-.rx-foot .primary-button { background: var(--ok); }
-.rx-foot .primary-button:hover { background: #215b4e; }
 #rxTitle:focus { outline: none; }
 
 /* 病歷頁版面：病人資料滿版；S｜O；左 A/P＋開藥區、右推薦藥品 */
@@ -1076,7 +1071,6 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .rx-recs { grid-area: recs; align-self: start; }
 .patient-body { display: grid; grid-template-columns: minmax(0, 620px) minmax(0, 1fr); gap: 12px 28px; align-items: end; }
 .patient-body .allergy-row { margin-top: 0; padding-top: 0; border-top: 0; }
-.record-actions .save-state { margin-left: 4px; }
 .recs-safety { margin: 0 0 18px; }
 @media (max-width: 1180px) {
   .patient-body { grid-template-columns: 1fr; }
@@ -1136,8 +1130,6 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 
 @media (max-width: 640px) {
   .records-dialog { width: 100%; }
-  .record-actions { gap: 8px; }
-  .record-actions .primary-button, .record-actions .secondary-button { padding: 9px 14px; }
   .patient-row { grid-template-columns: 1fr 1fr; }
   .rx-switcher { flex-wrap: wrap; }
   .rx-switcher select { flex: 1 1 100%; }
@@ -1145,7 +1137,6 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
   .records-table tr { display: grid; grid-template-columns: 1fr auto; padding: 10px 12px; border-top: 1px solid var(--line); }
   .records-table td { padding: 2px 0; border: 0; }
   .records-table td:nth-child(4), .records-table td:nth-child(5) { grid-column: 1 / -1; }
-  .rx-foot .primary-button { width: 100%; }
   .problem em { display: none; }
 }
 .dialog-head h2[tabindex="-1"]:focus { outline: none; }
@@ -1159,3 +1150,58 @@ table, .record-timer, .topic-link small, .card-meta, .tile-meta, .condition-chip
 .edu-aka > span:first-child { padding: 2px 10px; border-radius: 999px; background: hsl(var(--hue) 35% 93%); color: hsl(var(--hue) 35% 28%); font-size: 14px; font-weight: 700; }
 .exporting .edu-aka:has(.edu-edit:empty) { display: none; }
 .edu-source { flex-basis: 100%; font-size: 12px; }
+
+/* 現病史症狀：S 欄下方的症狀標籤，推薦區的症狀列 */
+.symptom-strip { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.symptom-label { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; margin: 0 0 8px; color: var(--ink-2); font-size: 12px; font-weight: 700; }
+.symptom-label .icon { width: 14px; height: 14px; align-self: center; color: var(--accent); }
+.symptom-label small { color: var(--faint); font-weight: 500; }
+.symptom-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.symptom-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 3px 4px 3px 11px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface, #fff); color: var(--ink); font-size: 13px; font-weight: 600; }
+.symptom-chip small { max-width: 12em; overflow: hidden; color: var(--faint); font-size: 11px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.symptom-chip button { display: inline-grid; place-items: center; width: 24px; height: 24px; border: 0; border-radius: 50%; background: none; color: var(--muted); }
+.symptom-chip button:hover { background: var(--accent-soft); color: var(--ink); }
+.symptom-chip button .icon { width: 13px; height: 13px; }
+.symptom-row .because { color: var(--accent); font-weight: 600; }
+.symptom-row .rec-row-side span { max-width: 16em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.symptom-covered { margin: 6px 0 0; color: var(--muted); font-size: 12px; }
+
+/* 病歷動作列：固定在畫面下方中間（sticky，跟著病歷頁內容欄置中） */
+.record-bar { position: sticky; bottom: 20px; z-index: 25; display: flex; align-items: center; gap: 8px; width: fit-content; max-width: 100%; margin: 28px auto 0; padding: 8px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255, 255, 255, .96); box-shadow: 0 2px 4px rgba(22, 35, 44, .06), 0 14px 36px -12px rgba(22, 35, 44, .28); backdrop-filter: blur(10px); }
+.record-bar-status { display: flex; align-items: center; gap: 10px; margin: 0 6px 0 10px; }
+.record-bar-status:has(.record-status:empty):has(.save-state:empty) { display: none; }
+.record-bar-status .save-state { white-space: nowrap; }
+.bar-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 42px; padding: 0 18px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: background .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease); }
+.bar-button[hidden] { display: none; }
+.bar-button .icon { width: 17px; height: 17px; }
+.bar-button:hover { border-color: var(--ink-2); }
+.bar-button:disabled { opacity: .6; cursor: progress; }
+.bar-button.primary { border-color: var(--ink); background: var(--ink); color: #fff; }
+.bar-button.primary:hover { background: var(--ink-2); }
+.bar-button.education { border-color: var(--ok); background: var(--ok); color: #fff; }
+.bar-button.education:hover { background: #215b4e; }
+.bar-button.danger { border-color: transparent; background: none; color: var(--muted); }
+.bar-button.danger:hover { background: #fbe9e5; color: var(--danger); }
+.bar-button.danger.confirming { background: var(--danger); color: #fff; }
+@media (max-width: 640px) {
+  .record-bar { bottom: calc(84px + env(safe-area-inset-bottom)); gap: 6px; padding: 6px; }
+  .record-bar-status { display: none; }
+  .record-bar.done .bar-button.danger span { display: none; }
+  .bar-button { min-height: 44px; padding: 0 14px; font-size: 13px; }
+  .bar-button.danger { padding: 0 12px; }
+}
+
+/* 新病歷：手動輸入／語音看診 */
+.new-record-dialog { width: min(560px, calc(100vw - 32px)); }
+.new-record-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+.new-record-option { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); text-align: left; cursor: pointer; transition: border-color .15s var(--ease), box-shadow .15s var(--ease), transform .15s var(--ease); }
+.new-record-option:hover { border-color: var(--ink-2); box-shadow: var(--shadow); transform: translateY(-1px); }
+.new-record-option b { font-family: var(--serif); font-size: 18px; }
+.new-record-option > span:last-child { color: var(--muted); font-size: 13px; line-height: 1.55; }
+.option-icon { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 4px; border-radius: 12px; background: var(--line-2); color: var(--ink); }
+.option-icon .icon { width: 20px; height: 20px; }
+.new-record-option.voice .option-icon { background: var(--accent-soft); color: var(--accent); }
+@media (max-width: 480px) { .new-record-options { grid-template-columns: 1fr; } }
+/* 病歷頁有下方動作列：提示訊息往上移，避免蓋住按鈕 */
+body:has(#view-records:not([hidden])) .toast { bottom: 100px; }
+@media (max-width: 640px) { body:has(#view-records:not([hidden])) .toast { bottom: calc(158px + env(safe-area-inset-bottom)); } }

@@ -105,6 +105,8 @@ MIGRATIONS = [
     ("records", "english_note", "TEXT NOT NULL DEFAULT ''"),
     ("records", "completed_at", "TEXT NOT NULL DEFAULT ''"),
     ("records", "plan", "TEXT NOT NULL DEFAULT ''"),
+    ("records", "symptoms", "TEXT NOT NULL DEFAULT '[]'"),
+    ("records", "removed_symptoms", "TEXT NOT NULL DEFAULT '[]'"),
 ]
 
 

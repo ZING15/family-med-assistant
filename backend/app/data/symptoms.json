@@ -1,0 +1,25 @@
+{
+  "_note": "現病史症狀 → 對症用藥類別（ATC 前綴，依常用程度排序）。只從 S（主訴＋現病史）偵測，用來補足問題清單（診斷）沒涵蓋到的對症藥物；不會加入問題清單。依一般家醫科對症用藥整理，非臨床指引，待受訪醫師確認。比對前「痠」統一成「酸」；exclude 為不算數的較長詞。",
+  "symptoms": [
+    {"name": "發燒", "aliases": ["發燒", "發熱", "燒到", "高燒", "fever", "febrile"], "exclude": ["退燒藥"],
+     "atc": ["N02BE", "M01AE"], "first_line": ["N02BE01"]},
+    {"name": "流鼻水", "aliases": ["流鼻水", "鼻水", "流鼻涕", "鼻涕", "rhinorrhea", "runny nose"], "exclude": ["鼻涕倒流"],
+     "atc": ["R06AE", "R06AX", "R06AB"], "first_line": ["R06AE07", "R06AE09", "R06AX13", "R06AB04"]},
+    {"name": "鼻塞", "aliases": ["鼻塞", "鼻子塞", "nasal congestion", "stuffy nose", "nasal obstruction"],
+     "atc": ["R01BA", "R01AA"], "first_line": ["R01BA02"]},
+    {"name": "打噴嚏", "aliases": ["打噴嚏", "噴嚏", "sneezing", "sneeze"],
+     "atc": ["R06AE", "R06AX", "R06AB"], "first_line": ["R06AE07", "R06AE09", "R06AX13"]},
+    {"name": "喉嚨痛", "aliases": ["喉嚨痛", "咽喉痛", "吞嚥痛", "吞口水都會痛", "吞口水會痛", "吞東西會痛", "sore throat", "odynophagia", "throat pain"],
+     "atc": ["N02BE", "B02AA", "R02AA"], "first_line": ["N02BE01", "B02AA02"], "avoid": ["B02AA01"]},
+    {"name": "有痰", "aliases": ["有痰", "痰多", "痰很多", "黃痰", "白痰", "濃痰", "痰白色", "痰黃", "productive cough", "sputum", "phlegm"],
+     "atc": ["R05CB"], "first_line": ["R05CB01", "R05CB06"]},
+    {"name": "肌肉酸痛", "aliases": ["肌肉酸痛", "全身酸痛", "身體酸痛", "肌肉痛", "myalgia", "muscle soreness", "muscle ache", "body ache"],
+     "atc": ["N02BE", "M01AE"], "first_line": ["N02BE01", "M01AE01"]},
+    {"name": "噁心嘔吐", "aliases": ["噁心", "想吐", "嘔吐", "吐了", "nausea", "vomiting", "vomit"],
+     "atc": ["A03FA"], "first_line": ["A03FA03"]},
+    {"name": "腹絞痛", "aliases": ["肚子痛", "腹痛", "絞痛", "肚子絞痛", "abdominal pain", "abdominal cramp", "cramping"],
+     "atc": ["A03BB", "A03AX"], "first_line": ["A03BB01"]},
+    {"name": "皮膚癢", "aliases": ["皮膚癢", "全身癢", "身體癢", "搔癢", "pruritus", "itchy skin", "itching"],
+     "atc": ["R06AE", "R06AX", "R06AB"], "first_line": ["R06AE07", "R06AX13"]}
+  ]
+}

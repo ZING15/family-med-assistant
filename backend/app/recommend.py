@@ -21,6 +21,7 @@ from .db import app_db, drug_db
 
 DATA_DIR = Path(__file__).parent / "data"
 ROW_LIMIT = 12
+SYMPTOM_LIMIT = 4   # 症狀列：每個症狀只取最常用的前幾名
 
 # 推薦範圍：有效、製劑、需要醫師處方或指示的藥品
 CATEGORIES = {
@@ -111,8 +112,17 @@ def ingredient_name(raw: str) -> str:
     return " ".join(words).lower()
 
 
+@lru_cache
+def symptoms() -> list[dict]:
+    return json.loads((DATA_DIR / "symptoms.json").read_text(encoding="utf-8"))["symptoms"]
+
+
 def condition_by_name(name: str) -> dict | None:
     return next((c for c in conditions() if c["name"] == name), None)
+
+
+def symptom_by_name(name: str) -> dict | None:
+    return next((s for s in symptoms() if s["name"] == name), None)
 
 
 def form_group(form: str) -> str:
@@ -159,10 +169,44 @@ def detect_keywords(text: str) -> list[dict]:
     return found
 
 
+# 英文句點也斷句（避開 38.5 這類小數）；別人的症狀或接觸史（同學發燒、sick contact）不算病人本人的症狀
+SENTENCE_DOT = re.compile(r"(?<!\d)\.(?!\d)")
+OTHER_PERSON = re.compile(r"(家人|家裡|同學|同事|室友|小孩|孩子|兒子|女兒|太太|先生|老公|老婆|爸爸|媽媽|父親|母親|有人|"
+                          r"\b(?:contact|exposure|family|classmates?|colleagues?|roommates?|sons?|daughters?|wife|husband)\b)", re.IGNORECASE)
+
+
+def detect_symptoms(text: str) -> list[dict]:
+    """從 S（主訴＋現病史）找症狀，給推薦藥品補上對症用藥；不加入問題清單。
+    逐句比對：整句是否定（no rhinorrhea、無發燒、denies fever）不算，關鍵字前方 4 字內有否定詞也不算。"""
+    found = []
+    pieces = [c for part in CLAUSE_SPLIT.split(_normalize(text)) for c in SENTENCE_DOT.split(part)]
+    clauses = [c for c in pieces if c.strip() and not NEGATED_CLAUSE.search(c)]
+    for symptom in symptoms():
+        hit = None
+        for alias in symptom["aliases"]:
+            needle = _normalize(alias)
+            for clause in clauses:
+                start = 0
+                while (index := clause.find(needle, start)) != -1:
+                    if not NEGATION.search(clause[max(0, index - 4):index]) \
+                            and not OTHER_PERSON.search(clause[:index]) \
+                            and not _excluded(clause, index, len(needle), symptom.get("exclude", [])):
+                        hit = alias
+                        break
+                    start = index + len(needle)
+                if hit:
+                    break
+            if hit:
+                break
+        if hit:
+            found.append({"name": symptom["name"], "source": "keyword", "matched": hit})
+    return found
+
+
 # 語意偵測：關鍵字沒對到、但意思相近的句子（例：「小便灼熱、跑廁所很多次」→ 尿路感染）。
 # 病歷逐句轉成向量，與每個病灶（名稱＋關鍵字）比較；否定句不算。結果只當「可能」，由醫師決定是否加入。
 CLAUSE_SPLIT = re.compile(r"[。，,；;、\n！？!?]+")
-NEGATED_CLAUSE = re.compile(r"^\s*(無|沒有|沒|否認|未|不|denies|denied|no\b)", re.IGNORECASE)
+NEGATED_CLAUSE = re.compile(r"^\s*(無|沒有|沒|否認|未|不|denies|denied|deny|without|negative for|no\b)", re.IGNORECASE)
 SEMANTIC_THRESHOLD = 0.7   # 實測：相符的描述多在 0.7 以上，無關句子約 0.6 以下
 _condition_vectors: list[tuple[dict, list[float]]] = []   # 每個病灶有多句描述，一句一個向量
 _clause_vectors: dict[str, list[float]] = {}
@@ -418,15 +462,19 @@ def detect_risks(text: str, age: str = "") -> list[dict]:
 
 
 def recommend(condition_names: list[str], allergy_ids: list[str], dismissed: list[dict],
-              text: str = "", age: str = "") -> dict:
+              text: str = "", age: str = "", symptom_list: list[dict] | None = None) -> dict:
+    """先依問題清單（診斷）逐列推薦，再依現病史症狀補上對症用藥；症狀列只放診斷列沒出現過的藥。"""
     adopt, adopt_any, never = _feedback()
     risks = detect_risks(text, age)
     rules = allergy_rules(allergy_ids)
     dismissed_keys = {(d.get("condition"), d.get("atc")) for d in dismissed}
     rows, excluded = [], []
 
-    for name in condition_names:
-        cond = condition_by_name(name)
+    targets = [(name, condition_by_name(name), None) for name in condition_names]
+    targets += [(s["name"], symptom_by_name(s["name"]), s) for s in (symptom_list or [])
+                if s.get("name") not in condition_names]
+    shown: set[str] = set()
+    for name, cond, symptom in targets:
         if not cond:
             continue
         prefixes = cond["atc"]
@@ -479,6 +527,16 @@ def recommend(condition_names: list[str], allergy_ids: list[str], dismissed: lis
         ranked = diversify(items)
         for item in ranked:
             item.pop("_prefix", None)
+        if symptom:
+            # 症狀列只看最常用的前幾名；已在上方病灶列出現的標成「已涵蓋」，避免只剩冷門藥
+            top = ranked[:SYMPTOM_LIMIT]
+            fresh = [i for i in top if i["atc_code"] not in shown]
+            shown.update(i["atc_code"] for i in fresh)
+            rows.append({"condition": name, "icd10": "", "items": fresh, "total": len(fresh), "kind": "symptom",
+                         "matched": symptom.get("matched", ""),
+                         "covered": [i["display_name"] for i in top if i not in fresh]})
+            continue
+        shown.update(i["atc_code"] for i in ranked[:ROW_LIMIT])
         rows.append({"condition": name, "icd10": cond["icd10"], "items": ranked[:ROW_LIMIT], "total": len(items)})
 
     return {"rows": rows, "excluded": excluded,

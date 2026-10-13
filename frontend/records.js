@@ -7,11 +7,19 @@
    依賴 app.js 的 $、$$、api、jsonBody、escapeHtml、showToast、hueStyle、icon
    ========================================================== */
 
-const FREQUENCIES = [
-  ['QD', '每日一次'], ['BID', '每日兩次'], ['TID', '每日三次'], ['QID', '每日四次'],
-  ['HS', '睡前'], ['PRN', '需要時'],
+const FREQUENCY_GROUPS = [
+  ['常用', [['QD', '每日一次'], ['BID', '每日兩次'], ['TID', '每日三次'], ['QID', '每日四次'], ['HS', '睡前'], ['PRN', '需要時']]],
+  ['飯前／飯後', [['QDAC', '每日一次飯前'], ['BIDAC', '每日兩次飯前'], ['TIDAC', '三餐飯前'], ['QDPC', '每日一次飯後'],
+    ['BIDPC', '每日兩次飯後'], ['TIDPC', '三餐飯後'], ['TID+HS', '三餐飯後＋睡前']]],
+  ['固定間隔', [['Q4H', '每 4 小時'], ['Q6H', '每 6 小時'], ['Q8H', '每 8 小時'], ['Q12H', '每 12 小時'],
+    ['Q6H PRN', '需要時，間隔 6 小時'], ['Q4H PRN', '需要時，間隔 4 小時']]],
+  ['其他', [['QOD', '隔日一次'], ['QW', '每週一次'], ['STAT', '立即一次'], ['ASORDER', '依醫囑']]],
 ];
-const DAYS = [1, 3, 5, 7, 14, 28];
+const FREQUENCY_CODES = FREQUENCY_GROUPS.flatMap(([, items]) => items.map(([code]) => code));
+const DAYS = [1, 2, 3, 4, 5, 7, 10, 14, 28, 30, 60, 90];
+const CUSTOM = '__custom';
+document.body.insertAdjacentHTML('beforeend', `<datalist id="freqCodes">${FREQUENCY_GROUPS.flatMap(([, items]) =>
+  items.map(([code, label]) => `<option value="${code}">${label}</option>`)).join('')}</datalist>`);
 const SOURCE_LABEL = { keyword: '關鍵字', semantic: '語意', ai: 'AI', manual: '手動', voice: '語音' };
 
 // TFDA 許可證「藥品類別」：處方藥、指示藥、成藥（甲乙類成藥可自行購買）
@@ -118,9 +126,19 @@ async function openRecord(id) {
   renderRecordSelect();
   renderAllergies();
   resolveAllergyNames();
+  rx.record.symptoms ||= [];
+  rx.record.removed_symptoms ||= [];
   renderConditions();
+  renderSymptoms();
   renderPrescriptions();
   refreshRecommendations();
+  // 舊病歷還沒有症狀紀錄：開啟時補抓一次（只更新症狀，問題清單維持醫師存的樣子）
+  if (!rx.record.symptoms.length && !rx.record.removed_symptoms.length && subjectiveText().trim()) {
+    const opened = rx.record;
+    api('/api/detect', jsonBody({ text: '', s_text: subjectiveText() }))
+      .then(({ symptoms }) => { if (rx.record === opened && symptoms.length) mergeSymptoms(symptoms, 'keyword', { save: false }); })
+      .catch(() => {});
+  }
 }
 
 async function newRecord() {
@@ -131,7 +149,20 @@ async function newRecord() {
 }
 
 $('#recordSelect').addEventListener('change', (event) => openRecord(Number(event.target.value)));
-$('#newRecordButton').addEventListener('click', newRecord);
+// 新病歷：先選「手動輸入」或「語音看診」
+const newRecordDialog = $('#newRecordDialog');
+$('#newRecordButton').addEventListener('click', () => newRecordDialog.showModal());
+newRecordDialog.addEventListener('click', async (event) => {
+  if (event.target === newRecordDialog || event.target.closest('[data-close]')) return newRecordDialog.close();
+  const mode = event.target.closest('[data-new-mode]')?.dataset.newMode;
+  if (!mode) return;
+  newRecordDialog.close();
+  await newRecord();
+  if (mode === 'voice') {
+    rx.voiceDraft = rx.record.id;
+    openVoiceDialog();
+  }
+});
 
 /* ---------- 儲存（自動） ---------- */
 
@@ -172,6 +203,8 @@ $('#pAge').addEventListener('input', () => {
 });
 // S、O、A：偵測問題與病史風險都以這段文字為準
 const recordText = () => [$('#rChief').value, $('#rHistory').value, $('#rExam').value, $('#rAssessment').value].join('\n');
+// 症狀只從 S（主訴＋現病史）找，用來補對症用藥
+const subjectiveText = () => [$('#rChief').value, $('#rHistory').value].join('\n');
 
 function scheduleDetect() {
   clearTimeout(detectTimer);
@@ -301,8 +334,8 @@ let semanticSeq = 0;
 
 async function detectConditions() {
   const text = recordText();
-  const { conditions, risks } = await api('/api/detect', jsonBody({ text }));
-  const changed = mergeConditions(conditions, 'keyword');
+  const { conditions, symptoms, risks } = await api('/api/detect', jsonBody({ text, s_text: subjectiveText() }));
+  const changed = mergeConditions(conditions, 'keyword') | mergeSymptoms(symptoms, 'keyword');
   // 病灶沒變但病史風險變了（例如補上「曾胃出血」），也要重新標示卡片提醒
   if (!changed && (risks || []).join() !== rx.riskSig) refreshRecommendations();
   clearTimeout(semanticTimer);
@@ -365,6 +398,59 @@ function mergeConditions(found, source) {
   return changed;
 }
 
+/* ---------- 現病史症狀：補對症用藥，不列入問題清單 ---------- */
+
+// 關鍵字結果整批更新；AI 找到的在原文還在時保留；醫師移除過的不再自動加回
+// save=false：開啟舊病歷時補抓的症狀只用來顯示與推薦，不存檔（不改動修改時間，已完成的病歷不會變成「完成後有修改」）
+function mergeSymptoms(found, source, { save = true } = {}) {
+  const r = rx.record;
+  const sText = subjectiveText().toLowerCase().replace(/\s+/g, '');
+  const kept = (r.symptoms || []).filter((x) => (source === 'keyword'
+    ? (x.source === 'keyword' ? found.some((f) => f.name === x.name) : sText.includes((x.matched || '').toLowerCase().replace(/\s+/g, '')))
+    : true));
+  const names = new Set(kept.map((x) => x.name));
+  const added = found.filter((x) => !names.has(x.name) && !(r.removed_symptoms || []).includes(x.name));
+  const next = [...kept, ...added];
+  const changed = JSON.stringify(next.map((x) => x.name)) !== JSON.stringify((r.symptoms || []).map((x) => x.name));
+  r.symptoms = next;
+  if (changed) {
+    renderSymptoms();
+    if (save) scheduleSave();
+    refreshRecommendations();
+  }
+  return changed;
+}
+
+function renderSymptoms() {
+  const r = rx.record;
+  const list = r.symptoms || [];
+  const removed = r.removed_symptoms || [];
+  const box = $('#symptomStrip');
+  box.hidden = !list.length && !removed.length;
+  box.innerHTML = `
+    <p class="symptom-label">${icon('pill')}現病史的症狀<small>用來補充對症用藥，不列入問題清單</small></p>
+    <div class="symptom-chips">
+      ${list.map((x) => `<span class="symptom-chip" title="依據：${escapeHtml(x.matched || '')}">${escapeHtml(x.name)}${x.matched && x.matched !== x.name ? `<small>${escapeHtml(x.matched.slice(0, 16))}</small>` : ''}
+        <button type="button" data-remove-symptom="${escapeHtml(x.name)}" aria-label="移除症狀 ${escapeHtml(x.name)}">${icon('x')}</button></span>`).join('')}
+      ${removed.map((n) => `<button type="button" class="restore-chip" data-restore-symptom="${escapeHtml(n)}" aria-label="復原症狀 ${escapeHtml(n)}">${escapeHtml(n)}<span aria-hidden="true">復原</span></button>`).join('')}
+    </div>`;
+}
+
+$('#symptomStrip').addEventListener('click', (event) => {
+  const r = rx.record;
+  const remove = event.target.closest('[data-remove-symptom]')?.dataset.removeSymptom;
+  const restore = event.target.closest('[data-restore-symptom]')?.dataset.restoreSymptom;
+  if (remove) {
+    r.symptoms = r.symptoms.filter((x) => x.name !== remove);
+    r.removed_symptoms = [...new Set([...(r.removed_symptoms || []), remove])];
+  } else if (restore) {
+    r.removed_symptoms = r.removed_symptoms.filter((n) => n !== restore);
+  } else return;
+  renderSymptoms();
+  scheduleSave();
+  if (restore) detectConditions(); else refreshRecommendations();
+});
+
 const PLAN_LABELS = [['diagnostic', '診斷'], ['therapeutic', '治療'], ['educational', '衛教'], ['follow_up', '追蹤'], ['consult', '會診']];
 
 // AI 參考計畫：一份統整計畫，預設模糊遮住，醫師寫完自己的 P 再偷看
@@ -393,7 +479,7 @@ function renderAiPlan() {
     <dl class="ai-plan-body" ${rx.peek ? '' : 'aria-hidden="true" inert'}>${rows}</dl>`;
 }
 
-const rxLine = (p) => [rxName(p), p.frequency, p.days && `${p.days} 天`].filter(Boolean).join(' ');
+const rxLine = (p) => [rxName(p), p.dose, p.frequency, p.days && `${p.days} 天`].filter(Boolean).join(' ');
 
 function renderPlanRx() {
   const list = rx.record.prescriptions;
@@ -512,11 +598,15 @@ $('#aiDetectButton').addEventListener('click', async () => {
   button.disabled = true;
   button.innerHTML = `${icon('sparkles')}<span>AI 偵測中…</span>`;
   try {
-    const result = await api('/api/detect/ai', jsonBody({ text }));
+    const result = await api('/api/detect/ai', jsonBody({ text, s_text: subjectiveText() }));
     const before = rx.record.conditions.length;
     // AI 明確找到的病灶，即使先前被移除也重新加入
     rx.record.removed_conditions = rx.record.removed_conditions.filter((n) => !result.conditions.some((c) => c.name === n));
     mergeConditions(result.conditions, 'ai');
+    rx.record.removed_symptoms = (rx.record.removed_symptoms || []).filter((n) => !result.symptoms.some((x) => x.name === n));
+    const symptomsBefore = (rx.record.symptoms || []).length;
+    mergeSymptoms(result.symptoms || [], 'ai');
+    const newSymptoms = rx.record.symptoms.length - symptomsBefore;
     renderConditions();
     const added = rx.record.conditions.length - before;
     const other = $('#aiOther');
@@ -524,7 +614,7 @@ $('#aiDetectButton').addEventListener('click', async () => {
     other.innerHTML = result.other.length
       ? `AI 另外看到：${result.other.map((o) => `<button type="button" class="restore-chip" data-add-other="${escapeHtml(o)}">${escapeHtml(o)}<span aria-hidden="true">加入</span></button>`).join('')}（不在清單，沒有用藥推薦）`
       : '';
-    showToast(added ? `AI 新增 ${added} 個問題` : 'AI 沒有找到其他清單中的問題');
+    showToast([added ? `AI 新增 ${added} 個問題` : 'AI 沒有找到其他清單中的問題', newSymptoms ? `${newSymptoms} 個症狀` : ''].filter(Boolean).join('、'));
   } catch (error) {
     showToast(error.message);
   } finally {
@@ -573,7 +663,7 @@ async function refreshRecommendations() {
   const r = rx.record;
   if (!r) return;
   const box = $('#recRows');
-  if (!r.conditions.length) {
+  if (!r.conditions.length && !(r.symptoms || []).length) {
     rx.recs = { rows: [], excluded: [], risks: [] };
     box.innerHTML = `<div class="recs-empty"><div class="empty-mark">${icon('pill')}</div>
       <p>寫下主訴與病史後，這裡會依每個病灶列出推薦藥品。</p></div>`;
@@ -583,7 +673,7 @@ async function refreshRecommendations() {
   }
   try {
     rx.recs = await api('/api/recommendations', jsonBody({
-      conditions: r.conditions.map((c) => c.name), allergies: r.allergies, dismissed: r.dismissed,
+      conditions: r.conditions.map((c) => c.name), symptoms: r.symptoms || [], allergies: r.allergies, dismissed: r.dismissed,
       text: recordText(), age: $('#pAge').value.trim(),
     }));
     rx.riskSig = (rx.recs.risks || []).map((x) => x.id).join();
@@ -639,6 +729,31 @@ function recCardHtml(item, condition, active) {
     </article>`;
 }
 
+// 症狀列：標出從現病史哪一句抓到；上方病灶已推薦過的藥只列名稱
+function symptomRowHtml(row, rowIndex, railId, collapsed, activeAtc) {
+  const cond = row.condition;
+  const { items } = row;
+  const covered = row.covered?.length ? `<p class="symptom-covered">上方已推薦：${row.covered.map(escapeHtml).join('、')}</p>` : '';
+  return `
+    <section class="rec-row symptom-row ${collapsed ? 'collapsed' : ''}" style="animation-delay:${rowIndex * 60}ms">
+      <div class="rec-row-head" style="${hueStyle(cond)}">
+        <h3><button type="button" class="rec-row-toggle" data-toggle-row="${escapeHtml(cond)}" aria-expanded="${!collapsed}" aria-controls="${railId}">
+          ${icon('chevron-down')}<span class="because">症狀</span>${escapeHtml(cond)}</button></h3>
+        <div class="rec-row-side"><span title="現病史原文">來自：${escapeHtml(row.matched || '')}</span></div>
+      </div>
+      <div id="${railId}" ${collapsed ? 'hidden' : ''}>
+        ${items.length ? `<div class="rail-wrap at-start">
+            <button type="button" class="rail-nav prev" data-rail-nav="-1" tabindex="-1" aria-hidden="true">${icon('arrow-left')}</button>
+            <div class="rec-rail" role="group" aria-label="症狀${escapeHtml(cond)}的對症用藥，用左右方向鍵切換藥品">
+              ${items.map((item) => recCardHtml(item, cond, item.atc_code === activeAtc)).join('')}
+            </div>
+            <button type="button" class="rail-nav next" data-rail-nav="1" tabindex="-1" aria-hidden="true">${icon('arrow-right')}</button>
+          </div>` : ''}
+        ${covered}
+      </div>
+    </section>`;
+}
+
 function renderRecommendations() {
   const text = recordText();
   const rows = rx.recs.rows.map((row, rowIndex) => {
@@ -650,6 +765,7 @@ function renderRecommendations() {
     const { items } = row;
     const activeAtc = items.some((i) => i.atc_code === rx.railActive[cond]) ? rx.railActive[cond] : items[0]?.atc_code;
     const railId = `rail-${rowIndex}`;
+    if (row.kind === 'symptom') return symptomRowHtml(row, rowIndex, railId, collapsed, activeAtc);
     return `
       <section class="rec-row ${collapsed ? 'collapsed' : ''}" style="animation-delay:${rowIndex * 60}ms">
         <div class="rec-row-head" style="${hueStyle(cond)}">
@@ -959,16 +1075,33 @@ $('#trayFab').addEventListener('click', () => {
   $('#rxTitle').focus({ preventScroll: true });
 });
 
-function doseHtml(p) {
+// 頻率、天數：常用選項用下拉選單，選「自訂…」改成輸入框（例：Q6H PRN、TID×3天後改BID、45 天）
+function doseHtml(p, index) {
   const name = escapeHtml(rxName(p));
-  return `
-    <select data-field="frequency" aria-label="${name} 頻率">
+  const editing = rx.customDose === `${index}:frequency`;
+  const editingDays = rx.customDose === `${index}:days`;
+  const customFreq = p.frequency && !FREQUENCY_CODES.includes(p.frequency);
+  const customDays = p.days && !DAYS.includes(Number(p.days));
+  const frequency = editing || customFreq
+    ? `<input type="text" data-field="frequency" class="rx-custom" value="${escapeHtml(p.frequency || '')}"
+         maxlength="30" placeholder="例：Q6H PRN" aria-label="${name} 自訂頻率" list="freqCodes">`
+    : `<select data-field="frequency" aria-label="${name} 頻率">
       <option value="">頻率</option>
-      ${FREQUENCIES.map(([code, label]) => `<option value="${code}" ${p.frequency === code ? 'selected' : ''}>${code}・${label}</option>`).join('')}
-    </select>
-    <select data-field="days" aria-label="${name} 天數">
-      ${DAYS.map((d) => `<option value="${d}" ${Number(p.days) === d ? 'selected' : ''}>${d} 天</option>`).join('')}
+      ${FREQUENCY_GROUPS.map(([group, items]) => `<optgroup label="${group}">${items.map(([code, label]) =>
+        `<option value="${code}" ${p.frequency === code ? 'selected' : ''}>${code}・${label}</option>`).join('')}</optgroup>`).join('')}
+      <option value="${CUSTOM}">自訂…</option>
     </select>`;
+  const days = editingDays || customDays
+    ? `<label class="rx-custom-days"><input type="number" data-field="days" class="rx-custom" value="${escapeHtml(String(p.days || ''))}"
+         min="1" max="365" step="1" inputmode="numeric" aria-label="${name} 自訂天數"> 天</label>`
+    : `<select data-field="days" aria-label="${name} 天數">
+      ${DAYS.map((d) => `<option value="${d}" ${Number(p.days) === d ? 'selected' : ''}>${d} 天</option>`).join('')}
+      <option value="${CUSTOM}">自訂…</option>
+    </select>`;
+  return `
+    <input type="text" data-field="dose" class="rx-dose-amount" value="${escapeHtml(p.dose || '')}" maxlength="20"
+      placeholder="每次量" aria-label="${name} 每次劑量" title="每次劑量，例：1 粒、5 mL、1 包">
+    ${frequency}${days}`;
 }
 
 function duplicateOf(index) {
@@ -990,19 +1123,38 @@ function rxHints(p, index) {
 }
 
 function onDoseChange(event) {
-  const select = event.target.closest('select[data-field]');
-  if (!select) return;
-  const where = '#rxList';
-  const index = Number(select.closest('[data-index]').dataset.index);
-  const field = select.dataset.field;
+  const field = event.target.closest('[data-field]');
+  if (!field) return;
+  const index = Number(field.closest('[data-index]').dataset.index);
+  const key = field.dataset.field;
   const item = rx.record.prescriptions[index];
-  if (field === 'days') { item.days = Number(select.value); item.days_default = false; }
-  else { item.frequency = select.value; item.frequency_from_ai = false; }
+  const value = field.value.trim();
+  if (value === CUSTOM) {
+    rx.customDose = `${index}:${key}`;
+    renderPrescriptions();
+    $(`#rxList [data-index="${index}"] [data-field="${key}"]`)?.focus();
+    return;
+  }
+  if (key === 'dose') { item.dose = value; scheduleSave(); return; }
+  rx.customDose = '';
+  if (key === 'days') {
+    const days = Math.round(Number(value));
+    if (days >= 1 && days <= 365) { item.days = days; item.days_default = false; }
+  } else {
+    item.frequency = value;
+    item.frequency_from_ai = false;
+  }
   renderPrescriptions();
   scheduleSave();
-  $(`${where} [data-index="${index}"] select[data-field="${field}"]`)?.focus();
+  $(`#rxList [data-index="${index}"] [data-field="${key}"]`)?.focus();
 }
 $('#rxList').addEventListener('change', onDoseChange);
+$('#rxList').addEventListener('keydown', (event) => {
+  const input = event.target.closest('input.rx-custom');
+  if (!input) return;
+  if (event.key === 'Enter') { event.preventDefault(); input.blur(); }
+  if (event.key === 'Escape' && rx.customDose) { rx.customDose = ''; renderPrescriptions(); }
+});
 
 function removeRx(index) {
   const [removed] = rx.record.prescriptions.splice(index, 1);
@@ -1100,7 +1252,7 @@ function renderPrescriptions() {
         <b>${escapeHtml(rxName(p))}${p.name_zh ? `<small>${escapeHtml(p.name_zh)}</small>` : ''}</b>
         <button type="button" class="rx-product" data-pick-product="${i}"><span>${escapeHtml(p.product_name || '選擇品項')}</span>${icon('chevron-down')}</button>
         ${rxNhiHtml(p)}
-        <div class="rx-dose">${doseHtml(p)}${rxHints(p, i)}</div>
+        <div class="rx-dose">${doseHtml(p, i)}${rxHints(p, i)}</div>
         ${p.condition ? `<span class="rx-for" style="${hueStyle(p.condition)}">${escapeHtml(p.condition)}</span>` : ''}
       </div>
       <button type="button" class="rx-remove" data-remove-rx="${i}" aria-label="移除 ${escapeHtml(rxName(p))}">${icon('x')}</button>
@@ -1368,10 +1520,18 @@ async function flushSave() {
 // 刪除需要按兩次；刪除後 10 秒內可以從提示「復原」（以同樣內容重新建立）
 async function deleteRecord(id, button) {
   if (!button.classList.contains('confirming')) {
+    const label = button.querySelector('span');
+    const original = label?.textContent;
     button.classList.add('confirming');
     button.setAttribute('aria-label', '再按一次確認刪除');
     button.title = '再按一次確認刪除';
-    setTimeout(() => { button.classList.remove('confirming'); button.removeAttribute('title'); }, 3000);
+    if (label) label.textContent = '再按一次確認';
+    setTimeout(() => {
+      button.classList.remove('confirming');
+      button.removeAttribute('title');
+      button.removeAttribute('aria-label');
+      if (label) label.textContent = original;
+    }, 3000);
     return;
   }
   const data = rx.records.find((r) => r.id === id) || (rx.record?.id === id ? rx.record : null);
@@ -1411,20 +1571,27 @@ $('#deleteRecordButton').addEventListener('click', (event) => {
 const noteDialog = $('#noteDialog');
 let noteLang = 'en';
 
+// 下方動作列：未完成時「刪除／完成病歷」；完成後換成「產生衛教單／產生英文版」
 function updateRecordStatus() {
   const r = rx.record;
-  const box = $('#recordStatus');
-  const button = $('#completeButton span');
-  if (!r?.completed_at) {
+  const box = $('#recordState');
+  const done = Boolean(r?.completed_at);
+  const changed = done && r.updated_at > r.completed_at;
+  $('#completeButton').hidden = done;
+  $('#makeEducation').hidden = !done;
+  $('#englishButton').hidden = !done;
+  $('#recordBar').classList.toggle('done', done);
+  const english = $('#englishButton span');
+  if (!$('#englishButton').disabled) {
+    english.textContent = !r?.english_note ? '產生英文版' : changed ? '更新英文版' : '檢視英文版';
+  }
+  if (!done) {
     box.className = 'record-status';
     box.textContent = '';
-    button.textContent = '完成病歷';
     return;
   }
-  const changed = r.updated_at > r.completed_at;
   box.className = `record-status ${changed ? 'changed' : 'done'}`;
-  box.innerHTML = changed ? '完成後有修改，英文版需更新' : `${icon('check')}已完成`;
-  button.textContent = changed ? '更新英文版' : '檢視病歷';
+  box.innerHTML = changed ? '完成後有修改' : `${icon('check')}已完成`;
 }
 
 const indent = (text) => text.split('\n').map((l) => `   ${l}`);
@@ -1462,22 +1629,38 @@ function renderNote() {
 async function completeRecord() {
   const r = rx.record;
   if (!r) return;
-  if (r.completed_at && r.updated_at <= r.completed_at) {
+  const button = $('#completeButton');
+  button.disabled = true;
+  try {
+    await flushSave();
+    const saved = await api(`/api/records/${r.id}/complete`, { method: 'POST' });
+    Object.assign(r, { completed_at: saved.completed_at, updated_at: saved.updated_at });
+    const index = rx.records.findIndex((x) => x.id === r.id);
+    if (index >= 0) rx.records[index] = { ...rx.records[index], ...saved };
+    showToast('病歷已完成，可以產生衛教單或英文版');
+    updateRecordStatus();
+    $('#makeEducation').focus();
+  } catch (error) {
+    showToast(error.message);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+// 英文版：沒有或已過期就請 AI 產生，否則直接打開
+async function englishVersion() {
+  const r = rx.record;
+  if (!r) return;
+  if (r.english_note && r.updated_at <= r.completed_at) {
     noteLang = 'en';
     renderNote();
     return noteDialog.showModal();
   }
-  const button = $('#completeButton');
+  const button = $('#englishButton');
   button.disabled = true;
-  $('#completeButton span').textContent = '產生英文版中…';
+  $('#englishButton span').textContent = '產生英文版中…';
   try {
-    await flushSave();
-    const saved = await api(`/api/records/${r.id}/complete`, { method: 'POST' });
-    Object.assign(r, { english_note: saved.english_note, completed_at: saved.completed_at, updated_at: saved.updated_at });
-    const index = rx.records.findIndex((x) => x.id === r.id);
-    if (index >= 0) rx.records[index] = { ...rx.records[index], ...saved };
-    noteLang = 'en';
-    renderNote();
+    await generateEnglish();
     noteDialog.showModal();
   } catch (error) {
     showToast(error.message);
@@ -1487,6 +1670,18 @@ async function completeRecord() {
   }
 }
 
+async function generateEnglish() {
+  const r = rx.record;
+  await flushSave();
+  const saved = await api(`/api/records/${r.id}/english`, { method: 'POST' });
+  Object.assign(r, { english_note: saved.english_note, completed_at: saved.completed_at, updated_at: saved.updated_at });
+  const index = rx.records.findIndex((x) => x.id === r.id);
+  if (index >= 0) rx.records[index] = { ...rx.records[index], ...saved };
+  noteLang = 'en';
+  renderNote();
+}
+
+$('#englishButton').addEventListener('click', englishVersion);
 $('#completeButton').addEventListener('click', completeRecord);
 noteDialog.addEventListener('click', async (event) => {
   if (event.target === noteDialog || event.target.closest('[data-close]')) return noteDialog.close();
@@ -1511,11 +1706,7 @@ $('#noteRegenerate').addEventListener('click', async () => {
   const button = $('#noteRegenerate');
   button.disabled = true;
   try {
-    await flushSave();
-    const saved = await api(`/api/records/${rx.record.id}/complete`, { method: 'POST' });
-    Object.assign(rx.record, { english_note: saved.english_note, completed_at: saved.completed_at, updated_at: saved.updated_at });
-    noteLang = 'en';
-    renderNote();
+    await generateEnglish();
     updateRecordStatus();
   } catch (error) {
     showToast(error.message);
@@ -1636,6 +1827,7 @@ const appendText = (current, add) => (current.trim() ? `${current.trimEnd()}\n${
 
 async function applyVoice() {
   const { soap } = voice.result;
+  rx.voiceDraft = null;
   const r = rx.record;
   const on = (key) => $(`[data-voice="${key}"]`)?.checked;
   const fill = (sel, value, key) => { if (on(key)) $(sel).value = appendText($(sel).value, value); };
@@ -1663,7 +1855,6 @@ async function applyVoice() {
   $('#soapSTitle').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-$('#voiceVisitButton').addEventListener('click', openVoiceDialog);
 voiceDialog.addEventListener('click', (event) => {
   if (event.target === voiceDialog || event.target.closest('[data-close]')) return voiceDialog.close();
   if (event.target.closest('#voiceStart')) return startVoice();
@@ -1681,4 +1872,16 @@ voiceDialog.addEventListener('close', () => {
     voice.recorder.stop();
   }
   stopVoiceStream();
+  // 從「新病歷 → 語音看診」進來卻沒有填入：刪掉那份空白病歷，不留下空的練習病歷
+  const draft = rx.voiceDraft;
+  rx.voiceDraft = null;
+  const r = rx.record;
+  const blank = r && r.id === draft && ![r.chief_complaint, r.history, r.exam, r.assessment, r.plan, $('#rChief').value, $('#rHistory').value].some((v) => v?.trim());
+  if (blank) {
+    clearTimeout(saveTimer);
+    api(`/api/records/${draft}`, { method: 'DELETE' }).then(async () => {
+      rx.records = rx.records.filter((x) => x.id !== draft);
+      if (rx.records.length) await openRecord(rx.records[0].id); else renderRecordSelect();
+    }).catch(() => {});
+  }
 });

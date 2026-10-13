@@ -30,6 +30,11 @@ IMAGE_DIR = UPLOAD_DIR / "education"
 FREQUENCY_TEXT = {
     "QD": "每天 1 次", "BID": "每天 2 次（早、晚）", "TID": "每天 3 次（三餐）",
     "QID": "每天 4 次", "HS": "睡前 1 次", "PRN": "不舒服時才吃",
+    "QDAC": "每天 1 次，飯前吃", "BIDAC": "每天 2 次，早晚飯前吃", "TIDAC": "每天 3 次，三餐飯前吃",
+    "QDPC": "每天 1 次，飯後吃", "BIDPC": "每天 2 次，早晚飯後吃", "TIDPC": "每天 3 次，三餐飯後吃",
+    "TID+HS": "三餐飯後和睡前各 1 次", "Q4H": "每 4 小時 1 次", "Q6H": "每 6 小時 1 次", "Q8H": "每 8 小時 1 次",
+    "Q12H": "每 12 小時 1 次", "Q6H PRN": "不舒服時才吃，間隔至少 6 小時", "Q4H PRN": "不舒服時才吃，間隔至少 4 小時",
+    "QOD": "隔一天吃 1 次", "QW": "每週 1 次", "STAT": "現在先吃 1 次", "ASORDER": "依醫師指示服用",
 }
 # 藥品外觀圖只允許從 TFDA 轉傳（下載衛教單圖片時用），不存檔
 PROXY_HOSTS = {"mcp.fda.gov.tw"}
@@ -65,7 +70,9 @@ def _get(sheet_id: int) -> dict:
 
 
 def _schedule(p: dict) -> str:
-    parts = [FREQUENCY_TEXT.get(p.get("frequency", ""), "")]
+    frequency = p.get("frequency", "")
+    # 自訂頻率（例：TID×3天後改BID）對照不到白話說法時，保留醫師寫的原文
+    parts = [f"每次 {p['dose']}" if p.get("dose") else "", FREQUENCY_TEXT.get(frequency.upper(), frequency)]
     if p.get("days"):
         parts.append(f"吃 {p['days']} 天")
     return "・".join(x for x in parts if x) or "依醫師指示服用"

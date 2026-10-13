@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import tempfile
 from pathlib import Path
 from typing import Literal
@@ -18,7 +19,8 @@ from .library import AUDIO_EXTENSIONS, AUDIO_MIME_EXT, MAX_AUDIO_BYTES
 
 router = APIRouter(prefix="/api", tags=["records"])
 
-JSON_FIELDS = ("allergies", "conditions", "removed_conditions", "dismissed", "prescriptions", "vitals", "ai_plan")
+JSON_FIELDS = ("allergies", "conditions", "removed_conditions", "dismissed", "prescriptions", "vitals", "ai_plan",
+               "symptoms", "removed_symptoms")
 OBJECT_FIELDS = {"vitals", "ai_plan"}
 VITAL_KEYS = ("bp", "hr", "bt", "rr", "spo2")
 
@@ -86,12 +88,15 @@ class RecordIn(BaseModel):
     plan: str = ""
     conditions: list[dict] = []
     removed_conditions: list[str] = []
+    symptoms: list[dict] = []          # 現病史症狀：只用來補對症用藥，不在問題清單
+    removed_symptoms: list[str] = []
     dismissed: list[dict] = []
     prescriptions: list[dict] = []
 
 
 class TextIn(BaseModel):
     text: str
+    s_text: str = ""   # S（主訴＋現病史），症狀只從這段找
 
 
 class SemanticIn(BaseModel):
@@ -101,6 +106,7 @@ class SemanticIn(BaseModel):
 
 class RecommendIn(BaseModel):
     conditions: list[str]
+    symptoms: list[dict] = []
     allergies: list[str] = []
     dismissed: list[dict] = []
     text: str = ""   # S＋O＋各問題的 A，用來找病史風險（胃出血、腎功能…）
@@ -128,8 +134,9 @@ def _insert(con, data: dict) -> int:
     ts = now()
     cur = con.execute(
         """INSERT INTO records (patient_code, age, sex, visit_date, allergies, chief_complaint, history, vitals, exam,
-           assessment, plan, conditions, removed_conditions, dismissed, prescriptions, created_at, updated_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+           assessment, plan, conditions, removed_conditions, dismissed, prescriptions, symptoms, removed_symptoms,
+           created_at, updated_at)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (data.get("patient_code", ""), data.get("age", ""), data.get("sex", ""), data.get("visit_date", ts[:10]),
          json.dumps(data.get("allergies", []), ensure_ascii=False),
          data.get("chief_complaint", ""), data.get("history", ""),
@@ -138,7 +145,9 @@ def _insert(con, data: dict) -> int:
          json.dumps(data.get("conditions", []), ensure_ascii=False),
          json.dumps(data.get("removed_conditions", []), ensure_ascii=False),
          json.dumps(data.get("dismissed", []), ensure_ascii=False),
-         json.dumps(data.get("prescriptions", []), ensure_ascii=False), ts, ts),
+         json.dumps(data.get("prescriptions", []), ensure_ascii=False),
+         json.dumps(data.get("symptoms", []), ensure_ascii=False),
+         json.dumps(data.get("removed_symptoms", []), ensure_ascii=False), ts, ts),
     )
     return cur.lastrowid
 
@@ -223,7 +232,8 @@ def update_record(record_id: int, data: RecordIn):
     with app_db() as con:
         con.execute(
             """UPDATE records SET patient_code=?, age=?, sex=?, visit_date=?, allergies=?, chief_complaint=?, history=?,
-               vitals=?, exam=?, assessment=?, plan=?, conditions=?, removed_conditions=?, dismissed=?, prescriptions=?, updated_at=?
+               vitals=?, exam=?, assessment=?, plan=?, conditions=?, removed_conditions=?, dismissed=?, prescriptions=?,
+               symptoms=?, removed_symptoms=?, updated_at=?
                WHERE id=?""",
             (data.patient_code, data.age, data.sex, data.visit_date, json.dumps(data.allergies, ensure_ascii=False),
              data.chief_complaint, data.history, json.dumps(_vitals(data.vitals), ensure_ascii=False), data.exam,
@@ -231,7 +241,9 @@ def update_record(record_id: int, data: RecordIn):
              json.dumps(data.conditions, ensure_ascii=False),
              json.dumps(data.removed_conditions, ensure_ascii=False),
              json.dumps(data.dismissed, ensure_ascii=False),
-             json.dumps(data.prescriptions, ensure_ascii=False), now(), record_id),
+             json.dumps(data.prescriptions, ensure_ascii=False),
+             json.dumps(data.symptoms, ensure_ascii=False),
+             json.dumps(data.removed_symptoms, ensure_ascii=False), now(), record_id),
         )
     return get_record(record_id)
 
@@ -250,6 +262,7 @@ def delete_record(record_id: int):
 @router.post("/detect")
 def detect(body: TextIn):
     return {"conditions": rec.detect_keywords(body.text),
+            "symptoms": rec.detect_symptoms(body.s_text),
             "risks": [r["id"] for r in rec.detect_risks(body.text)]}
 
 
@@ -269,7 +282,26 @@ def detect_ai(body: TextIn):
         cond = rec.condition_by_name(str(item.get("name", "")))
         if cond and cond["name"] not in {f["name"] for f in found}:
             found.append({"name": cond["name"], "source": "ai", "matched": str(item.get("evidence", ""))[:60], "icd10": cond["icd10"]})
-    return {"conditions": found, "other": [str(o) for o in result.get("other", [])][:5], "ai_meta": meta}
+    return {"conditions": found, "other": [str(o) for o in result.get("other", [])][:5],
+            "symptoms": _ai_symptoms(body.s_text), "ai_meta": meta}
+
+
+def _ai_symptoms(s_text: str) -> list[dict]:
+    """AI 從 S 找症狀；原文片段必須真的出現在病歷裡（避免 AI 編出沒寫的症狀），找不到就丟掉。"""
+    if not s_text.strip():
+        return []
+    try:
+        result, _ = ai.extract_symptoms(s_text, [s["name"] for s in rec.symptoms()])
+    except OpenAIError:
+        return []
+    squash = lambda t: re.sub(r"\s+", "", t).lower()
+    source, found = squash(s_text), []
+    for item in (result or {}).get("symptoms", []):
+        symptom = rec.symptom_by_name(str(item.get("name", "")))
+        evidence = str(item.get("evidence", "")).strip()
+        if symptom and evidence and squash(evidence) in source and symptom["name"] not in {f["name"] for f in found}:
+            found.append({"name": symptom["name"], "source": "ai", "matched": evidence[:40]})
+    return found
 
 
 @router.post("/detect/semantic")
@@ -296,7 +328,7 @@ def _chart(record: dict) -> dict:
                            for i, c in enumerate(record["conditions"], 1)],
               "assessment": record["assessment"]},
         "P": {"plan": record["plan"],
-              "prescriptions": [" ".join(x for x in (p.get("display_name") or p.get("name_en", ""), p.get("frequency", ""),
+              "prescriptions": [" ".join(x for x in (p.get("display_name") or p.get("name_en", ""), p.get("dose", ""), p.get("frequency", ""),
                                                       f"{p['days']} days" if p.get("days") else "") if x)
                                 for p in record["prescriptions"]]},
     }
@@ -402,7 +434,19 @@ def ai_plan(record_id: int):
 
 @router.post("/records/{record_id}/complete")
 def complete_record(record_id: int):
-    """完成病歷：同時產生英文 SOAP。完成後再修改，前端會提示英文版需要更新。"""
+    """完成病歷：只標記完成時間。完成後畫面改成「產生衛教單」「產生英文版」兩個動作。"""
+    record = get_record(record_id)
+    if not (record["chief_complaint"].strip() or record["conditions"]):
+        raise HTTPException(422, "病歷還是空的，請先寫主訴或問題")
+    stamp = now()
+    with app_db() as con:
+        con.execute("UPDATE records SET completed_at = ?, updated_at = ? WHERE id = ?", (stamp, stamp, record_id))
+    return get_record(record_id)
+
+
+@router.post("/records/{record_id}/english")
+def english_version(record_id: int):
+    """產生英文 SOAP（也算完成病歷）。之後再修改，前端會提示英文版需要更新。"""
     record = get_record(record_id)
     if not (record["chief_complaint"].strip() or record["conditions"]):
         raise HTTPException(422, "病歷還是空的，請先寫主訴或問題")
@@ -424,7 +468,7 @@ def complete_record(record_id: int):
 
 @router.post("/recommendations")
 def recommendations(body: RecommendIn):
-    return rec.recommend(body.conditions, body.allergies, body.dismissed, body.text, body.age)
+    return rec.recommend(body.conditions, body.allergies, body.dismissed, body.text, body.age, body.symptoms)
 
 
 @router.post("/feedback", status_code=201)
