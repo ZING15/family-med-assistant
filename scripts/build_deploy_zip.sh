@@ -15,6 +15,8 @@ rm -rf dist
 mkdir -p dist/package/backend dist/package/data/drug_reference
 cp -R backend/app dist/package/backend/
 cp -R frontend dist/package/
+# 本機的風格示範頁不部署
+rm -rf dist/package/frontend/demo
 cp "$DRUG_DB" dist/package/data/drug_reference/
 # 健保給付藥品表（選用；沒有時網站照常運作，只是不顯示健保資訊）
 NHI_DB=data/drug_reference/nhi_drugs.sqlite

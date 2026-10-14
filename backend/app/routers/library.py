@@ -36,7 +36,7 @@ AUDIO_MIME_EXT = {
     "audio/wave": ".wav", "video/webm": ".webm", "video/mp4": ".mp4",
 }
 MAX_AUDIO_BYTES = 25 * 1024 * 1024
-SEMANTIC_MIN_SCORE = 0.25
+SEMANTIC_MIN_SCORE = 0.4
 
 
 class LibraryItemIn(BaseModel):

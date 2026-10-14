@@ -98,7 +98,8 @@ async function loadRecordsView() {
 
 function renderRecordSelect() {
   $('#recordSelect').innerHTML = rx.records.map((r) => {
-    const label = [r.patient_code || '未命名', r.age && `${r.age} 歲`, r.sex, r.chief_complaint && `・${r.chief_complaint.slice(0, 24)}`].filter(Boolean).join(' ');
+    const label = [r.patient_code || '未命名', r.age && `${r.age} 歲`, r.sex, r.visit_total > 1 && `（第 ${r.visit_no} 次）`,
+      r.chief_complaint && `・${r.chief_complaint.slice(0, 24)}`].filter(Boolean).join(' ');
     return `<option value="${r.id}" ${rx.record?.id === r.id ? 'selected' : ''}>${escapeHtml(label)}</option>`;
   }).join('');
 }
@@ -124,8 +125,11 @@ async function openRecord(id) {
   updateRecordStatus();
   $('#saveState').textContent = '';
   renderRecordSelect();
+  rx.patient = null;
+  renderVisitInfo();
   renderAllergies();
   resolveAllergyNames();
+  loadPatientHistory();
   rx.record.symptoms ||= [];
   rx.record.removed_symptoms ||= [];
   renderConditions();
@@ -141,23 +145,93 @@ async function openRecord(id) {
   }
 }
 
-async function newRecord() {
-  const record = await api('/api/records', { method: 'POST' });
-  rx.records.unshift(record);
+// 新病人不帶代號（後端自動編號）；回診病人帶代號，後端帶入上次的年齡、性別與過去所有過敏
+async function newRecord(patientCode = '') {
+  const record = await api('/api/records', jsonBody({ patient_code: patientCode }));
+  rx.records = (await api('/api/records')).records;  // 同一位病人其他病歷的「第 N 次」也要更新
   await openRecord(record.id);
   $('#rChief').focus();
 }
 
 $('#recordSelect').addEventListener('change', (event) => openRecord(Number(event.target.value)));
-// 新病歷：先選「手動輸入」或「語音看診」
+/* ---------- 新病歷：先選病人（新病人／回診病人），再選「手動輸入」或「語音看診」 ---------- */
+
 const newRecordDialog = $('#newRecordDialog');
-$('#newRecordButton').addEventListener('click', () => newRecordDialog.showModal());
+const newRecordState = { patientCode: '', patients: [] };
+
+function showNewRecordStep(step) {
+  $$('#newRecordDialog [data-step]').forEach((el) => { el.hidden = el.dataset.step !== step; });
+  $('#newRecordMeta').textContent = { who: '先選病人，再選這次怎麼記錄', patients: '最近就診的在最上面，可用診斷或年齡搜尋', mode: '選擇這次怎麼記錄，之後都能再修改' }[step];
+  if (step === 'patients') $('#patientSearch').focus();
+}
+
+function patientRowHtml(p) {
+  const allergies = p.allergies.map(allergyLabel);
+  return `
+    <li><button type="button" class="patient-row-button" data-patient-code="${escapeHtml(p.patient_code)}">
+      <span class="patient-row-main"><b>${escapeHtml(p.patient_code)}</b>
+        <span>${escapeHtml([p.age && `${p.age} 歲`, p.sex].filter(Boolean).join(' '))}</span>
+        <small>上次 ${escapeHtml(p.last_visit.slice(5).replace('-', '/'))}・共 ${p.visits} 次</small></span>
+      <span class="patient-row-problems">${escapeHtml(p.problems.map((c) => c.name).join('、') || '尚未記錄問題')}</span>
+      ${allergies.length ? `<span class="patient-row-allergy">${icon('shield-alert')}${escapeHtml(allergies.join('、'))}過敏</span>` : ''}
+    </button></li>`;
+}
+
+function renderPatientList() {
+  const q = $('#patientSearch').value.trim().toLowerCase();
+  const list = newRecordState.patients.filter((p) => !q || [p.patient_code, p.age && `${p.age}`, p.sex,
+    ...p.problems.flatMap((c) => [c.name, c.icd10]), ...p.allergies.map(allergyLabel)].join(' ').toLowerCase().includes(q));
+  $('#patientList').innerHTML = list.length ? list.map(patientRowHtml).join('')
+    : `<li class="patient-empty">${newRecordState.patients.length ? '沒有符合的病人' : '還沒有任何病人，請選「新病人」'}</li>`;
+}
+
+$('#newRecordButton').addEventListener('click', () => {
+  newRecordState.patientCode = '';
+  $('#patientSearch').value = '';
+  showNewRecordStep('who');
+  newRecordDialog.showModal();
+});
+$('#patientSearch').addEventListener('input', renderPatientList);
 newRecordDialog.addEventListener('click', async (event) => {
   if (event.target === newRecordDialog || event.target.closest('[data-close]')) return newRecordDialog.close();
+  const back = event.target.closest('[data-step-back]');
+  if (back) return showNewRecordStep(back.dataset.stepBack);
+  const pick = event.target.closest('[data-pick-patient]')?.dataset.pickPatient;
+  if (pick === 'new') {
+    newRecordState.patientCode = '';
+    $('#newRecordWho').textContent = '新病人：會自動編一個練習代號';
+    $('#newRecordModeBack').dataset.stepBack = 'who';
+    return showNewRecordStep('mode');
+  }
+  if (pick === 'return') {
+    showNewRecordStep('patients');
+    $('#patientList').innerHTML = '<li class="patient-empty">載入中…</li>';
+    try {
+      newRecordState.patients = (await api('/api/patients')).patients;
+      renderPatientList();
+    } catch (error) {
+      $('#patientList').innerHTML = `<li class="patient-empty">${escapeHtml(error.message)}</li>`;
+    }
+    return;
+  }
+  const patient = event.target.closest('[data-patient-code]')?.dataset.patientCode;
+  if (patient) {
+    newRecordState.patientCode = patient;
+    const p = newRecordState.patients.find((x) => x.patient_code === patient);
+    $('#newRecordWho').textContent = `回診：${patient}${p ? `（${[p.age && `${p.age} 歲`, p.sex].filter(Boolean).join(' ')}，第 ${p.visits + 1} 次就診）` : ''}`;
+    $('#newRecordModeBack').dataset.stepBack = 'patients';
+    return showNewRecordStep('mode');
+  }
   const mode = event.target.closest('[data-new-mode]')?.dataset.newMode;
   if (!mode) return;
   newRecordDialog.close();
-  await newRecord();
+  await flushSave();
+  try {
+    await newRecord(newRecordState.patientCode);
+  } catch (error) {
+    return showToast(error.message);
+  }
+  if (newRecordState.patientCode) showToast(`已帶入 ${newRecordState.patientCode} 的年齡、性別與過去的過敏紀錄，請確認`);
   if (mode === 'voice') {
     rx.voiceDraft = rx.record.id;
     openVoiceDialog();
@@ -216,6 +290,75 @@ function scheduleDetect() {
   scheduleDetect();
 }));
 
+/* ---------- 病人歸檔：第幾次就診、過去就診、過敏的來源 ---------- */
+
+async function loadPatientHistory() {
+  const opened = rx.record;
+  if (!opened.patient_code) return;
+  try {
+    const patient = await api(`/api/patients/${encodeURIComponent(opened.patient_code)}`);
+    if (rx.record !== opened) return;
+    rx.patient = patient;
+    renderVisitInfo();
+    renderAllergies();
+  } catch { /* 查不到歷次就診時只顯示這一份 */ }
+}
+
+// 這份病歷之前的就診（看舊病歷時，不列出之後才發生的就診）
+function pastVisits() {
+  const visits = rx.patient?.visits || [];
+  const index = visits.findIndex((v) => v.id === rx.record.id);
+  return index < 0 ? [] : visits.slice(0, index);
+}
+
+const shortDate = (iso) => (iso || '').replaceAll('-', '/');
+
+function renderVisitInfo() {
+  const visits = rx.patient?.visits || [];
+  const index = visits.findIndex((v) => v.id === rx.record.id);
+  const no = index < 0 ? (rx.record.visit_no || 1) : index + 1;
+  $('#visitBadge').textContent = no > 1 ? `第 ${no} 次就診` : '初診';
+  $('#visitBadge').classList.toggle('return', no > 1);
+  const past = pastVisits();
+  $('#pastVisits').hidden = !past.length;
+  if (!past.length) return;
+  $('#pastVisitsTitle').textContent = `過去就診（${past.length} 次）`;
+  $('#pastVisitList').innerHTML = [...past].reverse().map((v) => `
+    <li>
+      <span class="past-visit-date">${escapeHtml(shortDate(v.visit_date))}</span>
+      <span class="past-visit-body">
+        <b>${v.problems.length ? v.problems.map((c) => `${escapeHtml(c.name)}${c.icd10 ? `<small>${escapeHtml(c.icd10)}</small>` : ''}`).join('、') : escapeHtml(v.chief_complaint || '尚未記錄問題')}</b>
+        ${v.medicines.length ? `<span>用藥：${escapeHtml(v.medicines.join('、'))}</span>` : ''}
+      </span>
+      <button type="button" class="link-button" data-open-past="${v.id}">開啟</button>
+    </li>`).join('');
+}
+
+// 過去病史：之前每次就診的問題（同一個問題只列第一次的日期），由醫師按下才寫進 S
+function pastHistoryLine() {
+  const first = new Map();
+  for (const v of pastVisits()) for (const c of v.problems) if (!first.has(c.name)) first.set(c.name, v.visit_date);
+  return first.size ? `過去病史：${[...first].map(([name, date]) => `${name}（${shortDate(date)}）`).join('、')}` : '';
+}
+
+$('#pmhButton').addEventListener('click', () => {
+  const line = pastHistoryLine();
+  if (!line) return showToast('過去的就診沒有記錄問題清單');
+  const field = $('#rHistory');
+  // 已經帶入過就更新那一行，不重複加
+  const lines = field.value.split('\n').filter((l) => !l.startsWith('過去病史：'));
+  field.value = [...lines.filter((l, i) => l || i < lines.length - 1), line].join('\n').replace(/^\n+/, '');
+  field.dispatchEvent(new Event('input', { bubbles: true }));
+  showToast('已在現病史最後加上過去病史');
+});
+
+$('#pastVisitList').addEventListener('click', async (event) => {
+  const id = event.target.closest('[data-open-past]')?.dataset.openPast;
+  if (!id) return;
+  await flushSave();
+  openRecord(Number(id));
+});
+
 /* ---------- 過敏 ---------- */
 
 function allergyLabel(entry) {
@@ -237,10 +380,17 @@ async function resolveAllergyNames() {
   renderSafety();
 }
 
+// 之前就診就記錄過的過敏，標示第一次記錄的日期
+function allergySince(entry) {
+  const since = rx.patient?.allergies.find((a) => a.id === entry);
+  return since && since.record_id !== rx.record.id && pastVisits().some((v) => v.id === since.record_id)
+    ? `<small class="allergy-since">${escapeHtml(shortDate(since.since).slice(5))} 記錄</small>` : '';
+}
+
 function renderAllergies() {
   const list = rx.record.allergies;
   $('#allergyChips').innerHTML = list.length
-    ? list.map((a) => `<span class="allergy-chip">${escapeHtml(allergyLabel(a))}<button type="button" data-remove-allergy="${escapeHtml(a)}" aria-label="移除 ${escapeHtml(allergyLabel(a))}">${icon('x')}</button></span>`).join('')
+    ? list.map((a) => `<span class="allergy-chip">${escapeHtml(allergyLabel(a))}${allergySince(a)}<button type="button" data-remove-allergy="${escapeHtml(a)}" aria-label="移除 ${escapeHtml(allergyLabel(a))}">${icon('x')}</button></span>`).join('')
     : '<span class="muted-text">無已知過敏</span>';
   $$('#allergenOptions [data-allergen]').forEach((b) => {
     const on = list.includes(b.dataset.allergen);
@@ -1477,7 +1627,7 @@ function renderRecordsTable() {
   $('#recordsTbody').innerHTML = list.length ? list.map((r) => `
     <tr class="${rx.record?.id === r.id ? 'current' : ''}">
       <td class="nowrap">${escapeHtml(r.visit_date || r.created_at.slice(0, 10))}</td>
-      <td class="nowrap"><b>${escapeHtml(r.patient_code || '未命名')}</b></td>
+      <td class="nowrap"><button type="button" class="code-filter" data-filter-code="${escapeHtml(r.patient_code)}" title="只看這位病人的病歷"><b>${escapeHtml(r.patient_code || '未命名')}</b></button>${r.visit_total > 1 ? `<small class="visit-no">第 ${r.visit_no} 次</small>` : ''}</td>
       <td class="nowrap">${escapeHtml([r.age && `${r.age} 歲`, r.sex].filter(Boolean).join('・') || '—')}</td>
       <td>${escapeHtml(r.chief_complaint || '—')}</td>
       <td>${r.conditions.length ? `<span class="mini-problems">${r.conditions.map((c, i) => `<b>#${i + 1} ${escapeHtml(c.name)}</b>`).join('')}</span>` : '<span class="muted-text">—</span>'}
@@ -1506,6 +1656,11 @@ recordsDialog.addEventListener('click', async (event) => {
     recordsDialog.close();
     await flushSave();
     return openRecord(Number(open.dataset.openRecord));
+  }
+  const code = event.target.closest('[data-filter-code]')?.dataset.filterCode;
+  if (code) {
+    $('#fText').value = code;
+    return renderRecordsTable();
   }
   const del = event.target.closest('[data-delete-record]');
   if (del) deleteRecord(Number(del.dataset.deleteRecord), del);

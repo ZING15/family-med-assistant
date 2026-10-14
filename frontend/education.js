@@ -1,7 +1,9 @@
 /* ==========================================================
    衛教單（F-08／F-09）
-   流程：從病歷或主題產生 AI 草稿 → 醫師直接點文字修改 → 產生一張衛教插圖
+   流程：從病歷或主題產生 AI 草稿 → 醫師直接點文字修改 → 每個重點產生一張小插圖
         → 勾選「醫師已確認」後才能下載圖片或存到學習庫
+   圖卡式（content.version = 2）：在家照顧、回診警訊都是「插圖＋5–10 字標語」的卡片；
+   舊版（整張插圖＋條列文字）照舊顯示
    依賴 app.js 的 $、$$、api、jsonBody、escapeHtml、showToast、hueStyle、icon
    ========================================================== */
 
@@ -71,8 +73,10 @@ function renderEmpty() {
 async function openSheet(id) {
   try {
     edu.sheet = await api(`/api/education/${id}`);
-    renderSheet();
     renderSheetList();
+    // 圖卡式衛教單的插圖要全部畫好才顯示：剛產生的、或上次畫到一半離開的，都直接接著畫
+    if (isCardSheet() && missingCards().length) drawAllCards();
+    else renderSheet();
   } catch (error) {
     showToast(error.message);
     renderEmpty();
@@ -86,7 +90,7 @@ function renderGenerating(label) {
     <div class="edu-generating" role="status">
       <div class="spinner"></div>
       <b>${escapeHtml(label)}</b>
-      <span>AI 正在用白話寫說明、用藥提醒與回診時機，約需 5–15 秒</span>
+      <span>AI 正在挑出在家照顧與回診警訊的重點，約需 5–15 秒；接著會一張一張畫插圖</span>
     </div>`;
 }
 
@@ -145,6 +149,81 @@ function medicineHtml(m, i) {
     </li>`;
 }
 
+const isCardSheet = () => edu.sheet?.content?.version === 2;
+const CARD_LABEL = { care: '在家照顧', warnings: '回診警訊' };
+const cardArtId = (key, i) => `eduArt-${key}-${i}`;
+
+function cardArtHtml(card, key, i) {
+  const art = card.image
+    ? `<img src="/uploads/${escapeHtml(card.image)}" alt="${escapeHtml(card.text)}的插圖" />`
+    : `<span class="edu-card-emoji" aria-hidden="true">${escapeHtml(card.emoji || '•')}</span>`;
+  return `${art}
+    <button type="button" class="edu-ui edu-card-redraw" data-redraw="${key}.${i}" aria-label="${card.image ? '重畫' : '畫'}這張插圖" title="${card.image ? '重畫這張插圖' : 'AI 畫這張插圖'}">${icon('sparkles')}</button>`;
+}
+
+function cardsHtml(key, cards, placeholder) {
+  return `
+    <ul class="edu-cards" style="--cols: ${cards.length === 4 || cards.length <= 2 ? Math.max(cards.length, 2) : 3}">
+      ${cards.map((card, i) => `
+        <li class="edu-card">
+          <div class="edu-card-art" id="${cardArtId(key, i)}">${cardArtHtml(card, key, i)}</div>
+          ${editable(`${key}.${i}.text`, card.text, 'b', placeholder)}
+          <button type="button" class="edu-ui edu-remove" data-remove="${key}.${i}" aria-label="刪除「${escapeHtml(card.text)}」">${icon('x')}</button>
+        </li>`).join('')}
+    </ul>
+    <button type="button" class="edu-ui link-button edu-add" data-add="${key}">${icon('plus')}新增一張</button>`;
+}
+
+function cardMedicineHtml(m, i) {
+  return `
+    <li class="edu-med compact ${m.image_url ? '' : 'no-photo'}">
+      ${m.image_url ? `<div class="edu-med-photo"><img src="${proxied(m.image_url)}" alt="${escapeHtml(m.product_name || m.name_zh || m.name)}" /></div>` : ''}
+      <div class="edu-med-body">
+        <p class="edu-med-name">${editable(`medicines.${i}.name_zh`, m.name_zh, 'b', '中文藥名')}${editable(`medicines.${i}.purpose`, m.purpose, 'span', '用途')}</p>
+        <p class="edu-med-schedule">${inlineIcon('check')}${editable(`medicines.${i}.schedule`, m.schedule, 'span', '一天幾次、吃幾天')}</p>
+        <p class="edu-med-tip">${editable(`medicines.${i}.tip`, m.tip, 'span', '服用提醒')}</p>
+      </div>
+    </li>`;
+}
+
+function renderCardSheet() {
+  const s = edu.sheet;
+  const c = s.content;
+  const topics = s.topic.split('、').filter(Boolean);
+  $('#eduMain').innerHTML = `
+    <div class="edu-toolbar" id="eduToolbar">${toolbarHtml()}</div>
+
+    <article class="edu-sheet cards" id="eduSheet" style="${hueStyle(topics[0] || '')}">
+      <header class="edu-sheet-head">
+        ${editable('title', s.title, 'h2', '衛教單標題')}
+        ${editable('about', c.about, 'p', '一句話說明這是什麼、多久會好')}
+      </header>
+
+      <section class="edu-block">
+        <h3>在家這樣做</h3>
+        ${cardsHtml('care', c.care || [], '5–10 字的重點')}
+      </section>
+
+      ${c.medicines?.length ? `
+      <section class="edu-block">
+        <h3>這樣吃藥</h3>
+        <ul class="edu-meds">${c.medicines.map(cardMedicineHtml).join('')}</ul>
+      </section>` : ''}
+
+      <section class="edu-block edu-warn">
+        <h3>出現這些情況，馬上回診</h3>
+        ${cardsHtml('warnings', c.warnings || [], '5–10 字的警訊')}
+        <p class="edu-urgent">${editable('urgent', c.urgent ?? '晚上或假日請直接到急診，情況危急請打 119', 'span', '就醫提醒')}</p>
+      </section>
+
+      <footer class="edu-sheet-foot">
+        <span id="eduFootStatus">${footStatus()}</span>
+        <span>新手家醫看診助手・練習資料，非臨床建議</span>
+        ${c.medicines?.some((m) => m.image_url) ? '<span>藥丸照片為 TFDA 公開外觀圖，實際拿到的藥若不同請問藥師</span>' : ''}
+      </footer>
+    </article>`;
+}
+
 const footStatus = () => (edu.sheet.confirmed ? `AI 產生，經醫師確認・${sheetDate(edu.sheet.confirmed_at)}` : '草稿・尚未經醫師確認');
 
 function toolbarHtml() {
@@ -156,7 +235,7 @@ function toolbarHtml() {
       <span>${meta}</span>
     </div>
     <div class="edu-actions">
-      <button type="button" class="secondary-button" id="eduImageButton">${icon('sparkles')}${s.image_path ? '重新產生衛教圖' : '產生衛教圖'}</button>
+      ${isCardSheet() ? '' : `<button type="button" class="secondary-button" id="eduImageButton">${icon('sparkles')}${s.image_path ? '重新產生衛教圖' : '產生衛教圖'}</button>`}
       <label class="edu-confirm"><input type="checkbox" id="eduConfirm" ${s.confirmed ? 'checked' : ''} />醫師已確認內容</label>
       <button type="button" class="primary-button" id="eduDownload" ${s.confirmed ? '' : 'disabled'}>${icon('upload')}下載圖片</button>
       <button type="button" class="secondary-button" id="eduSaveLibrary" ${s.confirmed ? '' : 'disabled'}>${icon('book-open')}存到學習庫</button>
@@ -166,6 +245,7 @@ function toolbarHtml() {
 }
 
 function renderSheet() {
+  if (isCardSheet()) return renderCardSheet();
   const s = edu.sheet;
   const c = s.content;
   const topics = s.topic.split('、').filter(Boolean);
@@ -292,10 +372,11 @@ $('#eduMain').addEventListener('click', async (event) => {
 
   const add = event.target.closest('[data-add]');
   if (add) {
-    s.content[add.dataset.add] = [...(s.content[add.dataset.add] || []), ''];
+    s.content[add.dataset.add] = [...(s.content[add.dataset.add] || []), isCardSheet() ? { text: '', emoji: '', scene: '', image: '' } : ''];
     unconfirm();
     renderSheet();
     $$(`#eduSheet [data-path^="${add.dataset.add}."]`).pop()?.focus();
+    if (isCardSheet()) updateConfirmUi();
     return scheduleSheetSave();
   }
   const remove = event.target.closest('[data-remove]');
@@ -308,6 +389,11 @@ $('#eduMain').addEventListener('click', async (event) => {
   }
 
   if (event.target.closest('#eduImageButton')) return generateImage(Boolean(s.image_path));
+  const redraw = event.target.closest('[data-redraw]');
+  if (redraw) {
+    const [key, index] = redraw.dataset.redraw.split('.');
+    return redrawCard(key, Number(index));
+  }
   if (event.target.closest('#eduDownload')) return downloadSheet();
   if (event.target.closest('#eduSaveLibrary')) return saveSheetToLibrary();
   if (event.target.closest('#eduDelete')) return deleteSheet(event.target.closest('#eduDelete'));
@@ -329,6 +415,100 @@ async function generateImage(regenerate) {
   } catch (error) {
     showToast(error.message);
     renderSheet();
+  }
+}
+
+/* ---------- 圖卡插圖：一張一張畫，顯示進度；遇到每分鐘上限就等一下再試 ---------- */
+
+let drawingSheet = 0;  // 正在畫插圖的衛教單 id
+let drawProgress = { done: 0, total: 0, note: '' };
+const cardKeys = () => ['care', 'warnings'].flatMap((key) => (edu.sheet.content[key] || []).map((card, i) => [key, i, card]));
+const missingCards = () => cardKeys().filter(([, , card]) => card.text && !card.image).map(([key, i]) => [key, i]);
+const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function renderDrawing() {
+  const { done, total, note } = drawProgress;
+  $('#eduMain').innerHTML = `
+    <div class="edu-generating" role="status">
+      <div class="spinner"></div>
+      <b>正在畫衛教插圖（${Math.min(done + 1, total)}／${total}）</b>
+      <div class="edu-progress" aria-hidden="true"><span style="width: ${total ? (done / total) * 100 : 0}%"></span></div>
+      <span>${escapeHtml(note || 'AI 依病人的年齡、性別，替每個重點畫一張圖；全部畫好後才會顯示衛教單')}</span>
+    </div>`;
+}
+
+// 畫一張插圖；遇到每分鐘上限等 30 秒再試，最多 3 次
+async function drawCard(sheetId, key, index, onWait) {
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      const saved = await api(`/api/education/${sheetId}/cards/${key}/${index}/image`, { method: 'POST' });
+      return saved.content[key]?.[index]?.image || '';
+    } catch (error) {
+      if (!/每分鐘上限/.test(error.message) || attempt === 2) throw error;
+      onWait?.();
+      await pause(30000);
+    }
+  }
+}
+
+async function drawAllCards() {
+  const sheetId = edu.sheet.id;
+  if (drawingSheet === sheetId) return renderDrawing();  // 切走又切回來：畫圖還在進行，繼續顯示進度
+  if (drawingSheet) return renderSheet();
+  drawingSheet = sheetId;
+  const targets = missingCards();
+  drawProgress = { done: 0, total: targets.length, note: '' };
+  renderDrawing();
+  let failed = '';
+  for (const [key, index] of targets) {
+    try {
+      const image = await drawCard(sheetId, key, index, () => {
+        drawProgress.note = '已達每分鐘生圖上限，30 秒後自動繼續…';
+        if (edu.sheet?.id === sheetId) renderDrawing();
+      });
+      if (edu.sheet?.id === sheetId) edu.sheet.content[key][index].image = image;
+    } catch (error) {
+      failed = error.message;
+      break;
+    }
+    drawProgress.done += 1;
+    drawProgress.note = '';
+    if (edu.sheet?.id === sheetId) renderDrawing();
+  }
+  drawingSheet = 0;
+  if (edu.sheet?.id !== sheetId) return;
+  // 伺服器在每張圖後都已存檔並取消確認，重新讀取一次即可
+  edu.sheet = await api(`/api/education/${sheetId}`);
+  renderSheet();
+  renderSheetList();
+  showToast(failed
+    ? `插圖沒有全部畫完：${failed}。可按卡片上的 ✨ 再畫一次`
+    : '衛教單與插圖都完成了，請確認內容後勾選「醫師已確認」');
+}
+
+// 醫師修改某張卡片後重畫那一張：只在那張卡片上顯示 loading
+async function redrawCard(key, index) {
+  const card = edu.sheet.content[key]?.[index];
+  if (!card?.text || drawingSheet) return;
+  const sheetId = edu.sheet.id;
+  clearTimeout(eduSaveTimer);
+  await saveSheet();  // 先存好修改，插圖才會對應到最新的文字
+  drawingSheet = sheetId;
+  const art = () => $(`#${cardArtId(key, index)}`);
+  art()?.classList.add('loading');
+  try {
+    const image = await drawCard(sheetId, key, index);
+    if (edu.sheet?.id === sheetId) card.image = image;
+    edu.sheet.confirmed = false;
+    edu.sheet.confirmed_at = '';
+    updateConfirmUi();
+    showToast('已重畫這張插圖，請確認後勾選「醫師已確認」');
+  } catch (error) {
+    showToast(error.message);
+  } finally {
+    drawingSheet = 0;
+    const el = art();
+    if (el && edu.sheet?.id === sheetId) { el.classList.remove('loading'); el.innerHTML = cardArtHtml(card, key, index); }
   }
 }
 
@@ -386,8 +566,8 @@ async function saveSheetToLibrary() {
   const note = [
     c.about,
     c.medicines?.length ? `用藥：${c.medicines.map((m) => `${m.name_zh || m.name}（${m.schedule}）${m.purpose ? `—${m.purpose}` : ''}`).join('；')}` : '',
-    c.care?.length ? `在家照顧：${c.care.filter(Boolean).join('；')}` : '',
-    c.warnings?.length ? `回診時機：${c.warnings.filter(Boolean).join('；')}` : '',
+    c.care?.length ? `在家照顧：${c.care.map((x) => x?.text ?? x).filter(Boolean).join('；')}` : '',
+    c.warnings?.length ? `回診時機：${c.warnings.map((x) => x?.text ?? x).filter(Boolean).join('；')}` : '',
   ].filter(Boolean).join('\n');
   try {
     await api('/api/library', jsonBody({

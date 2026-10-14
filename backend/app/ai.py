@@ -300,34 +300,26 @@ class AIService:
         return self.chat_json(system, user, max_tokens=1200)
 
     # ---- 衛教單 ----
-    def education_draft(self, topics: list[str], medicines: list[dict], audience: str = "", terms: dict | None = None) -> tuple[dict | None, dict]:
-        """產生長輩看得懂的衛教單草稿。用藥的頻率與天數由醫師決定，AI 不得更改或補充劑量。"""
+    def education_draft(self, topics: list[str], medicines: list[dict], audience: str = "") -> tuple[dict | None, dict]:
+        """產生圖卡式衛教單草稿：每個重點 5–10 字，配一張插圖。用藥的頻率與天數由醫師決定，AI 不得更改或補充劑量。"""
         system = (
-            "你協助台灣的家醫科醫師，為病人（多為長輩）寫中文衛教單草稿，醫師會再修改確認。"
-            "用國小程度的白話繁體中文，短句、親切、具體，不用醫學術語（必要時加白話解釋）。"
-            "不寫任何劑量數字（毫克、顆數）、不改變醫師開立的頻率與天數、不做診斷或保證療效。"
+            "你協助台灣的家醫科醫師，把衛教做成「一眼看懂的圖卡式衛教單」，病人多為長輩，醫師會再修改確認。"
+            "原則：只放最重要、和這個病最相關的重點；每個重點 5–10 個字，像海報標語，不寫完整句子、不解釋原因、不重複。"
+            "有多個病灶時，以最需要注意的診斷為中心（例：流感比感冒、咳嗽重要），標題、照顧重點與警訊都要針對它與病人本次的症狀；"
+            "會傳染的病要包含避免傳染家人的做法（例：戴口罩）。警訊挑這個病真正危險的情況，越具體越好（例：嘴唇發紫、叫不太醒）。"
+            "用白話繁體中文，不用醫學術語。不寫任何劑量數字（毫克、顆數）、不改變醫師開立的頻率與天數、不做診斷或保證療效。"
             "回傳 JSON：{"
-            "病名請搭配台灣病人熟悉的說法：只能從輸入的「可用的常見說法」裡挑（不可自行編造），"
-            "在 about 第一次提到病名時寫成「正式病名（俗稱××）」或「正式病名（台語叫××）」，例：帶狀皰疹（俗稱皮蛇）、氣喘（台語叫痚呴）；"
-            "清單中有標「容易混淆」的項目時，about 一定要加一句白話提醒（例：腳底的硬塊很多人叫雞眼，但有時其實是病毒疣，兩者處理不同，請讓醫師看過）。只挑和病名直接對應的說法，症狀、部位或藥品名稱不要放。"
-            "\"title\": 衛教單標題(15字內，例：感冒咳嗽的居家照顧), "
-            "\"about\": 2-3句說明這是什麼問題、通常會怎麼好轉, "
-            "\"aka\": [最多3個你用到的常見說法 {\"term\": 說法, \"lang\": \"華語\" 或 \"台語\"}]（沒有合適的就空陣列）, "
-            "\"medicines\": [對每個輸入藥品回傳 {\"atc_code\": 原樣帶回, \"name_zh\": 台灣常用中文藥名, "
-            "\"purpose\": 一句白話用途(15字內，例：止咳、讓喉嚨比較舒服), \"tip\": 一句服用提醒(飯前或飯後、常見副作用如想睡，20字內)}], "
-            "\"care\": 3-5點在家照顧的做法(每點20字內), "
-            "\"warnings\": 3-4點出現時要馬上回診或就醫的情況(每點20字內), "
-            "\"image_scene\": 一句英文，描述一個適合當衛教插圖的溫暖生活場景(長輩在家照顧自己，例如喝溫水、休息)，不要出現藥品、文字或醫療器材}"
+            "\"main\": 先從病灶中選出最需要注意的一個診斷（原樣照抄病灶名稱）, "
+            "\"title\": 衛教單標題(12字內，以 main 為主並帶到最主要的症狀，例：流感發燒怎麼照顧), "
+            "\"about\": 一句話(25字內)說明這是什麼、通常多久會好, "
+            "\"medicines\": [對每個輸入藥品回傳 {\"atc_code\": 原樣帶回, \"name_zh\": 成分的台灣常用中文名(例：右美沙芬；不要寫劑型或「止咳藥」這類統稱), "
+            "\"purpose\": 用途(8字內，例：退燒止痛), \"tip\": 具體的注意事項(10字內，例：會想睡、別開車；不可寫吃藥的時間或次數，那由醫師決定；沒有就空字串，不要寫「依醫囑」)}], "
+            "\"care\": 3–4 個在家要做的重點（會傳染的病一定要有一張避免傳染家人，例：戴口罩勤洗手） [{\"text\": 5–10字(例：多喝溫開水), \"emoji\": 一個代表這件事的 emoji, "
+            "\"scene\": 一句英文，只描述動作（例：drinking a cup of warm water），人物的年齡性別由程式決定，不要寫}], "
+            "\"warnings\": 4–6 個要馬上就醫的警訊 [{\"text\": 5–10字(例：呼吸很喘), \"emoji\": 一個 emoji, "
+            "\"scene\": 一句英文，只描述症狀的樣子（例：struggling to breathe, hand on chest），不要寫人物的年齡性別}]}"
         )
         lines = [f"病灶／主題：{'、'.join(topics)}"]
-        terms = terms or {}
-        if terms.get("colloquial") or terms.get("taiwanese"):
-            lines.append("可用的常見說法（只能從這裡挑）：")
-            lines += [f"- 容易混淆：病人常說「{c['term']}」，但不一定是{'、'.join(c['medical'])}（{c['note']}）。不可寫成俗稱，只能寫成提醒"
-                      if c.get("confusable") else
-                      f"- 華語俗稱「{c['term']}」＝{'、'.join(c['medical'])}{'；' + c['note'] if c.get('note') else ''}"
-                      for c in terms.get("colloquial", [])]
-            lines += [f"- 台語「{t['word']}」：{t['meaning']}" for t in terms.get("taiwanese", [])]
         if audience:
             lines.append(f"病人：{audience}")
         if medicines:
@@ -337,8 +329,31 @@ class AIService:
             lines.append("這份是一般衛教，沒有開立藥品，medicines 回傳空陣列。")
         return self.chat_json(system, "\n".join(lines), max_tokens=2500)
 
+    def education_card_image(self, scene: str, topic: str = "", person: str = "an adult", warning: bool = False) -> tuple[bytes | None, dict]:
+        """圖卡插圖：一個重點一張，同一套畫風。
+        依「主題＋對象＋這張卡的重點＋風格」組成提示：人物照病人的年齡性別畫，
+        滿版、大而清楚的單一主體、高對比、色盲友善；紅色只留給回診警訊。不含文字與藥品，標語由網頁疊加。"""
+        palette = (
+            "a soft coral-red background to signal a warning sign, otherwise calm colors on the character"
+            if warning else
+            "a soft sage-green or sky-blue background, no red"
+        )
+        prompt = (
+            "One card of a patient education infographic"
+            f"{f' about {topic}' if topic else ''}. "
+            f"Audience and main character: {person}. Draw the character to match this age and gender exactly. "
+            f"This card shows: {scene}. "
+            "Composition: a full-bleed square illustration that fills the entire canvas edge to edge with {palette}; "
+            "no circle, no frame, no border, no white margins, no vignette. "
+            "A single large, clear subject, upper body, the action or symptom instantly recognizable at a glance like a big icon. "
+            "Style: warm and reassuring clean flat vector illustration, rounded shapes, bold clean outlines, high contrast, "
+            "colorblind-friendly colors, consistent with a matching icon set. "
+            "Strictly no text, no letters, no numbers, no speech bubbles, no logos, no pills, tablets, capsules or medicine packaging, no syringes."
+        ).replace("{palette}", palette)
+        return self.generate_image(prompt, size="1024x1024")
+
     def education_image(self, scene: str) -> tuple[bytes | None, dict]:
-        """衛教插圖：不含文字與藥品，中文說明由網頁疊加。"""
+        """舊版衛教單的整張插圖：不含文字與藥品，中文說明由網頁疊加。"""
         prompt = (
             "A warm, gentle flat illustration for a patient health-education leaflet for elderly people in Taiwan. "
             f"Scene: {scene}. "

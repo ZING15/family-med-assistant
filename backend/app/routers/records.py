@@ -202,18 +202,112 @@ def catalog():
 
 # ---------- 病歷 ----------
 
+# ---------- 病人歸檔：同一個練習代號的病歷就是同一位病人的歷次就診（不收真實身分，不另建病人資料表） ----------
+
+CODE_PATTERN = re.compile(r"^練習-(\d+)$")
+
+
+class NewRecordIn(BaseModel):
+    patient_code: str = Field("", max_length=30)   # 回診病人的代號；空白表示新病人，自動編號
+
+
+def _visit_key(r: dict) -> tuple:
+    return (r["visit_date"] or r["created_at"][:10], r["created_at"])
+
+
+def _visits(rows: list[dict]) -> dict[str, list[dict]]:
+    """依代號分組，每位病人的病歷依就診日期排序（舊到新）。"""
+    groups: dict[str, list[dict]] = {}
+    for r in rows:
+        if r["patient_code"]:
+            groups.setdefault(r["patient_code"], []).append(r)
+    for visits in groups.values():
+        visits.sort(key=_visit_key)
+    return groups
+
+
+def _with_visit_no(records: list[dict], groups: dict[str, list[dict]]) -> list[dict]:
+    order = {r["id"]: (i, len(v)) for v in groups.values() for i, r in enumerate(v, 1)}
+    return [r | {"visit_no": order.get(r["id"], (1, 1))[0], "visit_total": order.get(r["id"], (1, 1))[1]} for r in records]
+
+
+def _allergy_history(visits: list[dict]) -> list[dict]:
+    """過去所有就診記錄過的過敏（合併），附第一次記錄的日期與病歷。"""
+    seen: dict[str, dict] = {}
+    for r in visits:
+        for a in r["allergies"]:
+            seen.setdefault(a, {"id": a, "since": r["visit_date"] or r["created_at"][:10], "record_id": r["id"]})
+    return list(seen.values())
+
+
+def _visit_summary(r: dict) -> dict:
+    return {
+        "id": r["id"], "visit_date": r["visit_date"] or r["created_at"][:10], "chief_complaint": r["chief_complaint"],
+        "problems": [{"name": c.get("name", ""), "icd10": c.get("icd10", "")} for c in r["conditions"] if c.get("name")],
+        "medicines": [p.get("display_name") or p.get("name_en") or p.get("name_zh", "") for p in r["prescriptions"]],
+        "completed": bool(r["completed_at"]),
+    }
+
+
+def _all_records(con) -> list[dict]:
+    return [_row(r) for r in con.execute("SELECT * FROM records").fetchall()]
+
+
+def _next_code(con) -> str:
+    # 以目前最大的號碼＋1（用病歷總數會和刪除後留下的代號重複）
+    numbers = [int(m.group(1)) for (code,) in con.execute("SELECT patient_code FROM records")
+               if (m := CODE_PATTERN.match(code or ""))]
+    return f"練習-{max(numbers, default=0) + 1:03d}"
+
+
+@router.get("/patients")
+def list_patients():
+    """回診病人清單：最近就診的在前。"""
+    with app_db() as con:
+        groups = _visits(_all_records(con))
+    patients = []
+    for code, visits in groups.items():
+        last = visits[-1]
+        patients.append({
+            "patient_code": code, "age": last["age"], "sex": last["sex"], "visits": len(visits),
+            "last_visit": _visit_key(last)[0], "last_record_id": last["id"],
+            "problems": _visit_summary(last)["problems"],
+            "allergies": [a["id"] for a in _allergy_history(visits)],
+        })
+    patients.sort(key=lambda p: (p["last_visit"], p["last_record_id"]), reverse=True)
+    return {"patients": patients}
+
+
+@router.get("/patients/{code}")
+def get_patient(code: str):
+    with app_db() as con:
+        visits = _visits(_all_records(con)).get(code)
+    if not visits:
+        raise HTTPException(404, "找不到這位病人")
+    return {"patient_code": code, "visits": [_visit_summary(r) for r in visits], "allergies": _allergy_history(visits)}
+
+
 @router.get("/records")
 def list_records():
     with app_db() as con:
-        rows = con.execute("SELECT * FROM records ORDER BY updated_at DESC").fetchall()
-    return {"records": [_row(r) for r in rows]}
+        records = [_row(r) for r in con.execute("SELECT * FROM records ORDER BY updated_at DESC").fetchall()]
+    return {"records": _with_visit_no(records, _visits(records))}
 
 
 @router.post("/records", status_code=201)
-def create_record():
+def create_record(body: NewRecordIn | None = None):
+    """新病人：自動編下一個代號。回診病人：帶入上次的年齡、性別，以及過去所有就診記錄過的過敏。"""
+    code = (body.patient_code if body else "").strip()
     with app_db() as con:
-        n = con.execute("SELECT COUNT(*) FROM records").fetchone()[0]
-        record_id = _insert(con, {"patient_code": f"練習-{n + 1:03d}"})
+        if not code:
+            record_id = _insert(con, {"patient_code": _next_code(con)})
+        else:
+            visits = _visits(_all_records(con)).get(code)
+            if not visits:
+                raise HTTPException(404, "找不到這位病人")
+            last = visits[-1]
+            record_id = _insert(con, {"patient_code": code, "age": last["age"], "sex": last["sex"],
+                                      "allergies": [a["id"] for a in _allergy_history(visits)]})
     return get_record(record_id)
 
 
@@ -223,7 +317,12 @@ def get_record(record_id: int):
         row = con.execute("SELECT * FROM records WHERE id = ?", (record_id,)).fetchone()
     if not row:
         raise HTTPException(404, "找不到這份病歷")
-    return _row(row)
+    record = _row(row)
+    if record["patient_code"]:
+        with app_db() as con:
+            same = [_row(r) for r in con.execute("SELECT * FROM records WHERE patient_code = ?", (record["patient_code"],))]
+        return _with_visit_no([record], _visits(same))[0]
+    return record | {"visit_no": 1, "visit_total": 1}
 
 
 @router.put("/records/{record_id}")

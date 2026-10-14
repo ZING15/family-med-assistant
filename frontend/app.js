@@ -372,7 +372,6 @@ $('#libraryMain').addEventListener('submit', async (event) => {
 
 $('#librarySearchForm').addEventListener('submit', (event) => {
   event.preventDefault();
-  libraryState.mode = $('#librarySearchMode').value;
   setLibraryHash({ q: $('#libraryQuery').value.trim(), topic: libraryState.topic });
 });
 
