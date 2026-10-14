@@ -148,6 +148,17 @@ def _excluded(text: str, index: int, length: int, phrases: list[str]) -> bool:
     return False
 
 
+def _word_ok(text: str, index: int, needle: str) -> bool:
+    """英文關鍵字要對在字首（URI 不可對到 dysuria、pruritus）；4 個字母以內的短縮寫也要對在字尾。中文不受影響。"""
+    if needle[:1].isascii() and needle[:1].isalpha() and index > 0 and text[index - 1].isascii() and text[index - 1].isalnum():
+        return False
+    end = index + len(needle)
+    if len(needle) <= 4 and needle[-1:].isascii() and needle[-1:].isalpha() and end < len(text) \
+            and text[end].isascii() and text[end].isalpha():
+        return False
+    return True
+
+
 def detect_keywords(text: str) -> list[dict]:
     """以關鍵字比對病灶；關鍵字前方 4 字內有否定詞（無、否認…）時不算。"""
     found = []
@@ -159,7 +170,8 @@ def detect_keywords(text: str) -> list[dict]:
             hit = None
             while (index := lowered.find(needle, start)) != -1:
                 before = lowered[max(0, index - 4):index]
-                if not NEGATION.search(before) and not _excluded(lowered, index, len(needle), cond.get("exclude", [])):
+                if _word_ok(lowered, index, needle) and not NEGATION.search(before) \
+                        and not _excluded(lowered, index, len(needle), cond.get("exclude", [])):
                     hit = alias
                     break
                 start = index + len(needle)
@@ -172,7 +184,8 @@ def detect_keywords(text: str) -> list[dict]:
 # 英文句點也斷句（避開 38.5 這類小數）；別人的症狀或接觸史（同學發燒、sick contact）不算病人本人的症狀
 SENTENCE_DOT = re.compile(r"(?<!\d)\.(?!\d)")
 OTHER_PERSON = re.compile(r"(家人|家裡|同學|同事|室友|小孩|孩子|兒子|女兒|太太|先生|老公|老婆|爸爸|媽媽|父親|母親|有人|"
-                          r"\b(?:contact|exposure|family|classmates?|colleagues?|roommates?|sons?|daughters?|wife|husband)\b)", re.IGNORECASE)
+                          r"哥哥|姐姐|姊姊|弟弟|妹妹|兄弟|姊妹|姐妹|阿公|阿嬤|爺爺|奶奶|外公|外婆|"
+                          r"\b(?:contact|exposure|family|classmates?|colleagues?|roommates?|sons?|daughters?|wife|husband|brothers?|sisters?|siblings?)\b)", re.IGNORECASE)
 
 
 def detect_symptoms(text: str) -> list[dict]:
@@ -188,7 +201,7 @@ def detect_symptoms(text: str) -> list[dict]:
             for clause in clauses:
                 start = 0
                 while (index := clause.find(needle, start)) != -1:
-                    if not NEGATION.search(clause[max(0, index - 4):index]) \
+                    if _word_ok(clause, index, needle) and not NEGATION.search(clause[max(0, index - 4):index]) \
                             and not OTHER_PERSON.search(clause[:index]) \
                             and not _excluded(clause, index, len(needle), symptom.get("exclude", [])):
                         hit = alias
