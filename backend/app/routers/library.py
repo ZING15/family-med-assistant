@@ -11,31 +11,20 @@ F-01／F-02 學習庫 API。
 from __future__ import annotations
 
 import json
-import uuid
 
 from typing import Literal
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
-from openai import OpenAIError
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from ..ai import TranscriptionError, ai, cosine
-from ..config import UPLOAD_DIR
+from ..ai import AIServiceError, TranscriptionError, ai, cosine
+from .uploads import IMAGE_TYPES, audio_mime, load_upload
+from .. import storage
 from ..db import app_db, now
 
 router = APIRouter(prefix="/api/library", tags=["library"])
 
-LIBRARY_UPLOADS = UPLOAD_DIR / "library"
-ALLOWED_TYPES = {"image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp", "image/gif": ".gif"}
-MAX_BYTES = 10 * 1024 * 1024
-# Azure 語音轉文字支援的格式；瀏覽器錄音在 Chrome 為 webm、Safari 為 mp4
-AUDIO_EXTENSIONS = {".webm", ".mp3", ".mp4", ".m4a", ".wav", ".mpeg", ".mpga"}
-AUDIO_MIME_EXT = {
-    "audio/webm": ".webm", "audio/mp4": ".m4a", "audio/x-m4a": ".m4a", "audio/m4a": ".m4a",
-    "audio/mpeg": ".mp3", "audio/mp3": ".mp3", "audio/wav": ".wav", "audio/x-wav": ".wav",
-    "audio/wave": ".wav", "video/webm": ".webm", "video/mp4": ".mp4",
-}
-MAX_AUDIO_BYTES = 25 * 1024 * 1024
+ALLOWED_TYPES = IMAGE_TYPES  # 新增筆記時檢查圖片副檔名
 SEMANTIC_MIN_SCORE = 0.4
 
 
@@ -97,11 +86,6 @@ def _embedding_text(data: LibraryItemIn) -> str:
     )
 
 
-def _resolve_upload(image_path: str):
-    path = (UPLOAD_DIR / image_path).resolve()
-    if not str(path).startswith(str(UPLOAD_DIR.resolve())) or not path.is_file():
-        raise HTTPException(404, "找不到上傳的圖片")
-    return path
 
 
 _topic_vectors: dict[str, list[float]] = {}
@@ -141,40 +125,6 @@ def _related_topics(suggestion: dict, topics: list[str], limit: int = 3) -> list
     return [t for t in scored[:limit] if t["score"] >= 0.35]
 
 
-@router.post("/uploads")
-async def upload_image(file: UploadFile = File(...)):
-    if file.content_type not in ALLOWED_TYPES:
-        raise HTTPException(415, "只接受 JPG、PNG、WebP 或 GIF 圖片")
-    content = await file.read()
-    if len(content) > MAX_BYTES:
-        raise HTTPException(413, "圖片不可超過 10MB")
-    LIBRARY_UPLOADS.mkdir(parents=True, exist_ok=True)
-    name = f"{uuid.uuid4().hex}{ALLOWED_TYPES[file.content_type]}"
-    (LIBRARY_UPLOADS / name).write_bytes(content)
-    image_path = f"library/{name}"
-    return {"image_path": image_path, "image_url": f"/uploads/{image_path}"}
-
-
-@router.post("/audio")
-async def upload_audio(file: UploadFile = File(...)):
-    mime = (file.content_type or "").split(";")[0].strip()
-    ext = AUDIO_MIME_EXT.get(mime) or next(
-        (e for e in AUDIO_EXTENSIONS if (file.filename or "").lower().endswith(e)), None
-    )
-    if not ext:
-        raise HTTPException(415, "只接受 mp3、m4a、wav、webm 或 mp4 音檔")
-    content = await file.read()
-    if len(content) > MAX_AUDIO_BYTES:
-        raise HTTPException(413, "音檔不可超過 25MB（約 20 分鐘以內的錄音）")
-    if not content:
-        raise HTTPException(422, "音檔是空的，請重新錄音")
-    LIBRARY_UPLOADS.mkdir(parents=True, exist_ok=True)
-    name = f"{uuid.uuid4().hex}{ext}"
-    (LIBRARY_UPLOADS / name).write_bytes(content)
-    audio_path = f"library/{name}"
-    return {"audio_path": audio_path, "audio_url": f"/uploads/{audio_path}"}
-
-
 @router.post("/analyze")
 def analyze(body: AnalyzeIn):
     """AI 整理內容，只回傳建議，不自動儲存。"""
@@ -182,20 +132,20 @@ def analyze(body: AnalyzeIn):
     topics = _existing_topics()
     try:
         if body.mode == "image":
-            path = _resolve_upload(body.image_path)
-            mime = next((m for m, ext in ALLOWED_TYPES.items() if path.suffix == ext), "image/png")
-            suggestion, meta = ai.analyze_figure(path.read_bytes(), mime, topics)
+            data = load_upload(body.image_path, "library", "圖片")
+            mime = next((m for m, ext in IMAGE_TYPES.items() if body.image_path.endswith(ext)), "image/png")
+            suggestion, meta = ai.analyze_figure(data, mime, topics)
         elif body.mode == "text":
             if not body.text.strip():
                 raise HTTPException(422, "請先輸入筆記內容")
             suggestion, meta = ai.analyze_text(body.text, topics=topics)
         else:
-            path = _resolve_upload(body.audio_path)
-            text, meta = ai.transcribe(path)
+            data = load_upload(body.audio_path, "library", "錄音")
+            text, meta = ai.transcribe(data, audio_mime(body.audio_path))
             if text is None:
                 return {
                     "suggestion": {}, "transcript": "", "ai_meta": meta,
-                    "message": "語音辨識尚未設定（需要 AZURE_SPEECH_MODEL 或 AZURE_OPENAI_TRANSCRIBE_DEPLOYMENT），請手動輸入內容。",
+                    "message": "語音辨識尚未設定（需要 GEMINI_API_KEY），請手動輸入內容。",
                 }
             transcript = text.strip()
             if not transcript:
@@ -203,15 +153,15 @@ def analyze(body: AnalyzeIn):
             transcribe_model = meta["model"]
             suggestion, meta = ai.analyze_text(transcript, spoken=True, topics=topics)
             meta = {**meta, "model": f"{transcribe_model} + {meta['model']}" if meta["model"] else transcribe_model}
-    except OpenAIError as error:
-        raise HTTPException(502, f"AI 服務錯誤：{getattr(error, 'message', str(error))[:200]}")
+    except AIServiceError as error:
+        raise HTTPException(error.status if error.status in (429, 503) else 502, error.message)
     except TranscriptionError as error:
         raise HTTPException(502, str(error))
 
-    message = "" if meta["mode"] == "azure" else "示範模式：尚未設定 Azure OpenAI，請手動輸入內容。"
+    message = "" if meta["mode"] != "demo" else "示範模式：尚未設定 Gemini（GEMINI_API_KEY），請手動輸入內容。"
     try:
-        related = _related_topics(suggestion, topics) if meta["mode"] == "azure" else []
-    except OpenAIError:
+        related = _related_topics(suggestion, topics) if meta["mode"] != "demo" else []
+    except AIServiceError:
         related = []
     return {
         "suggestion": suggestion,
@@ -326,10 +276,10 @@ def propose_topics():
     ]
     try:
         result, meta = ai.propose_topics(items)
-    except OpenAIError as error:
-        raise HTTPException(502, f"AI 服務錯誤：{getattr(error, 'message', str(error))[:200]}")
+    except AIServiceError as error:
+        raise HTTPException(error.status if error.status in (429, 503) else 502, error.message)
     if result is None:
-        raise HTTPException(503, "需要設定 Azure OpenAI 才能使用 AI 整理主題")
+        raise HTTPException(503, "需要設定 Gemini（GEMINI_API_KEY） 才能使用 AI 整理主題")
     current = {i["id"]: i for i in items}
     assignments = [
         {"id": a["id"], "title": current[a["id"]]["title"], "old": current[a["id"]]["topic"], "topic": str(a["topic"]).strip()}
@@ -356,16 +306,22 @@ def get_item(item_id: int):
     return _row_to_item(row)
 
 
+def _check_key(key: str, kind: str) -> None:
+    # 只檢查是學習庫上傳的檔案鍵，不重新下載檔案
+    if not key.startswith("library/") or not storage.KEY_PATTERN.fullmatch(key):
+        raise HTTPException(404, f"找不到上傳的{kind}，請重新上傳")
+
+
 def _validate(data: LibraryItemIn) -> None:
     """來源為選填；各類型只檢查必要的內容是否存在。"""
     if data.kind == "figure":
         if not data.image_path:
             raise HTTPException(422, "圖片筆記需要上傳圖片")
-        _resolve_upload(data.image_path)
+        _check_key(data.image_path, "圖片")
     elif data.kind == "voice":
         if not data.audio_path:
             raise HTTPException(422, "語音筆記需要錄音或上傳音檔")
-        _resolve_upload(data.audio_path)
+        _check_key(data.audio_path, "錄音")
     elif data.kind == "note" and not (data.note.strip() or data.extracted_text.strip()):
         raise HTTPException(422, "請輸入筆記內容")
 
@@ -381,7 +337,7 @@ def create_item(data: LibraryItemIn):
                (kind, title, topic, tags, note, source_title, source_url, source_year, image_path,
                 audio_path, extracted_text, ai_summary, ai_meta, ref_type, ref_id, embedding,
                 created_at, updated_at)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id""",
             (
                 data.kind, data.title.strip(), data.topic.strip(),
                 json.dumps([t.strip() for t in data.tags if t.strip()], ensure_ascii=False),
@@ -391,7 +347,7 @@ def create_item(data: LibraryItemIn):
                 json.dumps(vector) if vector else "", ts, ts,
             ),
         )
-        item_id = cur.lastrowid
+        item_id = cur.fetchone()[0]
     return get_item(item_id)
 
 
@@ -425,4 +381,4 @@ def delete_item(item_id: int):
     # 只刪學習庫自己上傳的檔案；藥品卡的 TFDA 連結、衛教單的插圖由各自功能管理
     for key in ("image_path", "audio_path"):
         if item[key] and item[key].startswith("library/"):
-            (UPLOAD_DIR / item[key]).unlink(missing_ok=True)
+            storage.delete(item[key])

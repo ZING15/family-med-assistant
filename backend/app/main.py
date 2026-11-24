@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import logging
 import secrets
 import time
 
@@ -10,10 +11,11 @@ from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
+from . import storage
 from .ai import ai
-from .config import APP_PASSWORD, DRUG_DB, FRONTEND_DIR, UPLOAD_DIR
-from .db import app_db, init_app_db
-from .routers import education, library, records
+from .config import APP_PASSWORD, DRUG_DB, FRONTEND_DIR
+from .db import USE_POSTGRES, app_db, init_app_db
+from .routers import education, library, records, uploads
 
 app = FastAPI(title="新手家醫看診助手 API", version="0.2.0")
 
@@ -50,10 +52,7 @@ async def require_password(request, call_next):
 
 
 def cleanup_orphan_uploads(max_age_hours: int = 6) -> int:
-    """刪除上傳後沒有存成筆記（例如按了取消）且超過時限的檔案。"""
-    folder = UPLOAD_DIR / "library"
-    if not folder.is_dir():
-        return 0
+    """刪除上傳後沒有存成筆記（例如按了取消）、以及處理到一半的看診錄音，且超過時限的檔案。"""
     with app_db() as con:
         used = {
             path
@@ -62,20 +61,25 @@ def cleanup_orphan_uploads(max_age_hours: int = 6) -> int:
             if path
         }
     cutoff = time.time() - max_age_hours * 3600
-    removed = 0
-    for file in folder.iterdir():
-        if f"library/{file.name}" not in used and file.stat().st_mtime < cutoff:
-            file.unlink()
-            removed += 1
-    return removed
+    stale = [key for folder in ("library", "tmp/voice") for key, mtime in storage.list_keys(folder)
+             if key not in used and mtime < cutoff]
+    storage.delete(*stale)
+    return len(stale)
 
 
-@app.on_event("startup")
 def startup() -> None:
+    """建立資料表與檔案空間。雲端（Vercel）每次冷啟動都會執行，所有步驟都可重複執行。"""
     init_app_db()
-    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-    cleanup_orphan_uploads()
+    storage.ensure_bucket()
+    try:
+        cleanup_orphan_uploads()
+    except Exception:  # 清理失敗不影響網站使用
+        logging.exception("清理上傳檔失敗")
     records.seed_records()
+
+
+# 匯入時就初始化：Vercel 的無伺服器函式不一定會觸發 FastAPI 的 startup 事件
+startup()
 
 
 @app.get("/api/health")
@@ -84,6 +88,8 @@ def health():
         "status": "ok",
         "ai": ai.status(),
         "drug_reference": DRUG_DB.is_file(),
+        "database": "postgres" if USE_POSTGRES else "sqlite",
+        "storage": "supabase" if storage.USE_SUPABASE else "local",
         "notice": "練習資料，非臨床建議",
     }
 
@@ -91,7 +97,6 @@ def health():
 app.include_router(library.router)
 app.include_router(records.router)
 app.include_router(education.router)
+app.include_router(uploads.router)
 
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

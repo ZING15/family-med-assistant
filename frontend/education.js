@@ -75,7 +75,8 @@ async function openSheet(id) {
     edu.sheet = await api(`/api/education/${id}`);
     renderSheetList();
     // 圖卡式衛教單的插圖要全部畫好才顯示：剛產生的、或上次畫到一半離開的，都直接接著畫
-    if (isCardSheet() && missingCards().length) drawAllCards();
+    // 免費方案沒有生圖額度時不自動畫圖，卡片顯示圖示
+    if (isCardSheet() && missingCards().length && aiStatus.image) drawAllCards();
     else renderSheet();
   } catch (error) {
     showToast(error.message);
@@ -158,7 +159,7 @@ function cardArtHtml(card, key, i) {
     ? `<img src="/uploads/${escapeHtml(card.image)}" alt="${escapeHtml(card.text)}的插圖" />`
     : `<span class="edu-card-emoji" aria-hidden="true">${escapeHtml(card.emoji || '•')}</span>`;
   return `${art}
-    <button type="button" class="edu-ui edu-card-redraw" data-redraw="${key}.${i}" aria-label="${card.image ? '重畫' : '畫'}這張插圖" title="${card.image ? '重畫這張插圖' : 'AI 畫這張插圖'}">${icon('sparkles')}</button>`;
+    <button type="button" class="edu-ui edu-card-redraw" ${aiStatus.image ? '' : 'hidden'} data-redraw="${key}.${i}" aria-label="${card.image ? '重畫' : '畫'}這張插圖" title="${card.image ? '重畫這張插圖' : 'AI 畫這張插圖'}">${icon('sparkles')}</button>`;
 }
 
 function cardsHtml(key, cards, placeholder) {
@@ -228,7 +229,7 @@ const footStatus = () => (edu.sheet.confirmed ? `AI 產生，經醫師確認・$
 
 function toolbarHtml() {
   const s = edu.sheet;
-  const meta = s.ai_meta?.mode === 'azure' ? `草稿由 ${escapeHtml(s.ai_meta.model)} 產生` : '空白範本（AI 未設定）';
+  const meta = s.ai_meta?.mode && s.ai_meta.mode !== 'demo' ? `草稿由 ${escapeHtml(s.ai_meta.model)} 產生` : '空白範本（AI 未設定）';
   return `
     <div class="edu-status ${s.confirmed ? 'ok' : ''}">
       ${s.confirmed ? `${icon('check')}醫師已確認・${sheetDate(s.confirmed_at)}` : `${icon('pencil')}草稿：點文字即可修改`}

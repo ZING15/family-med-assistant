@@ -456,7 +456,7 @@ function openViewer(item) {
       <span>${escapeHtml(item.source_title || '—')}${item.source_year ? `（${escapeHtml(item.source_year)}）` : ''}</span>
       ${url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">開啟原始來源${icon('external-link')}</a>` : ''}
     </div>` : ''}
-    ${item.ai_summary ? `<div class="viewer-block"><b>摘要 ${meta.mode === 'azure' ? '<span class="ai-label">AI 產生，待醫師確認</span>' : ''}</b><p>${escapeHtml(item.ai_summary)}</p></div>` : ''}
+    ${item.ai_summary ? `<div class="viewer-block"><b>摘要 ${meta.mode && meta.mode !== 'demo' ? '<span class="ai-label">AI 產生，待醫師確認</span>' : ''}</b><p>${escapeHtml(item.ai_summary)}</p></div>` : ''}
     ${item.kind === 'note' && item.note ? `<div class="viewer-block"><b>筆記內容</b><p>${escapeHtml(item.note)}</p></div>` : ''}
     ${item.kind === 'voice' && item.extracted_text ? `<details class="viewer-block" open><summary><b>逐字稿</b></summary><p>${escapeHtml(item.extracted_text)}</p></details>` : ''}
     ${item.kind === 'figure' && item.extracted_text ? `<details class="viewer-block"><summary><b>圖中文字</b></summary><p>${escapeHtml(item.extracted_text)}</p></details>` : ''}
@@ -661,10 +661,16 @@ async function runAnalysis(payload, loadingText) {
   form.title.focus();
 }
 
-async function uploadFile(endpoint, file, fieldName = 'file') {
-  const data = new FormData();
-  data.append(fieldName, file, file.name || 'recording');
-  return api(endpoint, { method: 'POST', body: data });
+// 上傳分兩步：先向後端要上傳網址，再把檔案直接送過去（雲端時直接送到 Supabase，不經過網站主機）
+async function uploadDirect(file, purpose) {
+  const sign = await api('/api/uploads/sign', jsonBody({
+    purpose, filename: file.name || 'recording', content_type: file.type || '', size: file.size,
+  }));
+  const response = await fetch(sign.upload_url, {
+    method: 'PUT', headers: { 'Content-Type': file.type || 'application/octet-stream' }, body: file,
+  });
+  if (!response.ok) throw new Error(`上傳失敗（${response.status}），請重新上傳`);
+  return sign;
 }
 
 /* 圖片 */
@@ -673,7 +679,8 @@ async function handleImage(file) {
   $('#loadingText').textContent = '上傳圖片中…';
   showStep('loading');
   try {
-    uploaded = await uploadFile('/api/library/uploads', file);
+    const sent = await uploadDirect(file, 'library-image');
+    uploaded = { image_path: sent.key, image_url: sent.url };
     await runAnalysis({ mode: 'image', image_path: uploaded.image_path }, 'AI 辨識圖片中…');
   } catch (error) {
     showStep('input');
@@ -695,7 +702,8 @@ async function handleAudio(file) {
   $('#loadingText').textContent = '上傳音檔中…';
   showStep('loading');
   try {
-    uploaded = await uploadFile('/api/library/audio', file);
+    const sent = await uploadDirect(file, 'library-audio');
+    uploaded = { audio_path: sent.key, audio_url: sent.url };
     await runAnalysis({ mode: 'voice', audio_path: uploaded.audio_path }, 'AI 轉逐字稿並整理中…');
   } catch (error) {
     showStep('input');

@@ -18,16 +18,15 @@ import uuid
 from urllib.parse import urlparse
 
 from fastapi import APIRouter, HTTPException, Response
-from openai import OpenAIError
 from pydantic import BaseModel, Field
 
-from ..ai import ImageGenerationError, ai
-from ..config import UPLOAD_DIR, azure
+from ..ai import AIServiceError, ImageGenerationError, ai
+from .. import storage
+from ..config import gemini
 from ..db import app_db, now
 
 router = APIRouter(prefix="/api", tags=["education"])
 
-IMAGE_DIR = UPLOAD_DIR / "education"
 # 給長輩看的服用頻率寫法
 FREQUENCY_TEXT = {
     "QD": "每天 1 次", "BID": "每天 2 次（早、晚）", "TID": "每天 3 次（三餐）",
@@ -124,8 +123,8 @@ def _draft(topics: list[str], medicines: list[dict], audience: str, patient: dic
     """AI 草稿；未設定 AI 時給空白範本，醫師仍可手動完成。"""
     try:
         result, meta = ai.education_draft(topics, medicines, audience)
-    except OpenAIError as error:
-        raise HTTPException(502, f"AI 服務錯誤：{getattr(error, 'message', str(error))[:200]}")
+    except AIServiceError as error:
+        raise HTTPException(error.status if error.status in (429, 503) else 502, error.message)
     result = result or {}
     by_atc = {m.get("atc_code"): m for m in result.get("medicines", []) if isinstance(m, dict)}
     for med in medicines:
@@ -191,11 +190,12 @@ def create_sheet(body: SheetCreate):
     with app_db() as con:
         cur = con.execute(
             """INSERT INTO education_sheets (record_id, topic, title, content, ai_meta, created_at, updated_at)
-               VALUES (?,?,?,?,?,?,?)""",
+               VALUES (?,?,?,?,?,?,?) RETURNING id""",
             (body.record_id, "、".join(topics), draft["title"], json.dumps(draft["content"], ensure_ascii=False),
              json.dumps(meta, ensure_ascii=False), stamp, stamp),
         )
-    return _get(cur.lastrowid)
+        sheet_id = cur.fetchone()[0]
+    return _get(sheet_id)
 
 
 @router.put("/education/{sheet_id}")
@@ -222,15 +222,14 @@ def create_image(sheet_id: int, regenerate: bool = False):
         data, meta = ai.education_image(scene)
     except ImageGenerationError as error:
         raise HTTPException(503 if error.status != 429 else 429, _image_error(error))
-    except OpenAIError as error:
-        raise HTTPException(502, f"AI 生圖錯誤：{getattr(error, 'message', str(error))[:200]}")
+    except AIServiceError as error:
+        raise HTTPException(error.status if error.status in (429, 503) else 502, error.message)
     if data is None:
-        raise HTTPException(503, "需要設定 Azure OpenAI 生圖模型才能產生衛教圖")
-    IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+        raise HTTPException(503, "AI 插圖目前未開啟（Gemini 免費方案沒有生圖額度）")
     name = f"education/{sheet_id}-{uuid.uuid4().hex[:10]}.png"
-    (UPLOAD_DIR / name).write_bytes(data)
+    storage.save(name, data, "image/png")
     if sheet["image_path"]:
-        (UPLOAD_DIR / sheet["image_path"]).unlink(missing_ok=True)
+        storage.delete(sheet["image_path"])
     with app_db() as con:
         # 換了插圖，醫師需要重新確認
         con.execute(
@@ -257,15 +256,14 @@ def create_card_image(sheet_id: int, section: str, index: int):
         )
     except ImageGenerationError as error:
         raise HTTPException(429 if error.status == 429 else 503, _image_error(error))
-    except OpenAIError as error:
-        raise HTTPException(502, f"AI 生圖錯誤：{getattr(error, 'message', str(error))[:200]}")
+    except AIServiceError as error:
+        raise HTTPException(error.status if error.status in (429, 503) else 502, error.message)
     if data is None:
-        raise HTTPException(503, "需要設定 Azure OpenAI 生圖模型才能產生插圖")
-    IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+        raise HTTPException(503, "AI 插圖目前未開啟（Gemini 免費方案沒有生圖額度）")
     name = f"education/{sheet_id}-{section}-{uuid.uuid4().hex[:10]}.png"
-    (UPLOAD_DIR / name).write_bytes(data)
+    storage.save(name, data, "image/png")
     if card.get("image") in _card_images(sheet):
-        (UPLOAD_DIR / card["image"]).unlink(missing_ok=True)
+        storage.delete(card["image"])
     card["image"] = name
     card["scene"] = scene
     with app_db() as con:
@@ -304,10 +302,11 @@ def _person(patient: dict) -> str:
 
 def _image_error(error: ImageGenerationError) -> str:
     messages = {
-        404: f"Azure 上找不到生圖模型部署「{azure.image_deployment}」，請確認 Foundry 的部署名稱和 .env 的 AZURE_OPENAI_IMAGE_DEPLOYMENT 相同",
-        429: "生圖太頻繁，已達每分鐘上限，請等一分鐘再試",
+        404: f"找不到生圖模型「{gemini.image_model}」，請確認 .env 的 GEMINI_IMAGE_MODEL",
+        429: "生圖額度已用完或太頻繁：請等一分鐘再試；免費方案沒有生圖額度，需在 Google AI Studio 啟用付費",
         400: "生圖要求被拒絕，可能是插圖描述觸發內容安全過濾，請修改後再試",
-        401: "生圖模型的金鑰無效，請確認 .env 的金鑰設定",
+        401: "Gemini 金鑰無效，請確認 .env 的 GEMINI_API_KEY",
+        403: "Gemini 金鑰沒有生圖權限，請確認 Google AI Studio 的專案設定",
     }
     return messages.get(error.status, f"AI 生圖錯誤（{error.status}）：{str(error)[:160]}")
 
@@ -329,9 +328,9 @@ def delete_sheet(sheet_id: int):
             "SELECT 1 FROM library_items WHERE image_path = ? LIMIT 1", (sheet["image_path"],)
         ).fetchone() if sheet["image_path"] else None
     if sheet["image_path"] and not in_library:
-        (UPLOAD_DIR / sheet["image_path"]).unlink(missing_ok=True)
+        storage.delete(sheet["image_path"])
     for path in _card_images(sheet):
-        (UPLOAD_DIR / path).unlink(missing_ok=True)
+        storage.delete(path)
 
 
 @router.get("/image-proxy")

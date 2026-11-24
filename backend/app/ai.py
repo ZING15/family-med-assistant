@@ -1,35 +1,39 @@
 """
-Azure OpenAI 封裝。
+AI 服務封裝：Google Gemini（Google AI Studio 金鑰）。
 
-每個能力（對話、視覺、embedding、語音轉文字、生圖）各自判斷是否已設定；未設定時回傳示範結果，
+每個能力（對話、視覺、embedding、語音轉文字、生圖）都用同一把 GEMINI_API_KEY；未設定時回傳示範結果，
 並在回應中標示 mode = "demo"，讓前端顯示「示範模式」。
+模型暫時過載（503）時自動重試，再改用備用模型；額度用完（429）直接告知使用者。
 """
 
 from __future__ import annotations
 
-import base64
+import io
 import json
 import math
 import re
-import shutil
-import subprocess
-import tempfile
-import urllib.error
-import urllib.request
-import uuid
+import time
 from datetime import datetime
-from urllib.parse import urlparse
-from pathlib import Path
 
-import openai
-from openai import AzureOpenAI
 from opencc import OpenCC
 
-from .config import azure
+from .config import gemini
 
-# MAI-Transcribe 的中文輸出為簡體，轉成台灣正體與用語
+# 逐字稿偶爾混入簡體字，轉成台灣正體與用語
 _to_traditional = OpenCC("s2twp").convert
-SPEECH_FORMATS = {".wav", ".mp3", ".flac"}
+# 模型過載時依序改用的備用模型（第一個是設定的主要模型）
+# 只用 Gemini API 免費層列出的模型；3.8 Flash 尖峰時常過載，排在最後
+FALLBACK_CHAT_MODELS = ("gemini-3.5-flash-lite", "gemini-3.8-flash")
+INLINE_AUDIO_LIMIT = 18 * 1024 * 1024   # 超過時改用 Files API 上傳
+
+
+class AIServiceError(RuntimeError):
+    """AI 服務錯誤；status 為 HTTP 狀態碼，message 為給使用者看的說明。"""
+
+    def __init__(self, message: str, status: int = 502):
+        super().__init__(message)
+        self.message = message
+        self.status = status
 
 
 class TranscriptionError(RuntimeError):
@@ -96,47 +100,55 @@ def _normalize(result: dict | None) -> dict:
     return data
 
 
+def _friendly(error) -> AIServiceError:
+    code = getattr(error, "code", 502) or 502
+    message = str(getattr(error, "message", "") or error)[:200]
+    if code == 429:
+        return AIServiceError("AI 額度已用完或太頻繁，請稍後再試（免費額度不足時需在 Google AI Studio 啟用付費）", 429)
+    if code in (503, 504):
+        return AIServiceError("AI 模型目前使用人數過多，請稍後再試", 503)
+    if code in (401, 403):
+        return AIServiceError("Gemini 金鑰無效或沒有權限，請確認 GEMINI_API_KEY", code)
+    return AIServiceError(f"AI 服務錯誤（{code}）：{message}", code)
+
+
+def _parse_json(text: str) -> dict:
+    text = (text or "").strip()
+    text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        match = re.search(r"\{.*\}", text, re.S)
+        if match:
+            return json.loads(match.group(0))
+        raise
+
+
 class AIService:
     def __init__(self) -> None:
-        self._chat = None
-        self._image = None
-        if azure.endpoint and azure.api_key:
-            self._chat = AzureOpenAI(
-                api_key=azure.api_key, azure_endpoint=azure.endpoint, api_version=azure.api_version
-            )
-        self._transcribe = None
-        if azure.endpoint and azure.api_key and azure.transcribe_deployment:
-            # 語音轉文字模型需要較新的 API 版本
-            self._transcribe = AzureOpenAI(
-                api_key=azure.api_key,
-                azure_endpoint=azure.endpoint,
-                api_version=azure.transcribe_api_version,
-            )
-        if azure.image_endpoint and azure.image_api_key and azure.image_deployment:
-            self._image = AzureOpenAI(
-                api_key=azure.image_api_key,
-                azure_endpoint=azure.image_endpoint,
-                api_version=azure.image_api_version,
-            )
+        self._client = None
+        if gemini.api_key:
+            from google import genai
+            from google.genai import types
+
+            self._client = genai.Client(api_key=gemini.api_key, http_options=types.HttpOptions(timeout=170_000))
 
     # ---- 狀態 ----
     @property
     def chat_ready(self) -> bool:
-        return bool(self._chat and azure.chat_deployment)
+        return self._client is not None
 
     @property
     def embedding_ready(self) -> bool:
-        return bool(self._chat and azure.embedding_deployment)
+        return self._client is not None
 
     @property
     def transcribe_ready(self) -> bool:
-        return self._transcribe is not None or bool(
-            azure.speech_model and azure.speech_endpoint and azure.speech_api_key
-        )
+        return self._client is not None
 
     @property
     def image_ready(self) -> bool:
-        return self._image is not None
+        return self._client is not None and gemini.image_enabled
 
     def status(self) -> dict:
         return {
@@ -147,37 +159,68 @@ class AIService:
             "image": self.image_ready,
         }
 
+    # ---- 共用：呼叫模型（過載時重試並改用備用模型） ----
+    def _generate(self, model: str, contents, config, timeout: int = 60) -> tuple[object, str]:
+        """依序嘗試主要模型與備用模型。過載（500／503）先等 2 秒重試一次；逾時（504 或連線逾時）直接換下一個模型。
+        每次呼叫最多等 timeout 秒，避免整個請求超過 Vercel 的 300 秒上限。"""
+        from google.genai import errors, types
+
+        config.http_options = types.HttpOptions(timeout=timeout * 1000)
+        models = [model] + [m for m in FALLBACK_CHAT_MODELS if m != model]
+        last = None
+        for name in models:
+            for attempt in range(2):
+                try:
+                    return self._client.models.generate_content(model=name, contents=contents, config=config), name
+                except errors.APIError as error:
+                    last = error
+                    if error.code in (500, 503) and attempt == 0:
+                        time.sleep(2)
+                        continue
+                    if error.code in (404, 500, 503, 504):
+                        break  # 換下一個模型
+                    raise _friendly(error) from error
+                except Exception as error:  # 連線逾時等網路錯誤
+                    if "timeout" not in type(error).__name__.lower() and "timed out" not in str(error).lower():
+                        raise
+                    last = AIServiceError("AI 模型回應逾時，請稍後再試", 503)
+                    break
+        if isinstance(last, AIServiceError):
+            raise last
+        raise _friendly(last)
+
     # ---- 對話（JSON 結構化輸出） ----
     def chat_json(
         self, system: str, user: str | list, max_tokens: int = 2000, deployment: str = ""
     ) -> tuple[dict | None, dict]:
         if not self.chat_ready:
             return None, _meta("demo")
-        deployment = deployment or azure.chat_deployment
-        response = self._chat.chat.completions.create(
-            model=deployment,
-            messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
-            response_format={"type": "json_object"},
-            # 新一代與推理模型只接受 max_completion_tokens（含推理 token，因此上限放寬），且不支援自訂 temperature
-            max_completion_tokens=max_tokens,
+        from google.genai import types
+
+        config = types.GenerateContentConfig(
+            system_instruction=system,
+            response_mime_type="application/json",
+            # 新一代模型的思考也算在輸出額度內，上限放寬避免 JSON 被截斷
+            max_output_tokens=min(max(max_tokens * 4, 4096), 32768),
         )
-        content = response.choices[0].message.content or "{}"
-        return json.loads(content), _meta("azure", deployment)
+        response, model = self._generate(deployment or gemini.chat_model, user, config)
+        try:
+            return _parse_json(response.text), _meta("gemini", model)
+        except (json.JSONDecodeError, TypeError) as error:
+            raise AIServiceError("AI 回傳的格式不完整，請再試一次") from error
 
     # ---- 學習庫：圖片 ----
     def analyze_figure(self, image_bytes: bytes, mime: str, topics: list[str] = ()) -> tuple[dict, dict]:
+        from google.genai import types
+
         system = (
             "你協助醫師把期刊圖表、評估量表或醫學 AI 查詢結果的截圖整理成學習筆記。"
             "只描述圖中呈現的內容，不做病人診斷或影像判讀。"
             f"回傳 JSON：{{{NOTE_FIELDS}, \"extracted_text\": 圖中可辨識的文字(保留原文與表格結構)}}。"
             + SOURCE_RULE + topic_instruction(list(topics))
         )
-        data_url = f"data:{mime};base64,{base64.b64encode(image_bytes).decode()}"
-        user = [
-            {"type": "text", "text": "請整理這張圖。"},
-            {"type": "image_url", "image_url": {"url": data_url, "detail": "high"}},
-        ]
-        result, meta = self.chat_json(system, user, max_tokens=4000, deployment=azure.vision_deployment)
+        user = [types.Part.from_bytes(data=image_bytes, mime_type=mime), "請整理這張圖。"]
+        result, meta = self.chat_json(system, user, max_tokens=4000, deployment=gemini.vision_model)
         return _normalize(result), meta
 
     # ---- 學習庫：文字與語音逐字稿 ----
@@ -365,151 +408,79 @@ class AIService:
         return self.generate_image(prompt, size="1536x1024")
 
     # ---- 語音轉文字 ----
-    def transcribe(self, audio_path: Path) -> tuple[str | None, dict]:
-        if self._transcribe is not None:
-            with open(audio_path, "rb") as f:
-                response = self._transcribe.audio.transcriptions.create(
-                    model=azure.transcribe_deployment,
-                    file=(audio_path.name, f),
-                    # 提示醫學情境，讓中英夾雜的專有名詞辨識更準
-                    prompt="以下是醫師以繁體中文口述的醫學學習筆記，可能夾雜英文醫學名詞。",
-                )
-            return _to_traditional(response.text), _meta("azure", azure.transcribe_deployment)
-        if azure.speech_model and azure.speech_endpoint and azure.speech_api_key:
-            model = azure.speech_model if azure.speech_model.lower().startswith("mai-") else f"Azure Speech（{azure.speech_locale}）"
-            return _to_traditional(self._speech_transcribe(audio_path)), _meta("azure", model)
-        return None, _meta("demo")
+    def transcribe(self, data: bytes, mime: str) -> tuple[str | None, dict]:
+        """錄音 → 繁體中文逐字稿（學習筆記口述或看診對話皆可）。"""
+        if not self.transcribe_ready:
+            return None, _meta("demo")
+        from google.genai import types
 
-    def _speech_transcribe(self, audio_path: Path) -> str:
-        """Azure Speech 快速轉錄 API。預設模型直接收 webm／m4a；指定 MAI-Transcribe 時改用 enhancedMode，需先轉成 WAV。"""
-        mai = azure.speech_model.lower().startswith("mai-")
-        with tempfile.TemporaryDirectory() as tmp:
-            if mai:
-                path = audio_path if audio_path.suffix in SPEECH_FORMATS else _convert_to_wav(audio_path, Path(tmp))
-                definition = {
-                    "enhancedMode": {
-                        "enabled": True,
-                        "model": azure.speech_model,
-                        # clean：去除「嗯、呃」等贅字，適合整理成筆記
-                        "modelOptions": {"transcribeStyle": "clean"},
-                    }
-                }
-            else:
-                path = audio_path
-                definition = {"locales": [azure.speech_locale]}
-            boundary = uuid.uuid4().hex
-            body = (
-                f'--{boundary}\r\nContent-Disposition: form-data; name="audio"; filename="{path.name}"\r\n'
-                f"Content-Type: application/octet-stream\r\n\r\n"
-            ).encode() + path.read_bytes() + (
-                f'\r\n--{boundary}\r\nContent-Disposition: form-data; name="definition"\r\n\r\n'
-                f"{json.dumps(definition)}\r\n--{boundary}--\r\n"
-            ).encode()
-        host = azure.speech_endpoint.rstrip("/")
-        request = urllib.request.Request(
-            f"{host}/speechtotext/transcriptions:transcribe?api-version={azure.speech_api_version}",
-            data=body,
-            headers={
-                "Ocp-Apim-Subscription-Key": azure.speech_api_key,
-                "Content-Type": f"multipart/form-data; boundary={boundary}",
-            },
+        prompt = (
+            "這是台灣醫師的錄音（可能是口述的學習筆記，或醫師與病人的看診對話）。"
+            "請逐字轉錄成繁體中文（台灣用語），英文醫學名詞與藥名保留英文；"
+            "不要摘要、不要加標題或說明，只輸出逐字稿。聽不清楚的地方略過，不要自行補寫。"
         )
+        mime = mime.split(";")[0] or "audio/webm"
+        if len(data) > INLINE_AUDIO_LIMIT:
+            part = self._client.files.upload(file=io.BytesIO(data), config={"mime_type": mime})
+        else:
+            part = types.Part.from_bytes(data=data, mime_type=mime)
+        config = types.GenerateContentConfig(max_output_tokens=32768)
         try:
-            with urllib.request.urlopen(request, timeout=120) as response:
-                result = json.loads(response.read())
-        except urllib.error.HTTPError as error:
-            raise TranscriptionError(f"語音服務回應 {error.code}：{error.read().decode()[:200]}") from error
-        except urllib.error.URLError as error:
-            raise TranscriptionError(f"無法連線語音服務：{error.reason}") from error
-        return " ".join(p["text"] for p in result.get("combinedPhrases", []))
+            response, model = self._generate(gemini.transcribe_model, [part, prompt], config, timeout=150)
+        except AIServiceError as error:
+            raise TranscriptionError(error.message) from error
+        text = _to_traditional((response.text or "").strip())
+        # 模型有時在中文字之間加空格，去掉（英文詞之間的空格保留）
+        text = re.sub(r"(?<=[\u3000-\u9fff\uff00-\uffef])[ \t]+(?=[\u3000-\u9fff\uff00-\uffef])", "", text)
+        return text, _meta("gemini", model)
 
     # ---- Embedding ----
     def embed(self, text: str) -> list[float] | None:
         if not self.embedding_ready or not text.strip():
             return None
-        response = self._chat.embeddings.create(model=azure.embedding_deployment, input=text[:8000])
-        return response.data[0].embedding
+        vectors = self.embed_many([text[:8000]])
+        return vectors[0] if vectors else None
 
     def embed_many(self, texts: list[str]) -> list[list[float]] | None:
-        """一次呼叫取得多段文字的向量（病灶語意偵測用）。"""
+        """一次取得多段文字的向量（每批最多 100 段）。"""
         if not self.embedding_ready or not texts:
             return None
-        response = self._chat.embeddings.create(model=azure.embedding_deployment, input=[t[:2000] for t in texts])
-        return [d.embedding for d in sorted(response.data, key=lambda d: d.index)]
+        from google.genai import errors, types
+
+        config = types.EmbedContentConfig(output_dimensionality=gemini.embedding_dim)
+        vectors: list[list[float]] = []
+        for start in range(0, len(texts), 100):
+            batch = [t[:2000] or " " for t in texts[start:start + 100]]
+            try:
+                result = self._client.models.embed_content(model=gemini.embedding_model, contents=batch, config=config)
+            except errors.APIError as error:
+                raise _friendly(error) from error
+            vectors += [list(e.values) for e in result.embeddings]
+        return vectors
 
     # ---- 圖片生成 ----
-    # 兩種 API：gpt-image 系列走 Azure OpenAI 的 images.generate；
-    # Microsoft MAI-Image 系列走 Foundry 的 /mai/v1/images/generations（以寬高指定尺寸，不支援 quality）
     def generate_image(self, prompt: str, size: str = "1024x1024") -> tuple[bytes | None, dict]:
         if not self.image_ready:
             return None, _meta("demo")
-        if azure.image_deployment.lower().startswith("mai-"):
-            return self._mai_image(prompt, size)
-        try:
-            response = self._image.images.generate(
-                model=azure.image_deployment, prompt=prompt, size=size, quality=azure.image_quality, n=1
-            )
-        except openai.APIStatusError as error:
-            raise ImageGenerationError(error.status_code, getattr(error, "message", str(error))) from error
-        item = response.data[0]
-        if getattr(item, "b64_json", None):
-            return base64.b64decode(item.b64_json), _meta("azure", azure.image_deployment)
-        return None, _meta("azure", azure.image_deployment)
+        from google.genai import errors, types
 
-    def _mai_image(self, prompt: str, size: str) -> tuple[bytes | None, dict]:
         width, height = (int(x) for x in size.split("x"))
-        # MAI-Image-2.5 單張上限 1,048,576 像素（約 1024×1024）；2.6 為 2,359,296。兩邊都至少 768
-        limit = 1_048_576 if "2.5" in azure.image_deployment else 2_359_296
-        if width * height > limit:
-            scale = (limit / (width * height)) ** 0.5
-            width, height = max(768, int(width * scale) // 16 * 16), max(768, int(height * scale) // 16 * 16)
-        parsed = urlparse(azure.image_endpoint)
-        url = f"{parsed.scheme}://{parsed.netloc}/mai/v1/images/generations"
-        body = json.dumps({"model": azure.image_deployment, "prompt": prompt, "width": width, "height": height}).encode()
-        request = urllib.request.Request(
-            url, data=body, method="POST",
-            headers={"Content-Type": "application/json", "api-key": azure.image_api_key},
-        )
+        ratio = "1:1" if width == height else ("3:2" if width > height else "2:3")
+        config = types.GenerateContentConfig(response_modalities=["IMAGE"], image_config=types.ImageConfig(aspect_ratio=ratio))
         try:
-            with urllib.request.urlopen(request, timeout=180) as response:
-                result = json.loads(response.read())
-        except urllib.error.HTTPError as error:
-            raise ImageGenerationError(error.code, error.read().decode("utf-8", "replace")[:300]) from error
-        except urllib.error.URLError as error:
-            raise ImageGenerationError(502, str(error.reason)) from error
-        images = [d["b64_json"] for d in result.get("data", []) if d.get("b64_json")]
-        meta = _meta("azure", azure.image_deployment) | {"size": f"{width}x{height}"}
-        return (base64.b64decode(images[0]) if images else None), meta
-
-
-def _ffmpeg_path() -> str | None:
-    """優先用系統安裝的 ffmpeg；雲端主機沒有時，改用 imageio-ffmpeg 套件內附的執行檔。"""
-    found = shutil.which("ffmpeg")
-    if found:
-        return found
-    try:
-        import imageio_ffmpeg
-        return imageio_ffmpeg.get_ffmpeg_exe()
-    except (ImportError, RuntimeError):
-        return None
-
-
-def _convert_to_wav(source: Path, folder: Path) -> Path:
-    """瀏覽器錄音多為 webm／m4a，MAI-Transcribe 只收 WAV／MP3／FLAC，以 ffmpeg 轉成 16kHz 單聲道 WAV（預設模型不需要）。"""
-    ffmpeg = _ffmpeg_path()
-    if not ffmpeg:
-        raise TranscriptionError("伺服器需要 ffmpeg 才能轉換這個音檔格式（brew install ffmpeg，或 pip install imageio-ffmpeg）")
-    target = folder / f"{source.stem}.wav"
-    result = subprocess.run(
-        [ffmpeg, "-y", "-loglevel", "error", "-i", str(source), "-ac", "1", "-ar", "16000", str(target)],
-        capture_output=True, text=True, timeout=120,
-    )
-    if result.returncode != 0:
-        raise TranscriptionError(f"音檔轉換失敗：{result.stderr.strip()[:200]}")
-    return target
+            response = self._client.models.generate_content(model=gemini.image_model, contents=prompt, config=config)
+        except errors.APIError as error:
+            raise ImageGenerationError(error.code or 502, str(error.message or error)[:300]) from error
+        parts = [p for c in (response.candidates or []) for p in (c.content.parts if c.content else []) if p.inline_data]
+        meta = _meta("gemini", gemini.image_model) | {"size": ratio}
+        if not parts:
+            raise ImageGenerationError(400, "生圖要求被拒絕，可能觸發內容安全過濾")
+        return parts[0].inline_data.data, meta
 
 
 def cosine(a: list[float], b: list[float]) -> float:
+    if len(a) != len(b):  # 不同模型的向量（例：舊的 OpenAI 向量）不能比較
+        return 0.0
     dot = sum(x * y for x, y in zip(a, b))
     na = math.sqrt(sum(x * x for x in a))
     nb = math.sqrt(sum(y * y for y in b))

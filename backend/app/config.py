@@ -29,6 +29,39 @@ NHI_DB = ROOT / "data" / "drug_reference" / "nhi_drugs.sqlite"
 APP_PASSWORD = env("APP_PASSWORD")
 
 
+# ---- 2026-11 起的雲端：Supabase（Postgres＋Storage）與 Gemini ----
+# 有填 DATABASE_URL 就改用 Postgres；沒填時沿用本機 SQLite（開發用）
+DATABASE_URL = env("DATABASE_URL")
+
+
+class SupabaseSettings:
+    url = env("SUPABASE_URL").rstrip("/")
+    secret_key = env("SUPABASE_SECRET_KEY")
+    bucket = env("SUPABASE_BUCKET", "uploads")   # 私人 bucket：圖片以有時效的簽名網址顯示
+
+    @property
+    def ready(self) -> bool:
+        return bool(self.url and self.secret_key)
+
+
+supabase = SupabaseSettings()
+
+
+class GeminiSettings:
+    api_key = env("GEMINI_API_KEY")
+    chat_model = env("GEMINI_CHAT_MODEL", "gemini-3.6-flash")
+    vision_model = env("GEMINI_VISION_MODEL") or chat_model
+    transcribe_model = env("GEMINI_TRANSCRIBE_MODEL") or chat_model
+    embedding_model = env("GEMINI_EMBEDDING_MODEL", "gemini-embedding-001")
+    embedding_dim = int(env("GEMINI_EMBEDDING_DIM", "768"))
+    image_model = env("GEMINI_IMAGE_MODEL", "gemini-3.1-flash-image")   # Nano Banana 2
+    # 免費方案沒有生圖額度：預設關閉，衛教單卡片改顯示圖示；啟用付費後設 GEMINI_IMAGE_ENABLED=true
+    image_enabled = env("GEMINI_IMAGE_ENABLED", "false").lower() in ("1", "true", "yes")
+
+
+gemini = GeminiSettings()
+
+
 class AzureSettings:
     endpoint = env("AZURE_OPENAI_ENDPOINT")
     api_key = env("AZURE_OPENAI_API_KEY")

@@ -4,18 +4,16 @@ from __future__ import annotations
 
 import json
 import re
-import tempfile
-from pathlib import Path
 from typing import Literal
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
-from openai import OpenAIError
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from .. import recommend as rec
-from ..ai import TranscriptionError, ai
+from ..ai import AIServiceError, TranscriptionError, ai
 from ..db import app_db, now
-from .library import AUDIO_EXTENSIONS, AUDIO_MIME_EXT, MAX_AUDIO_BYTES
+from .. import storage
+from .uploads import audio_mime, load_upload
 
 router = APIRouter(prefix="/api", tags=["records"])
 
@@ -136,7 +134,7 @@ def _insert(con, data: dict) -> int:
         """INSERT INTO records (patient_code, age, sex, visit_date, allergies, chief_complaint, history, vitals, exam,
            assessment, plan, conditions, removed_conditions, dismissed, prescriptions, symptoms, removed_symptoms,
            created_at, updated_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id""",
         (data.get("patient_code", ""), data.get("age", ""), data.get("sex", ""), data.get("visit_date", ts[:10]),
          json.dumps(data.get("allergies", []), ensure_ascii=False),
          data.get("chief_complaint", ""), data.get("history", ""),
@@ -149,7 +147,7 @@ def _insert(con, data: dict) -> int:
          json.dumps(data.get("symptoms", []), ensure_ascii=False),
          json.dumps(data.get("removed_symptoms", []), ensure_ascii=False), ts, ts),
     )
-    return cur.lastrowid
+    return cur.fetchone()[0]
 
 
 def _vitals_text(vitals: dict) -> str:
@@ -372,10 +370,10 @@ def detect_ai(body: TextIn):
     names = [c["name"] for c in rec.conditions()]
     try:
         result, meta = ai.extract_conditions(body.text, names)
-    except OpenAIError as error:
-        raise HTTPException(502, f"AI 服務錯誤：{getattr(error, 'message', str(error))[:200]}")
+    except AIServiceError as error:
+        raise HTTPException(error.status if error.status in (429, 503) else 502, error.message)
     if result is None:
-        raise HTTPException(503, "需要設定 Azure OpenAI 才能使用 AI 偵測")
+        raise HTTPException(503, "需要設定 Gemini（GEMINI_API_KEY） 才能使用 AI 偵測")
     found = []
     for item in result.get("conditions", []):
         cond = rec.condition_by_name(str(item.get("name", "")))
@@ -391,7 +389,7 @@ def _ai_symptoms(s_text: str) -> list[dict]:
         return []
     try:
         result, _ = ai.extract_symptoms(s_text, [s["name"] for s in rec.symptoms()])
-    except OpenAIError:
+    except AIServiceError:
         return []
     squash = lambda t: re.sub(r"\s+", "", t).lower()
     source, found = squash(s_text), []
@@ -408,7 +406,7 @@ def detect_semantic(body: SemanticIn):
     """語意相近的「可能病灶」：關鍵字沒對到時的補充建議，不自動加入。"""
     try:
         return {"conditions": rec.semantic_candidates(body.text, set(body.skip))}
-    except OpenAIError:
+    except AIServiceError:
         return {"conditions": []}
 
 
@@ -451,41 +449,36 @@ def _english_header(record: dict) -> str:
     return " | ".join(p for p in parts if p)
 
 
-def _ai_error(error: OpenAIError) -> HTTPException:
-    return HTTPException(502, f"AI 服務錯誤：{getattr(error, 'message', str(error))[:200]}")
+def _ai_error(error: AIServiceError) -> HTTPException:
+    return HTTPException(error.status if error.status in (429, 503) else 502, error.message)
+
+
+class VoiceIn(BaseModel):
+    key: str   # 瀏覽器先上傳到 tmp/voice/ 的錄音（見 /api/uploads/sign）
 
 
 @router.post("/records/voice")
-async def voice_to_soap(file: UploadFile = File(...)):
+def voice_to_soap(body: VoiceIn):
     """看診錄音 → 逐字稿 → AI 依 SOAP 分段。錄音只用來轉文字，處理完立即刪除，不保存。"""
-    mime = (file.content_type or "").split(";")[0].strip()
-    ext = AUDIO_MIME_EXT.get(mime) or next((e for e in AUDIO_EXTENSIONS if (file.filename or "").lower().endswith(e)), None)
-    if not ext:
-        raise HTTPException(415, "只接受 mp3、m4a、wav、webm 或 mp4 音檔")
-    content = await file.read()
-    if not content:
-        raise HTTPException(422, "音檔是空的，請重新錄音")
-    if len(content) > MAX_AUDIO_BYTES:
-        raise HTTPException(413, "音檔不可超過 25MB（約 20 分鐘以內的錄音）")
-    with tempfile.TemporaryDirectory() as tmp:
-        path = Path(tmp) / f"visit{ext}"
-        path.write_bytes(content)
-        try:
-            transcript, _ = ai.transcribe(path)
-        except TranscriptionError as error:
-            raise HTTPException(502, str(error))
-        except OpenAIError as error:
-            raise _ai_error(error)
+    content = load_upload(body.key, "tmp/voice", "錄音")
+    try:
+        transcript, _ = ai.transcribe(content, audio_mime(body.key))
+    except TranscriptionError as error:
+        raise HTTPException(502, str(error))
+    except AIServiceError as error:
+        raise _ai_error(error)
+    finally:
+        storage.delete(body.key)
     if transcript is None:
-        raise HTTPException(503, "語音辨識尚未設定（需要 AZURE_SPEECH_MODEL），請改用手動輸入")
+        raise HTTPException(503, "語音辨識尚未設定（需要 GEMINI_API_KEY），請改用手動輸入")
     if not transcript.strip():
         raise HTTPException(422, "沒有辨識到語音內容，請確認麥克風或音檔")
     try:
         soap, meta = ai.soap_from_transcript(transcript, [c["name"] for c in rec.conditions()])
-    except OpenAIError as error:
+    except AIServiceError as error:
         raise _ai_error(error)
     if soap is None:
-        raise HTTPException(503, "需要設定 Azure OpenAI 才能把逐字稿整理成 SOAP")
+        raise HTTPException(503, "需要設定 Gemini（GEMINI_API_KEY） 才能把逐字稿整理成 SOAP")
     problems = []
     for item in soap.get("problems", []):
         name = str(item.get("name", "") if isinstance(item, dict) else item).strip()[:40]
@@ -517,10 +510,10 @@ def ai_plan(record_id: int):
         raise HTTPException(422, "請先建立至少一個問題，AI 才能依問題寫計畫")
     try:
         result, meta = ai.plan_suggestions(_chart(record))
-    except OpenAIError as error:
+    except AIServiceError as error:
         raise _ai_error(error)
     if result is None:
-        raise HTTPException(503, "需要設定 Azure OpenAI 才能產生 AI 計畫")
+        raise HTTPException(503, "需要設定 Gemini（GEMINI_API_KEY） 才能產生 AI 計畫")
     keys = ("diagnostic", "therapeutic", "educational", "follow_up", "consult")
     plan = {k: str(result.get(k, "")) for k in keys} | {
         "basis": [c["name"] for c in record["conditions"]],
@@ -551,10 +544,10 @@ def english_version(record_id: int):
         raise HTTPException(422, "病歷還是空的，請先寫主訴或問題")
     try:
         result, _ = ai.english_note(_chart(record))
-    except OpenAIError as error:
+    except AIServiceError as error:
         raise _ai_error(error)
     if result is None:
-        raise HTTPException(503, "需要設定 Azure OpenAI 才能產生英文版")
+        raise HTTPException(503, "需要設定 Gemini（GEMINI_API_KEY） 才能產生英文版")
     stamp = now()
     note = f"{_english_header(record)}\n{str(result.get('note', '')).strip()}"
     with app_db() as con:
@@ -639,13 +632,15 @@ def drug_summary(atc_code: str):
         raise HTTPException(404, "找不到這個藥品成分")
     try:
         summary, meta = ai.drug_summary(detail)
-    except OpenAIError as error:
-        raise HTTPException(502, f"AI 服務錯誤：{getattr(error, 'message', str(error))[:200]}")
+    except AIServiceError as error:
+        raise HTTPException(error.status if error.status in (429, 503) else 502, error.message)
     if summary is None:
-        raise HTTPException(503, "需要設定 Azure OpenAI 才能產生藥品簡介")
+        raise HTTPException(503, "需要設定 Gemini（GEMINI_API_KEY） 才能產生藥品簡介")
     with app_db() as con:
         con.execute(
-            "INSERT OR REPLACE INTO drug_summaries (atc_code, summary, model, generated_at) VALUES (?,?,?,?)",
+            """INSERT INTO drug_summaries (atc_code, summary, model, generated_at) VALUES (?,?,?,?)
+               ON CONFLICT (atc_code) DO UPDATE SET summary = excluded.summary, model = excluded.model,
+               generated_at = excluded.generated_at""",
             (atc_code, json.dumps(summary, ensure_ascii=False), meta["model"], meta["generated_at"]),
         )
     return {"summary": summary, "summary_meta": {"model": meta["model"], "generated_at": meta["generated_at"]}, "cached": False}

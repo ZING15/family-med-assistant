@@ -1573,7 +1573,7 @@ async function saveDrugToLibrary(atc, condition) {
       source_title: 'TFDA 開放資料',
       source_url: `https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&query=${encodeURIComponent(d.name_en.split(',')[0])}`,
       image_path: image,
-      ai_meta: d.summary_meta ? { mode: 'azure', ...d.summary_meta } : {},
+      ai_meta: d.summary_meta ? { mode: 'gemini', ...d.summary_meta } : {},
       ref_type: 'atc', ref_id: atc,
     }));
     if (typeof libraryState !== 'undefined') libraryState.loaded = false;
@@ -1935,11 +1935,11 @@ function stopVoiceStream() {
 
 async function sendVoice(file) {
   $('#voiceBody').innerHTML = `<div class="voice-stage"><div class="spinner"></div><p id="voiceProgress">轉成文字中…</p><p class="muted-text">接著由 AI 分到 SOAP；5 分鐘的錄音約 30–40 秒</p></div>`;
-  const form = new FormData();
-  form.append('file', file);
   setTimeout(() => { const el = $('#voiceProgress'); if (el) el.textContent = 'AI 整理成 SOAP 中…'; }, 4000);
   try {
-    voice.result = await api('/api/records/voice', { method: 'POST', body: form });
+    // 錄音先直接上傳到檔案儲存，再請後端轉文字；後端處理完立即刪除錄音
+    const sent = await uploadDirect(file, 'voice');
+    voice.result = await api('/api/records/voice', jsonBody({ key: sent.key }));
     renderVoicePreview();
   } catch (error) {
     $('#voiceBody').innerHTML = voiceIdleHtml();
