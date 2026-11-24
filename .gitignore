@@ -2,7 +2,10 @@
 data/raw/
 
 # TFDA drug reference build output (large; regenerate with scripts/build_drug_reference.py)
-data/drug_reference/
+# 程式執行需要的兩個唯讀資料庫要進版控，Vercel 從 GitHub 部署時才有（政府開放資料，可公開散布）
+data/drug_reference/*
+!data/drug_reference/drug_reference.sqlite
+!data/drug_reference/nhi_drugs.sqlite
 
 # Secrets and local runtime data
 .env
