@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新手家醫看診助手｜作品集</title>
+
+<!-- 字體：與產品前端相同（Noto Serif TC 標題；Source Sans 3 + Noto Sans TC 內文） -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================================
+   THEME TOKENS
+   直接沿用產品 DESIGN.md「臨床手札」：紙、墨、鉛筆三色＋單一處方簽藍。
+   改這裡就能改整份簡報的顏色。
+   =========================================================== */
+:root {
+  --stage-bg: #e9e5dc;          /* 投影時舞台外的留白 */
+  --slide-bg: #f5f3ee;          /* notebook-paper 手札紙 */
+  --paper: #f5f3ee;
+  --surface: #ffffff;           /* sheet-white 紙頁白 */
+  --ink: #16232c;               /* notebook-ink 手札墨 */
+  --ink-2: #3a4a55;             /* graphite */
+  --muted: #5f6b74;             /* pencil-grey */
+  --faint: #66717a;             /* faded-pencil */
+  --mark: #a3acb2;              /* 非文字裝飾 */
+  --line: #e4dfd5;
+  --line-2: #eeeae2;
+  --accent: #1f5e8c;            /* 處方簽藍：只給「目前位置／重點動作」 */
+  --accent-soft: #e6eef5;
+  --ok: #2a7262;  --ok-soft: #e5f2ee;
+  --warn: #93600f; --warn-soft: #fbf0dc;
+  --danger: #b4432f; --danger-soft: #fbe9e5;
+
+  /* 三個功能的主題色相（與產品「主題色由名稱雜湊」同公式：低飽和） */
+  --h-lib: 208;   /* 學習庫 */
+  --h-rx: 158;    /* 病歷與開藥 */
+  --h-edu: 32;    /* 衛教單 */
+
+  --serif: "Noto Serif TC", "Songti TC", serif;
+  --sans: "Source Sans 3", "Noto Sans TC", "PingFang TC", sans-serif;
+
+  --shadow-rest: 0 1px 1px rgba(22,35,44,.04), 0 2px 4px -1px rgba(22,35,44,.05), 0 8px 18px -10px rgba(22,35,44,.16);
+  --shadow-lift: 0 1px 2px rgba(22,35,44,.04), 0 24px 56px -20px rgba(22,35,44,.26);
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===========================================================
+   FIXED 16:9 STAGE — viewport-base.css（完整內容，勿刪）
+   =========================================================== */
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--slide-bg, #fff); }
+.slide { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: block; visibility: hidden; opacity: 0; pointer-events: none; background: var(--slide-bg, #fff); }
+.slide.active, .slide.visible { visibility: visible; opacity: 1; pointer-events: auto; z-index: 1; }
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+.deck-controls { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 1000; }
+@media print {
+  html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+  .deck-viewport { position: static; overflow: visible; background: #fff; }
+  .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+  .slide { position: relative; display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always; }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  .deck-controls { display: none !important; }
+  /* PDF：每頁一張投影片，所有淡入元素直接顯示 */
+  .reveal, .lift { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .wires path { stroke-dashoffset: 0 !important; transition: none !important; }
+  .progress, .notes-panel, .edit-hotzone, .edit-toggle { display: none !important; }
+}
+@page { size: 1920px 1080px; margin: 0; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
+
+/* ===========================================================
+   BASE TYPOGRAPHY（1920×1080 設計尺寸）
+   =========================================================== */
+.slide { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; }
+.icon { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.frame { position: absolute; left: 128px; right: 128px; top: 96px; bottom: 120px; }
+.h2 { font: 700 76px/1.2 var(--serif); letter-spacing: .01em; }
+.lede { margin-top: 18px; font-size: 32px; line-height: 1.5; color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+
+/* 每頁底部資訊列（真實簡報 chrome） */
+.foot { position: absolute; left: 128px; right: 128px; bottom: 44px; display: flex; justify-content: space-between; align-items: center; font-size: 21px; color: var(--faint); }
+.foot .brand { display: flex; align-items: center; gap: 12px; color: var(--ink-2); font-weight: 600; }
+.foot .brand .logo { width: 32px; height: 32px; flex: none; }
+.foot .note { color: var(--faint); }
+
+/* 白色紙卡（Resting Sheet） */
+.sheet { background: var(--surface); border-radius: 16px; box-shadow: var(--shadow-rest); }
+
+/* 主題色工具：在元素上設 --h */
+.tint { background: hsl(var(--h) 35% 94%); color: hsl(var(--h) 32% 26%); }
+.dot { width: 14px; height: 14px; border-radius: 50%; background: hsl(var(--h) 40% 52%); flex: none; }
+
+/* 膠囊 */
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 22px; border-radius: 999px; font-size: 24px; font-weight: 600; background: var(--surface); color: var(--ink-2); box-shadow: 0 1px 2px rgba(22,35,44,.06), inset 0 0 0 1px var(--line); }
+.pill.ink { background: var(--ink); color: #fff; box-shadow: none; }
+.pill.warn { background: var(--warn-soft); color: var(--warn); box-shadow: none; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); box-shadow: none; }
+
+/* 截圖框：紙頁浮在紙上 */
+.shot { border-radius: 16px; overflow: hidden; background: var(--surface); box-shadow: var(--shadow-lift), 0 0 0 1px rgba(22,35,44,.05); }
+.shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: left top; max-width: none; max-height: none; }
+
+/* ===========================================================
+   ANIMATION：唯一曲線 var(--ease)，浮起＋淡入
+   在元素上設 style="--d:3" 控制出場順序
+   =========================================================== */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s var(--ease), transform .7s var(--ease); transition-delay: calc(var(--d, 0) * 90ms + 80ms); }
+.slide.visible .reveal { opacity: 1; transform: none; }
+.lift { opacity: 0; transform: translateY(40px) rotate(var(--r, 0deg)) scale(.98); transition: opacity .9s var(--ease), transform .9s var(--ease); transition-delay: calc(var(--d, 0) * 110ms + 150ms); }
+.slide.visible .lift { opacity: 1; transform: rotate(var(--r, 0deg)); }
+
+/* ===========================================================
+   01 COVER
+   =========================================================== */
+.cover-brand { display: flex; align-items: center; gap: 18px; font-size: 26px; color: var(--muted); }
+.cover-brand .logo { width: 72px; height: 72px; flex: none; }
+.cover-title { margin-top: 64px; font: 900 156px/1.1 var(--serif); letter-spacing: .02em; }
+.cover-sub { margin-top: 36px; font-size: 38px; line-height: 1.5; color: var(--ink-2); }
+.cover-pills { margin-top: 48px; display: flex; gap: 16px; }
+.cover-pills .pill { font-size: 28px; padding: 14px 28px; }
+.cover-pills .pill .icon { color: hsl(var(--h) 40% 42%); font-size: 30px; }
+.cover-meta { position: absolute; left: 0; bottom: 0; display: flex; gap: 40px; font-size: 26px; color: var(--muted); }
+.cover-meta b { color: var(--ink); font-weight: 600; }
+.cover-stack { position: absolute; right: 0; top: 40px; width: 860px; height: 820px; }
+.cover-stack .shot { position: absolute; width: 640px; height: 400px; }
+
+/* ===========================================================
+   02 PROBLEM CARDS
+   =========================================================== */
+.cards3 { margin-top: 72px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.pcard { padding: 48px 44px 44px; min-height: 520px; display: flex; flex-direction: column; }
+.pcard .badge { display: grid; place-items: center; width: 84px; height: 84px; border-radius: 22px; font-size: 42px; }
+.pcard h3 { margin-top: 36px; font: 700 46px/1.3 var(--serif); }
+.pcard p { margin-top: 18px; font-size: 28px; line-height: 1.55; color: var(--ink-2); }
+.pcard blockquote { margin-top: auto; padding-top: 28px; border-top: 1px solid var(--line-2); font-size: 25px; line-height: 1.6; color: var(--muted); }
+
+/* ===========================================================
+   03 POSITIONING FLOW
+   =========================================================== */
+.flow { margin-top: 96px; display: flex; align-items: center; gap: 28px; }
+.node { padding: 44px 40px; height: 330px; display: flex; flex-direction: column; justify-content: center; }
+.node .tag { font-size: 24px; color: var(--muted); font-weight: 600; letter-spacing: .08em; }
+.node h3 { margin-top: 14px; font: 700 52px/1.25 var(--serif); }
+.node p { margin-top: 18px; font-size: 28px; line-height: 1.5; color: var(--ink-2); }
+.node.main { background: var(--ink); color: #fff; box-shadow: var(--shadow-lift); }
+.node.main .tag, .node.main p { color: #c9d2d8; }
+.arrow { flex: none; font-size: 56px; color: var(--mark); }
+.flow-note { margin-top: 72px; font: 600 40px/1.5 var(--serif); color: var(--ink); }
+.flow-note em { font-style: normal; background: linear-gradient(transparent 62%, var(--accent-soft) 62%); }
+
+/* ===========================================================
+   04 DAY TIMELINE
+   =========================================================== */
+.day { margin-top: 88px; position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.moment { overflow: hidden; }
+.moment .top { height: 190px; padding: 36px 40px; display: flex; justify-content: space-between; align-items: flex-start; }
+.moment .top .icon { font-size: 76px; color: hsl(var(--h) 38% 40%); stroke-width: 1.6; }
+.moment .when { font-size: 26px; font-weight: 700; letter-spacing: .06em; }
+.moment .body { padding: 36px 40px 44px; }
+.moment h3 { font: 700 50px/1.25 var(--serif); }
+.moment p { margin-top: 16px; font-size: 29px; line-height: 1.55; color: var(--ink-2); }
+.loop { margin-top: 40px; display: flex; align-items: center; gap: 20px; padding: 26px 36px; border-radius: 999px; border: 1.5px dashed #d3cbbd; font-size: 29px; color: var(--ink-2); }
+.loop .icon { font-size: 38px; color: var(--accent); }
+
+/* ===========================================================
+   05 UX FLOW：三個階段欄，步驟由上往下；打勾＝醫師決定
+   =========================================================== */
+.ux { margin-top: 56px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 72px; }
+.ux-col { position: relative; display: flex; flex-direction: column; }
+.ux-head { padding: 18px 26px; border-radius: 14px; }
+.ux-head .when { font-size: 22px; font-weight: 700; letter-spacing: .06em; }
+.ux-head h3 { margin-top: 2px; font: 700 36px/1.25 var(--serif); }
+.ux-next { position: absolute; right: -58px; top: 36px; font-size: 44px; color: var(--mark); }
+.ux-step { margin-top: 34px; position: relative; display: grid; grid-template-columns: 44px 1fr 36px; gap: 16px; align-items: center; padding: 18px 20px; }
+.ux-step:not(:first-of-type)::before { content: ""; position: absolute; left: 41px; top: -30px; height: 26px; border-left: 2px dashed var(--mark); }
+.ux-step .n { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; font: 700 21px var(--sans); }
+.ux-step span.t { font-size: 25px; line-height: 1.4; color: var(--ink); }
+.ux-step .ok { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--ok-soft); color: var(--ok); font-size: 22px; }
+.ux-step .ok .icon { stroke-width: 2.6; }
+.ux-legend { margin-top: 40px; display: flex; align-items: center; gap: 14px; font-size: 25px; color: var(--ink-2); }
+.ux-legend .ok { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--ok-soft); color: var(--ok); font-size: 22px; }
+
+/* ===========================================================
+   06 AI AGENT FLOW：每列一個階段 → AI → 資料 → 結果 → 醫師把關
+   =========================================================== */
+.agent { margin-top: 40px; display: grid; gap: 10px; }
+.agent .ah, .agent .ar { display: grid; grid-template-columns: 210px 420px 1fr 1fr 220px; gap: 28px; align-items: center; }
+.agent .ah { padding: 0 28px; font-size: 20px; font-weight: 600; letter-spacing: .12em; color: var(--faint); }
+.agent .ar { padding: 12px 28px; font-size: 22px; line-height: 1.45; color: var(--ink-2); }
+.agent .stage { display: flex; align-items: center; gap: 12px; font: 700 26px/1.3 var(--serif); color: var(--ink); }
+.agent .ai-cell { display: flex; flex-wrap: wrap; gap: 6px 8px; }
+.agent .chip { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 20px; font-weight: 600; background: var(--accent-soft); color: var(--accent); }
+.agent .chip.rule { background: var(--paper); color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line); }
+.agent .out { color: var(--ink); font-weight: 600; }
+.agent .gate { color: var(--ok); font-weight: 600; }
+.agent-foot { margin-top: 26px; display: flex; gap: 16px; align-items: center; font-size: 24px; color: var(--ink-2); }
+
+/* ===========================================================
+   05–07 FEATURE + SCREENSHOT
+   =========================================================== */
+.feat { margin-top: 72px; display: grid; grid-template-columns: 600px 1fr; gap: 72px; align-items: start; }
+.steps { display: grid; gap: 40px; padding-top: 12px; }
+.step { display: grid; grid-template-columns: 64px 1fr; gap: 26px; align-items: start; }
+.step .n { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; font: 700 28px var(--sans); }
+.step h4 { font-size: 34px; font-weight: 700; line-height: 1.35; margin-top: 6px; }
+.step p { margin-top: 8px; font-size: 26px; line-height: 1.55; color: var(--muted); }
+.feat .shot { width: 984px; height: 615px; }
+.guard { margin-top: 44px; display: flex; align-items: flex-start; gap: 16px; padding: 22px 26px; border-radius: 12px; background: var(--warn-soft); color: var(--warn); font-size: 25px; line-height: 1.5; font-weight: 600; }
+.guard .icon { font-size: 30px; margin-top: 2px; }
+
+/* ===========================================================
+   07 RECORD AI HELPERS：三張附截圖的卡片
+   =========================================================== */
+.helpers { margin-top: 64px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.helper { overflow: hidden; display: flex; flex-direction: column; }
+.helper .pic { height: 300px; background: var(--paper); border-bottom: 1px solid var(--line-2); overflow: hidden; }
+.helper .pic img { display: block; width: 100%; height: 100%; object-fit: cover; max-width: none; max-height: none; }
+.helper .body { padding: 32px 36px 38px; }
+.helper h3 { display: flex; align-items: center; gap: 14px; font: 700 40px/1.25 var(--serif); }
+.helper h3 .icon { font-size: 34px; color: var(--accent); }
+.helper p { margin-top: 14px; font-size: 26px; line-height: 1.55; color: var(--ink-2); }
+.helpers-note { margin-top: 36px; display: flex; align-items: center; gap: 16px; font-size: 26px; color: var(--ink-2); }
+.helpers-note .icon { font-size: 32px; color: var(--ok); stroke-width: 2.4; }
+
+/* ===========================================================
+   08 SOLUTION TABLE
+   =========================================================== */
+.sol { margin-top: 56px; display: grid; gap: 22px; }
+.sol .head, .sol .row { display: grid; grid-template-columns: 300px 500px 1fr; gap: 40px; align-items: center; }
+.sol .head { padding: 0 44px; font-size: 22px; font-weight: 600; letter-spacing: .14em; color: var(--faint); }
+.sol .row { padding: 34px 44px; }
+.sol .name { display: flex; align-items: center; gap: 16px; font: 700 42px/1.2 var(--serif); }
+.sol .name .dot { width: 16px; height: 16px; }
+.sol .what { font-size: 28px; line-height: 1.55; color: var(--ink-2); }
+.sol .tech { display: flex; flex-wrap: wrap; gap: 12px; }
+.sol .tech .pill { font-size: 23px; padding: 8px 18px; }
+.stackline { margin-top: 34px; display: flex; gap: 48px; padding: 0 44px; font-size: 26px; color: var(--muted); }
+.stackline b { color: var(--ink); font-weight: 600; margin-left: 10px; }
+
+/* ===========================================================
+   09 AI TILES
+   =========================================================== */
+.ai4 { margin-top: 64px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+.ai { padding: 40px 36px; display: flex; flex-direction: column; min-height: 500px; }
+.ai .ico { display: grid; place-items: center; width: 76px; height: 76px; border-radius: 20px; background: var(--accent-soft); color: var(--accent); font-size: 38px; }
+.ai .role { margin-top: 30px; font-size: 24px; font-weight: 600; color: var(--muted); letter-spacing: .08em; }
+.ai .model { margin-top: 8px; font-size: 28px; font-weight: 700; line-height: 1.3; white-space: nowrap; }
+.ai .use { margin-top: 18px; font-size: 27px; line-height: 1.55; color: var(--ink-2); }
+.ai .when { margin-top: auto; min-height: 104px; padding-top: 22px; border-top: 1px solid var(--line-2); font-size: 23px; line-height: 1.5; color: var(--muted); }
+.ai-foot { margin-top: 36px; display: flex; gap: 16px; align-items: center; font-size: 26px; color: var(--ink-2); }
+
+/* ===========================================================
+   10 ARCHITECTURE（絕對座標，方便畫連線）
+   =========================================================== */
+.arch { position: absolute; inset: 0; }
+.box { position: absolute; padding: 26px 30px; display: flex; flex-direction: column; justify-content: center; }
+.box .bt { display: flex; align-items: center; gap: 14px; font-size: 32px; font-weight: 700; }
+.box .bt .icon { font-size: 34px; color: var(--accent); }
+.box .bs { margin-top: 10px; font-size: 23px; line-height: 1.5; color: var(--muted); }
+.box.core { background: var(--ink); color: #fff; box-shadow: var(--shadow-lift); }
+.box.core .bt .icon { color: #9fc3df; }
+.box.core .bs { color: #c9d2d8; }
+.box.src { background: transparent; box-shadow: none; border: 1.5px dashed #d3cbbd; }
+.wires { position: absolute; inset: 0; width: 1920px; height: 1080px; max-width: none; max-height: none; pointer-events: none; }
+.wires path { fill: none; stroke: #9aa4ab; stroke-width: 2.5; stroke-dasharray: 1400; stroke-dashoffset: 1400; transition: stroke-dashoffset 1.2s var(--ease) .5s; }
+.slide.visible .wires path { stroke-dashoffset: 0; }
+.wlabel { position: absolute; font-size: 20px; color: var(--faint); background: var(--paper); padding: 2px 8px; }
+.deploy { position: absolute; left: 128px; top: 936px; display: flex; align-items: center; gap: 16px; font-size: 26px; color: var(--ink-2); }
+.deploy .icon { font-size: 32px; color: var(--accent); }
+
+/* ===========================================================
+   11 CLOSING
+   =========================================================== */
+.close-grid { margin-top: 64px; display: grid; grid-template-columns: 1fr; }
+.close-title { font: 900 120px/1.15 var(--serif); }
+.rules { margin-top: 64px; display: grid; gap: 34px; }
+.rule { display: flex; align-items: flex-start; gap: 22px; font-size: 36px; line-height: 1.5; color: var(--ink-2); }
+.rule .icon { flex: none; margin-top: 6px; font-size: 34px; color: var(--ok); stroke-width: 2.4; }
+.plan { padding: 48px 48px 40px; align-self: start; margin-top: 24px; }
+.plan h3 { font: 700 38px var(--serif); }
+.ms { margin-top: 36px; display: grid; gap: 34px; position: relative; }
+.ms::before { content: ""; position: absolute; left: 13px; top: 18px; bottom: 64px; border-left: 2px solid var(--line); }
+.mi { display: grid; grid-template-columns: 28px 1fr; gap: 26px; position: relative; }
+.mi .pt { width: 28px; height: 28px; margin-top: 6px; border-radius: 50%; background: var(--surface); border: 3px solid var(--mark); }
+.mi.done .pt { border-color: var(--ok); background: var(--ok); }
+.mi.now .pt { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 0 6px var(--accent-soft); }
+.mi .d { font-size: 30px; font-weight: 700; }
+.mi .t { margin-top: 4px; font-size: 26px; line-height: 1.5; color: var(--muted); }
+.thanks { position: absolute; right: 0; bottom: 0; font: 700 56px var(--serif); color: var(--ink); }
+
+
+/* ===========================================================
+   作品集版元件
+   =========================================================== */
+
+/* --- QR 試用卡：封面與結尾共用 --- */
+.qr-card { position: absolute; padding: 44px 48px 40px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.qr-card .qr-label { font: 700 40px/1.2 var(--serif); }
+.qr-card .qr-sub { margin-top: 8px; font-size: 24px; color: var(--muted); }
+.qr-card .qr-box { margin-top: 28px; padding: 22px; border-radius: 20px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.qr-card .qr-svg { display: block; width: 360px; height: 360px; max-width: none; max-height: none; }
+.qr-card .qr-url { margin-top: 24px; font: 700 30px/1.2 var(--sans); color: var(--accent); letter-spacing: .01em; }
+.qr-card .qr-pw { margin-top: 18px; display: flex; gap: 14px; align-items: baseline; font-size: 26px; color: var(--ink-2); }
+.qr-card .qr-pw b { font: 700 32px var(--sans); color: var(--ink); padding: 4px 16px; border-radius: 10px; background: var(--accent-soft); }
+.qr-card .qr-note { margin-top: 18px; font-size: 20px; color: var(--faint); }
+.qr-card .url-box { margin-top: 32px; width: 100%; padding: 40px 28px; border-radius: 20px; background: var(--accent-soft); display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.qr-card .url-box .icon { font-size: 64px; color: var(--accent); stroke-width: 1.6; }
+.qr-card .url-box span { font: 700 40px/1.3 var(--sans); color: var(--accent); }
+
+/* --- 三個卡關 → 三個功能 --- */
+.recap { margin-top: 72px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.recap .card { overflow: hidden; }
+.recap .prob { padding: 30px 36px; min-height: 168px; }
+.recap .prob .tag { font-size: 22px; font-weight: 700; letter-spacing: .08em; }
+.recap .prob p { margin-top: 10px; font-size: 30px; line-height: 1.45; }
+.recap .sol-body { padding: 30px 36px 38px; }
+.recap .sol-body .down { font-size: 34px; color: var(--mark); }
+.recap .sol-body h3 { margin-top: 6px; display: flex; align-items: center; gap: 14px; font: 700 46px/1.25 var(--serif); }
+.recap .sol-body h3 .icon { font-size: 40px; color: hsl(var(--h) 40% 42%); }
+.recap .sol-body p { margin-top: 12px; font-size: 28px; line-height: 1.5; color: var(--ink-2); }
+.principle { margin-top: 44px; font: 700 40px/1.4 var(--serif); }
+.principle em { font-style: normal; background: linear-gradient(transparent 62%, var(--accent-soft) 62%); }
+
+/* --- 改了什麼：之前 → 現在 --- */
+.changes { margin-top: 56px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.change { overflow: hidden; display: flex; flex-direction: column; }
+.change .pic { position: relative; height: 310px; background: var(--paper); border-bottom: 1px solid var(--line-2); overflow: hidden; }
+.change .pic img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; max-width: none; max-height: none; }
+.change .src { position: absolute; left: 16px; top: 16px; padding: 4px 14px; border-radius: 999px; font-size: 19px; font-weight: 700; background: var(--ok-soft); color: var(--ok); }
+.change .body { padding: 26px 32px 30px; }
+.change h3 { font: 700 38px/1.25 var(--serif); }
+.ba { margin-top: 14px; display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: baseline; font-size: 23px; line-height: 1.5; color: var(--muted); }
+.ba .b { justify-self: start; padding: 2px 10px; border-radius: 8px; font-size: 18px; font-weight: 700; background: var(--paper); color: var(--faint); }
+.ba.now { color: var(--ink); font-weight: 600; }
+.ba.now .b { background: var(--accent-soft); color: var(--accent); }
+.change .feat-desc { margin-top: 14px; font-size: 25px; line-height: 1.55; color: var(--ink-2); }
+.more { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 12px; }
+.more .pill { font-size: 22px; padding: 8px 20px; }
+
+/* --- 使用流程：四步與用到的 AI --- */
+.demo { margin-top: 56px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+.dstep { padding: 32px 30px 30px; display: flex; flex-direction: column; min-height: 520px; }
+.dstep .top { display: flex; justify-content: space-between; align-items: center; }
+.dstep .no { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; font: 700 24px var(--sans); }
+.dstep .time { padding: 6px 16px; border-radius: 999px; font: 700 22px var(--sans); background: var(--ink); color: #fff; font-variant-numeric: tabular-nums; }
+.dstep h3 { margin-top: 22px; font: 700 38px/1.25 var(--serif); }
+.dstep ul { margin-top: 14px; padding-left: 0; list-style: none; display: grid; gap: 10px; }
+.dstep li { position: relative; padding-left: 22px; font-size: 24px; line-height: 1.5; color: var(--ink-2); }
+.dstep li::before { content: ""; position: absolute; left: 2px; top: 15px; width: 8px; height: 8px; border-radius: 50%; background: hsl(var(--h) 40% 52%); }
+.dstep .uses { margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line-2); display: flex; flex-wrap: wrap; gap: 8px; }
+.dstep .chip { padding: 3px 12px; border-radius: 999px; font-size: 19px; font-weight: 600; background: var(--accent-soft); color: var(--accent); }
+.demo-foot { margin-top: 30px; display: flex; align-items: center; gap: 14px; font-size: 24px; color: var(--ink-2); }
+.demo-foot .icon { font-size: 30px; color: var(--warn); }
+
+/* --- 部署架構：盒子用絕對座標，方便畫連線 --- */
+.box .bl { margin-top: 6px; font-size: 22px; line-height: 1.55; color: var(--muted); }
+.box.core .bl { color: #c9d2d8; }
+.pipe { position: absolute; left: 128px; right: 128px; top: 872px; white-space: nowrap; display: flex; align-items: center; gap: 14px; font-size: 23px; color: var(--ink-2); }
+.pipe .pstep { padding: 8px 18px; border-radius: 999px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); font-weight: 600; }
+.pipe .icon { font-size: 26px; color: var(--mark); }
+.pipe .lbl { font-weight: 700; color: var(--faint); letter-spacing: .08em; margin-right: 6px; }
+
+/* --- 結尾 --- */
+.end-title { font: 900 120px/1.15 var(--serif); }
+
+/* ===========================================================
+   PRESENTER CHROME（舞台外：進度條、講稿面板、編輯）
+   =========================================================== */
+.progress { position: fixed; left: 0; top: 0; height: 4px; background: var(--accent); z-index: 1000; transition: width .4s var(--ease); }
+.notes-panel { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); width: min(1100px, 92vw); max-height: 38vh; overflow: auto; padding: 18px 24px; border-radius: 14px; background: rgba(22,35,44,.94); color: #eef2f4; font: 16px/1.7 var(--sans); white-space: pre-wrap; z-index: 1001; display: none; }
+.notes-panel.show { display: block; }
+.notes-panel b { color: #9fc3df; }
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle { position: fixed; top: 16px; left: 16px; z-index: 10001; padding: 8px 14px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font: 600 14px var(--sans); opacity: 0; pointer-events: none; transition: opacity .3s; cursor: pointer; }
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { background: var(--accent); }
+body.editing [data-edit] { outline: 1.5px dashed rgba(31,94,140,.45); outline-offset: 4px; cursor: text; }
+.notes { display: none; }
+</style>
+</head>
+<body>
+
+<!-- Lucide 圖示（與產品前端同一套 sprite，另補架構圖所需） -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <!-- 產品 Logo：與 frontend/favicon.svg 相同 -->
+  <symbol id="logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="#1f5e8c"/><rect x="15" y="10" width="34" height="44" rx="5" fill="#f5f3ee"/><path d="M22 10v44" stroke="#e4dfd5" stroke-width="1.6"/><path d="M38 10h7v13l-3.5-3-3.5 3z" fill="#b4432f"/><path d="M33.5 26v16M25.5 34h16" stroke="#1f5e8c" stroke-width="5.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-clipboard-pen" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5.5"/><path d="M4 13.5V6a2 2 0 0 1 2-2h2"/><path d="M13.378 15.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></symbol>
+  <symbol id="i-file-heart" viewBox="0 0 24 24"><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M2.62 13.8A2.25 2.25 0 1 1 6 10.836a2.25 2.25 0 1 1 3.38 2.966l-2.626 2.856a.998.998 0 0 1-1.507 0z"/><path d="M4 6.005V4a2 2 0 0 1 2-2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-1.9-1.376"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></symbol>
+  <symbol id="i-pill" viewBox="0 0 24 24"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></symbol>
+  <symbol id="i-shield-alert" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></symbol>
+  <symbol id="i-triangle-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-type" viewBox="0 0 24 24"><path d="M12 4v16"/><path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2"/><path d="M9 20h6"/></symbol>
+  <symbol id="i-audio-lines" viewBox="0 0 24 24"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></symbol>
+  <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></symbol>
+  <symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01"/><path d="M6 18h.01"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></symbol>
+  <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M12 2 20 7H4z"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+</svg>
+
+<div class="progress" id="progress"></div>
+<div class="notes-panel" id="notesPanel"></div>
+<div class="edit-hotzone" id="editHotzone"></div>
+<button class="edit-toggle" id="editToggle" title="編輯模式（E）">編輯文字</button>
+
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage">
+
+<!-- =========================================================
+     01 封面
+     ========================================================= -->
+<section class="slide active" data-title="封面">
+  <div class="frame">
+    <div class="cover-brand reveal" style="--d:0"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span data-edit>個人專題作品</span></div>
+    <h1 class="cover-title reveal" style="--d:1" data-edit>新手家醫<br>看診助手</h1>
+    <p class="cover-sub reveal" style="--d:2" data-edit>給剛上門診的家醫科醫師，<br>一個看診輔助與學習工具。</p>
+    <div class="cover-pills reveal" style="--d:3">
+      <span class="pill" style="--h:var(--h-lib)"><svg class="icon"><use href="#i-book-open"/></svg>學習庫</span>
+      <span class="pill" style="--h:var(--h-rx)"><svg class="icon"><use href="#i-clipboard-pen"/></svg>病歷與開藥</span>
+      <span class="pill" style="--h:var(--h-edu)"><svg class="icon"><use href="#i-file-heart"/></svg>衛教單</span>
+    </div>
+    <div class="cover-meta reveal" style="--d:4"><span>黃子哲</span><span>Python・FastAPI・Gemini・Supabase・Vercel</span></div>
+    <div class="sheet qr-card reveal" style="--d:2; right:0; top:40px; width:600px;">
+      <div class="qr-label">掃描試用</div>
+      <div class="qr-sub">手機或電腦都能開，不需登入</div>
+      <div class="qr-box"><svg class="qr-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="family-med-assistant.vercel.app 的 QR Code" viewBox="-2 -2 33 33" shape-rendering="crispEdges"><path stroke="#16232c" d="M0 0.5h7M10 0.5h2M14 0.5h2M17 0.5h3M22 0.5h7M0 1.5h1M6 1.5h1M8 1.5h1M11 1.5h1M13 1.5h1M15 1.5h1M17 1.5h1M19 1.5h2M22 1.5h1M28 1.5h1M0 2.5h1M2 2.5h3M6 2.5h1M9 2.5h4M15 2.5h1M19 2.5h2M22 2.5h1M24 2.5h3M28 2.5h1M0 3.5h1M2 3.5h3M6 3.5h1M9 3.5h1M11 3.5h2M14 3.5h1M18 3.5h3M22 3.5h1M24 3.5h3M28 3.5h1M0 4.5h1M2 4.5h3M6 4.5h1M8 4.5h1M10 4.5h1M12 4.5h1M15 4.5h2M19 4.5h1M22 4.5h1M24 4.5h3M28 4.5h1M0 5.5h1M6 5.5h1M13 5.5h1M15 5.5h1M19 5.5h2M22 5.5h1M28 5.5h1M0 6.5h7M8 6.5h1M10 6.5h1M12 6.5h1M14 6.5h1M16 6.5h1M18 6.5h1M20 6.5h1M22 6.5h7M9 7.5h5M15 7.5h4M0 8.5h1M2 8.5h1M4 8.5h1M6 8.5h1M11 8.5h1M13 8.5h1M15 8.5h3M24 8.5h1M27 8.5h1M1 9.5h1M3 9.5h2M9 9.5h2M13 9.5h2M16 9.5h3M20 9.5h3M25 9.5h1M28 9.5h1M2 10.5h1M4 10.5h1M6 10.5h1M8 10.5h2M14 10.5h1M21 10.5h1M23 10.5h2M26 10.5h3M0 11.5h2M3 11.5h2M9 11.5h1M11 11.5h3M15 11.5h3M19 11.5h1M21 11.5h1M23 11.5h2M27 11.5h1M1 12.5h1M6 12.5h1M9 12.5h1M11 12.5h1M14 12.5h1M16 12.5h2M20 12.5h3M25 12.5h1M27 12.5h2M0 13.5h6M8 13.5h1M11 13.5h3M16 13.5h2M20 13.5h1M22 13.5h1M25 13.5h1M28 13.5h1M1 14.5h1M3 14.5h1M5 14.5h2M12 14.5h1M14 14.5h1M18 14.5h1M23 14.5h3M27 14.5h2M0 15.5h1M2 15.5h2M5 15.5h1M8 15.5h1M12 15.5h2M17 15.5h4M24 15.5h2M27 15.5h1M5 16.5h4M11 16.5h2M14 16.5h1M16 16.5h2M19 16.5h2M22 16.5h1M25 16.5h1M27 16.5h2M1 17.5h5M8 17.5h2M16 17.5h1M21 17.5h2M25 17.5h2M28 17.5h1M0 18.5h1M2 18.5h1M5 18.5h2M10 18.5h1M13 18.5h1M16 18.5h2M20 18.5h2M23 18.5h2M27 18.5h2M1 19.5h1M3 19.5h3M9 19.5h1M11 19.5h1M17 19.5h1M19 19.5h2M23 19.5h1M25 19.5h1M27 19.5h1M0 20.5h1M3 20.5h1M5 20.5h4M10 20.5h1M12 20.5h1M17 20.5h1M20 20.5h5M8 21.5h1M12 21.5h2M16 21.5h5M24 21.5h1M26 21.5h3M0 22.5h7M9 22.5h2M14 22.5h1M19 22.5h2M22 22.5h1M24 22.5h2M27 22.5h2M0 23.5h1M6 23.5h1M9 23.5h1M11 23.5h1M13 23.5h5M20 23.5h1M24 23.5h2M28 23.5h1M0 24.5h1M2 24.5h3M6 24.5h1M8 24.5h1M10 24.5h2M14 24.5h1M16 24.5h3M20 24.5h5M27 24.5h2M0 25.5h1M2 25.5h3M6 25.5h1M11 25.5h1M13 25.5h2M16 25.5h1M23 25.5h2M26 25.5h3M0 26.5h1M2 26.5h3M6 26.5h1M8 26.5h1M10 26.5h1M12 26.5h3M16 26.5h2M19 26.5h2M23 26.5h3M28 26.5h1M0 27.5h1M6 27.5h1M12 27.5h2M16 27.5h2M19 27.5h2M22 27.5h3M27 27.5h1M0 28.5h7M8 28.5h5M14 28.5h1M17 28.5h1M19 28.5h6M27 28.5h2"/></svg></div>
+      <div class="qr-url">family-med-assistant.vercel.app</div>
+      <div class="qr-note">練習資料，請勿輸入真實病人資料</div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>新手家醫看診助手</span><span class="num">01 / 07</span></div>
+  <aside class="notes">新手家醫看診助手：給剛上門診的家醫科醫師的看診輔助與學習工具，包含學習庫、病歷與開藥、衛教單三個功能。線上版不需登入即可試用。</aside>
+</section>
+
+<!-- =========================================================
+     02 三個卡關
+     ========================================================= -->
+<section class="slide" data-title="三個卡關">
+  <div class="frame">
+    <h2 class="h2 reveal" style="--d:0" data-edit>三個卡關，三個功能</h2>
+    <div class="recap">
+      <article class="sheet card reveal" style="--d:1; --h:var(--h-lib)">
+        <div class="prob tint"><div class="tag">卡關</div><p data-edit>期刊圖表存在手機，要用時找不到</p></div>
+        <div class="sol-body"><div class="down">↓</div><h3><svg class="icon"><use href="#i-book-open"/></svg>學習庫</h3><p data-edit>AI 整理，用一句話找回來</p></div>
+      </article>
+      <article class="sheet card reveal" style="--d:2; --h:var(--h-rx)">
+        <div class="prob tint"><div class="tag">卡關</div><p data-edit>少見病灶，選藥靠經驗</p></div>
+        <div class="sol-body"><div class="down">↓</div><h3><svg class="icon"><use href="#i-clipboard-pen"/></svg>病歷與開藥</h3><p data-edit>寫 SOAP 病歷，用藥候選就在旁邊</p></div>
+      </article>
+      <article class="sheet card reveal" style="--d:3; --h:var(--h-edu)">
+        <div class="prob tint"><div class="tag">卡關</div><p data-edit>醫囑太長，長輩聽不懂</p></div>
+        <div class="sol-body"><div class="down">↓</div><h3><svg class="icon"><use href="#i-file-heart"/></svg>衛教單</h3><p data-edit>圖卡式衛教，長輩一看就懂</p></div>
+      </article>
+    </div>
+    <p class="principle reveal" style="--d:4" data-edit>設計原則：<em>系統推薦，醫師決定</em>。</p>
+  </div>
+  <div class="foot"><span class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>新手家醫看診助手</span><span class="num">02 / 07</span></div>
+  <aside class="notes">訪談醫師後歸納出新手家醫的三個卡關：筆記找不到、少見病灶選藥靠經驗、長輩聽不懂醫囑。對應三個功能：學習庫、病歷與開藥、衛教單。所有寫入病歷或交給病人的內容，都由醫師確認。</aside>
+</section>
+
+<!-- =========================================================
+     03 設計亮點
+     ========================================================= -->
+<section class="slide" data-title="設計亮點">
+  <div class="frame">
+    <h2 class="h2 reveal" style="--d:0" data-edit>來自醫師回饋的三個設計</h2>
+    <div class="changes">
+      <article class="sheet change reveal" style="--d:1">
+        <div class="pic"><img src="assets/f-return.jpg" alt="回診病人清單：依最近就診排序，顯示診斷與過敏"></div>
+        <div class="body"><h3 data-edit>病人歸檔</h3>
+          <p class="feat-desc" data-edit>選「回診病人」，自動帶入年齡、過敏與過去就診，不用每次重打</p></div>
+      </article>
+      <article class="sheet change reveal" style="--d:2">
+        <div class="pic"><img src="assets/f-symptoms.jpg" alt="現病史下方列出偵測到的症狀：發燒、喉嚨痛"><span class="src">醫師試用回饋</span></div>
+        <div class="body"><h3 data-edit>症狀也能開藥</h3>
+          <p class="feat-desc" data-edit>除了依診斷推薦，現病史的症狀也會補上對症藥；頻率、天數、劑量都能自訂</p></div>
+      </article>
+      <article class="sheet change reveal" style="--d:3">
+        <div class="pic"><img src="assets/f-cards.jpg" alt="圖卡式衛教單：每個重點一張插圖加短標語"><span class="src">受訪者回饋</span></div>
+        <div class="body"><h3 data-edit>圖卡式衛教單</h3>
+          <p class="feat-desc" data-edit>每個重點一張插圖＋5–10 字短標語，插圖人物依病人的年齡與性別繪製</p></div>
+      </article>
+    </div>
+    <div class="more reveal" style="--d:4">
+      <span class="pill"><svg class="icon"><use href="#i-plus"/></svg>28 種常見問題＋10 種症狀</span>
+      <span class="pill"><svg class="icon"><use href="#i-plus"/></svg>病歷可手動輸入或語音看診</span>
+      <span class="pill"><svg class="icon"><use href="#i-plus"/></svg>學習庫語意搜尋</span>
+      <span class="pill ink"><svg class="icon"><use href="#i-cloud"/></svg>線上版 family-med-assistant.vercel.app</span>
+    </div>
+  </div>
+  <div class="foot"><span class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>新手家醫看診助手</span><span class="num">03 / 07</span></div>
+  <aside class="notes">三個來自醫師試用與受訪者回饋的設計：病人歸檔（回診自動帶入年齡、過敏與過去就診）、症狀也能開藥（現病史的症狀補上對症藥，頻率天數劑量可自訂）、圖卡式衛教單（每個重點一張插圖加短標語，人物依病人年齡性別繪製）。</aside>
+</section>
+
+<!-- =========================================================
+     04 解決方案
+     ========================================================= -->
+<section class="slide" data-title="解決方案">
+  <div class="frame">
+    <h2 class="h2 reveal" style="--d:0" data-edit>解決方案：用哪些技術完成哪些功能</h2>
+    <div class="sol">
+      <div class="head reveal" style="--d:1"><span>功能</span><span>做什麼</span><span>用什麼</span></div>
+      <div class="sheet row reveal" style="--d:2; --h:var(--h-lib)">
+        <div class="name"><span class="dot"></span>學習庫</div>
+        <div class="what" data-edit>圖片辨識、語音逐字稿、主題整理、語意搜尋</div>
+        <div class="tech"><span class="pill">Gemini Flash</span><span class="pill">Gemini 語音轉錄</span><span class="pill">Gemini Embedding</span></div>
+      </div>
+      <div class="sheet row reveal" style="--d:3; --h:var(--h-rx)">
+        <div class="name"><span class="dot"></span>病歷與開藥</div>
+        <div class="what" data-edit>SOAP 病歷、病人歸檔、問題與症狀偵測、用藥推薦</div>
+        <div class="tech"><span class="pill">關鍵字比對</span><span class="pill">Gemini Embedding</span><span class="pill">Gemini Flash</span><span class="pill">Gemini 語音轉錄</span><span class="pill">TFDA／健保署資料</span></div>
+      </div>
+      <div class="sheet row reveal" style="--d:4; --h:var(--h-edu)">
+        <div class="name"><span class="dot"></span>衛教單</div>
+        <div class="what" data-edit>挑出重點、依病人畫圖卡、下載圖片</div>
+        <div class="tech"><span class="pill">Gemini Flash</span><span class="pill">Gemini Flash Image</span><span class="pill">html-to-image</span></div>
+      </div>
+    </div>
+    <div class="stackline reveal" style="--d:5"><span>前端<b>原生 HTML／CSS／JS</b></span><span>後端<b>Python・FastAPI</b></span><span>資料庫<b>Supabase Postgres</b></span><span>部署<b>Vercel</b></span></div>
+  </div>
+  <div class="foot"><span class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>新手家醫看診助手</span><span class="num">04 / 07</span></div>
+  <aside class="notes">學習庫用 Gemini Flash 看圖與整理、Gemini 轉錄語音、Gemini Embedding 做語意搜尋。病歷用關鍵字、語意比對與 Gemini Flash 找出問題與症狀，藥品來自食藥署與健保署的開放資料。衛教單用 Gemini Flash 挑重點、Gemini Flash Image 畫圖卡。</aside>
+</section>
+
+<!-- =========================================================
+     05 系統架構
+     ========================================================= -->
+<section class="slide" data-title="系統架構">
+  <div class="frame"><h2 class="h2 reveal" style="--d:0" data-edit>系統架構與部署</h2></div>
+  <div class="arch">
+    <svg class="wires" viewBox="0 0 1920 1080" aria-hidden="true">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#9aa4ab"/></marker></defs>
+      <path d="M408 560 H468" marker-end="url(#ah)"/>
+      <path d="M748 560 H808" marker-end="url(#ah)" marker-start="url(#ah)"/>
+      <path d="M1248 560 H1290 V325 H1330" marker-end="url(#ah)"/>
+      <path d="M1248 560 H1330" marker-end="url(#ah)"/>
+      <path d="M1248 560 H1290 V755 H1330" marker-end="url(#ah)"/>
+    </svg>
+    <div class="sheet box reveal" style="--d:1; left:128px; top:470px; width:280px; height:180px">
+      <div class="bt"><svg class="icon"><use href="#i-monitor"/></svg>使用者</div>
+      <div class="bl">醫師的手機或電腦<br>瀏覽器打開網址</div>
+    </div>
+    <div class="sheet box reveal" style="--d:2; left:476px; top:470px; width:272px; height:180px">
+      <div class="bt" style="font-size:28px">Vercel 網域</div>
+      <div class="bl">*.vercel.app<br>全程 HTTPS</div>
+    </div>
+    <div class="box core reveal" style="--d:3; left:816px; top:400px; width:432px; height:320px; border-radius:16px">
+      <div class="bt"><svg class="icon"><use href="#i-cloud"/></svg>Vercel</div>
+      <div class="bl">首爾・Python 3.13 無伺服器函式<br>FastAPI 後端＋前端網頁<br>GitHub 推送後自動部署<br>金鑰只放在環境變數</div>
+    </div>
+    <div class="sheet box reveal" style="--d:4; left:1338px; top:240px; width:454px; height:170px">
+      <div class="bt"><svg class="icon"><use href="#i-sparkles"/></svg>Gemini API</div>
+      <div class="bl">Google AI Studio<br>文字・看圖・語音・搜尋・插圖</div>
+    </div>
+    <div class="sheet box reveal" style="--d:5; left:1338px; top:455px; width:454px; height:170px">
+      <div class="bt"><svg class="icon"><use href="#i-database"/></svg>Supabase</div>
+      <div class="bl">首爾・Postgres 資料庫<br>Storage 存放圖片與錄音</div>
+    </div>
+    <div class="sheet box reveal" style="--d:6; left:1338px; top:670px; width:454px; height:170px">
+      <div class="bt"><svg class="icon"><use href="#i-pill"/></svg>藥品參考表</div>
+      <div class="bl">TFDA・健保署開放資料<br>唯讀 SQLite，隨程式部署</div>
+    </div>
+    <div class="pipe reveal" style="--d:7"><span class="lbl">更新流程</span><span class="pstep">本機開發與測試</span><svg class="icon"><use href="#i-arrow-right"/></svg><span class="pstep">推送到 GitHub</span><svg class="icon"><use href="#i-arrow-right"/></svg><span class="pstep">Vercel 自動建置部署</span><svg class="icon"><use href="#i-arrow-right"/></svg><span class="pstep">金鑰放 Vercel 環境變數，不進程式碼</span></div>
+  </div>
+  <div class="foot"><span class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>新手家醫看診助手</span><span class="num">05 / 07</span></div>
+  <aside class="notes">使用者用瀏覽器打開 family-med-assistant.vercel.app。Vercel 在首爾機房以無伺服器函式執行 FastAPI 後端與前端網頁；需要 AI 時呼叫 Gemini API；病歷、學習庫與衛教單存在 Supabase Postgres，圖片與錄音由瀏覽器直接上傳到 Supabase Storage，網站以有時效的簽名網址顯示；藥品參考表是整理好的政府開放資料，隨程式一起部署。程式推送到 GitHub 後由 Vercel 自動部署，金鑰只放在環境變數。</aside>
+</section>
+
+<!-- =========================================================
+     06 使用流程
+     ========================================================= -->
+<section class="slide" data-title="使用流程">
+  <div class="frame">
+    <h2 class="h2 reveal" style="--d:0" data-edit>使用流程：一次門診走一遍</h2>
+    <div class="demo">
+      <article class="sheet dstep reveal" style="--d:1; --h:var(--h-lib)">
+        <div class="top"><span class="no tint">1</span></div>
+        <h3>學習庫</h3>
+        <ul><li data-edit>輸入一句話搜尋</li><li data-edit>依意思找到筆記，打開看 AI 整理的標題與來源</li></ul>
+        <div class="uses"><span class="chip">Gemini Embedding</span></div>
+      </article>
+      <article class="sheet dstep reveal" style="--d:2; --h:var(--h-rx)">
+        <div class="top"><span class="no tint">2</span></div>
+        <h3>病歷與開藥</h3>
+        <ul><li data-edit>回診病人：帶入年齡、過敏與過去就診</li><li data-edit>打主訴，問題與症狀自動出現</li><li data-edit>過敏藥已排除，按「採用」</li></ul>
+        <div class="uses"><span class="chip">關鍵字比對</span><span class="chip">Gemini Embedding</span></div>
+      </article>
+      <article class="sheet dstep reveal" style="--d:3; --h:var(--h-edu)">
+        <div class="top"><span class="no tint">3</span></div>
+        <h3>圖卡衛教單</h3>
+        <ul><li data-edit>從病歷一鍵產生衛教單</li><li data-edit>看圖卡，勾選「醫師已確認」</li><li data-edit>下載成圖片，傳給病人</li></ul>
+        <div class="uses"><span class="chip">Gemini Flash</span><span class="chip">Gemini Flash Image</span></div>
+      </article>
+      <article class="sheet dstep reveal" style="--d:4; --h:var(--h-rx)">
+        <div class="top"><span class="no tint">4</span></div>
+        <h3>完成病歷</h3>
+        <ul><li data-edit>按「完成病歷」</li><li data-edit>產生英文版，中英切換</li></ul>
+        <div class="uses"><span class="chip">Gemini Flash</span></div>
+      </article>
+    </div>
+    <div class="demo-foot reveal" style="--d:5"><svg class="icon" style="color:var(--ok)"><use href="#i-check"/></svg><span data-edit>每一步寫入病歷或交給病人的內容，都由醫師確認後才生效。</span></div>
+  </div>
+  <div class="foot"><span class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>新手家醫看診助手</span><span class="num">06 / 07</span></div>
+  <aside class="notes">一次門診的流程：① 學習庫：一句話搜尋，依意思找到筆記，查看 AI 整理的標題與來源。② 病歷與開藥：選回診病人，自動帶入年齡、過敏與過去就診；輸入主訴後問題與症狀自動出現，過敏藥已排除，醫師按「採用」。③ 圖卡衛教單：從病歷產生，醫師確認後下載成圖片。④ 完成病歷：產生英文版，中英切換。</aside>
+</section>
+
+<!-- =========================================================
+     07 結尾
+     ========================================================= -->
+<section class="slide" data-title="結尾">
+  <div class="frame">
+    <div style="max-width:980px; margin-top:80px">
+      <h2 class="end-title reveal" style="--d:0" data-edit>系統推薦，<br>醫師決定。</h2>
+      <div class="rules">
+        <div class="rule reveal" style="--d:1"><svg class="icon"><use href="#i-check"/></svg><span data-edit>寫入開藥區、交給病人的內容，都要醫師按下</span></div>
+        <div class="rule reveal" style="--d:2"><svg class="icon"><use href="#i-check"/></svg><span data-edit>不做診斷、不判讀影像、不自動決定劑量</span></div>
+        <div class="rule reveal" style="--d:3"><svg class="icon"><use href="#i-check"/></svg><span data-edit>只用練習假資料與政府開放資料</span></div>
+      </div>
+      
+    </div>
+    <div class="sheet qr-card reveal" style="--d:3; right:0; top:40px; width:600px;">
+      <div class="qr-label">掃描試用</div>
+      <div class="qr-sub">手機或電腦都能開，不需登入</div>
+      <div class="qr-box"><svg class="qr-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="family-med-assistant.vercel.app 的 QR Code" viewBox="-2 -2 33 33" shape-rendering="crispEdges"><path stroke="#16232c" d="M0 0.5h7M10 0.5h2M14 0.5h2M17 0.5h3M22 0.5h7M0 1.5h1M6 1.5h1M8 1.5h1M11 1.5h1M13 1.5h1M15 1.5h1M17 1.5h1M19 1.5h2M22 1.5h1M28 1.5h1M0 2.5h1M2 2.5h3M6 2.5h1M9 2.5h4M15 2.5h1M19 2.5h2M22 2.5h1M24 2.5h3M28 2.5h1M0 3.5h1M2 3.5h3M6 3.5h1M9 3.5h1M11 3.5h2M14 3.5h1M18 3.5h3M22 3.5h1M24 3.5h3M28 3.5h1M0 4.5h1M2 4.5h3M6 4.5h1M8 4.5h1M10 4.5h1M12 4.5h1M15 4.5h2M19 4.5h1M22 4.5h1M24 4.5h3M28 4.5h1M0 5.5h1M6 5.5h1M13 5.5h1M15 5.5h1M19 5.5h2M22 5.5h1M28 5.5h1M0 6.5h7M8 6.5h1M10 6.5h1M12 6.5h1M14 6.5h1M16 6.5h1M18 6.5h1M20 6.5h1M22 6.5h7M9 7.5h5M15 7.5h4M0 8.5h1M2 8.5h1M4 8.5h1M6 8.5h1M11 8.5h1M13 8.5h1M15 8.5h3M24 8.5h1M27 8.5h1M1 9.5h1M3 9.5h2M9 9.5h2M13 9.5h2M16 9.5h3M20 9.5h3M25 9.5h1M28 9.5h1M2 10.5h1M4 10.5h1M6 10.5h1M8 10.5h2M14 10.5h1M21 10.5h1M23 10.5h2M26 10.5h3M0 11.5h2M3 11.5h2M9 11.5h1M11 11.5h3M15 11.5h3M19 11.5h1M21 11.5h1M23 11.5h2M27 11.5h1M1 12.5h1M6 12.5h1M9 12.5h1M11 12.5h1M14 12.5h1M16 12.5h2M20 12.5h3M25 12.5h1M27 12.5h2M0 13.5h6M8 13.5h1M11 13.5h3M16 13.5h2M20 13.5h1M22 13.5h1M25 13.5h1M28 13.5h1M1 14.5h1M3 14.5h1M5 14.5h2M12 14.5h1M14 14.5h1M18 14.5h1M23 14.5h3M27 14.5h2M0 15.5h1M2 15.5h2M5 15.5h1M8 15.5h1M12 15.5h2M17 15.5h4M24 15.5h2M27 15.5h1M5 16.5h4M11 16.5h2M14 16.5h1M16 16.5h2M19 16.5h2M22 16.5h1M25 16.5h1M27 16.5h2M1 17.5h5M8 17.5h2M16 17.5h1M21 17.5h2M25 17.5h2M28 17.5h1M0 18.5h1M2 18.5h1M5 18.5h2M10 18.5h1M13 18.5h1M16 18.5h2M20 18.5h2M23 18.5h2M27 18.5h2M1 19.5h1M3 19.5h3M9 19.5h1M11 19.5h1M17 19.5h1M19 19.5h2M23 19.5h1M25 19.5h1M27 19.5h1M0 20.5h1M3 20.5h1M5 20.5h4M10 20.5h1M12 20.5h1M17 20.5h1M20 20.5h5M8 21.5h1M12 21.5h2M16 21.5h5M24 21.5h1M26 21.5h3M0 22.5h7M9 22.5h2M14 22.5h1M19 22.5h2M22 22.5h1M24 22.5h2M27 22.5h2M0 23.5h1M6 23.5h1M9 23.5h1M11 23.5h1M13 23.5h5M20 23.5h1M24 23.5h2M28 23.5h1M0 24.5h1M2 24.5h3M6 24.5h1M8 24.5h1M10 24.5h2M14 24.5h1M16 24.5h3M20 24.5h5M27 24.5h2M0 25.5h1M2 25.5h3M6 25.5h1M11 25.5h1M13 25.5h2M16 25.5h1M23 25.5h2M26 25.5h3M0 26.5h1M2 26.5h3M6 26.5h1M8 26.5h1M10 26.5h1M12 26.5h3M16 26.5h2M19 26.5h2M23 26.5h3M28 26.5h1M0 27.5h1M6 27.5h1M12 27.5h2M16 27.5h2M19 27.5h2M22 27.5h3M27 27.5h1M0 28.5h7M8 28.5h5M14 28.5h1M17 28.5h1M19 28.5h6M27 28.5h2"/></svg></div>
+      <div class="qr-url">family-med-assistant.vercel.app</div>
+      <div class="qr-note">練習資料，請勿輸入真實病人資料</div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg>新手家醫看診助手</span><span class="num">07 / 07</span></div>
+  <aside class="notes">設計原則：系統推薦、醫師決定。寫入開藥區與交給病人的內容都要醫師按下；不做診斷、不判讀影像、不自動決定劑量；只使用練習假資料與政府開放資料。</aside>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ===========================================================
+   SLIDE PRESENTATION CONTROLLER
+   方向鍵／空白鍵／PageUp/Down／滑鼠滾輪／觸控滑動換頁
+   N：顯示講稿　F：全螢幕　E：編輯文字
+   =========================================================== */
+class SlidePresentation {
+  constructor() {
+    this.slides = [...document.querySelectorAll('.slide')];
+    this.stage = document.getElementById('deckStage');
+    this.progress = document.getElementById('progress');
+    this.notesPanel = document.getElementById('notesPanel');
+    this.current = 0;
+    this.setupStageScale();
+    this.setupKeyboardNav();
+    this.setupWheelNav();
+    this.setupTouchNav();
+    const fromHash = parseInt(location.hash.slice(1), 10);
+    this.show(Number.isFinite(fromHash) ? fromHash - 1 : 0);
+  }
+
+  /* 把 1920×1080 舞台等比縮放到視窗，置中留邊 */
+  setupStageScale() {
+    const scale = () => {
+      const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+      this.stage.style.transform = `translate(${(innerWidth - 1920 * k) / 2}px, ${(innerHeight - 1080 * k) / 2}px) scale(${k})`;
+    };
+    scale();
+    addEventListener('resize', scale);
+  }
+
+  setupKeyboardNav() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.isContentEditable) return;
+      if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); this.show(this.current + 1); }
+      if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); this.show(this.current - 1); }
+      if (e.key === 'Home') this.show(0);
+      if (e.key === 'End') this.show(this.slides.length - 1);
+      if (e.key === 'n' || e.key === 'N') this.notesPanel.classList.toggle('show');
+      if (e.key === 'f' || e.key === 'F') document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    });
+  }
+
+  setupWheelNav() {
+    let lock = false;
+    addEventListener('wheel', (e) => {
+      if (lock || Math.abs(e.deltaY) < 30) return;
+      lock = true; this.show(this.current + (e.deltaY > 0 ? 1 : -1));
+      setTimeout(() => (lock = false), 700);
+    }, { passive: true });
+  }
+
+  setupTouchNav() {
+    let x0 = null;
+    addEventListener('touchstart', (e) => (x0 = e.touches[0].clientX), { passive: true });
+    addEventListener('touchend', (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 50) this.show(this.current + (dx < 0 ? 1 : -1));
+      x0 = null;
+    });
+  }
+
+  show(i) {
+    this.current = Math.max(0, Math.min(i, this.slides.length - 1));
+    this.slides.forEach((s, n) => {
+      s.classList.toggle('active', n === this.current);
+      s.classList.toggle('visible', n === this.current);
+    });
+    this.progress.style.width = `${((this.current + 1) / this.slides.length) * 100}%`;
+    const note = this.slides[this.current].querySelector('.notes');
+    this.notesPanel.innerHTML = `<b>${this.current + 1}／${this.slides.length}　${this.slides[this.current].dataset.title}</b>\n${note ? note.textContent.trim() : ''}`;
+    history.replaceState(null, '', `#${this.current + 1}`);
+  }
+}
+
+/* ===========================================================
+   INLINE EDITING
+   左上角懸停或按 E 進入編輯；Ctrl/⌘+S 下載修改後的 HTML
+   =========================================================== */
+class InlineEditor {
+  constructor() {
+    this.isActive = false;
+    this.toggle = document.getElementById('editToggle');
+    const hot = document.getElementById('editHotzone');
+    let hide = null;
+    const showBtn = () => { clearTimeout(hide); this.toggle.classList.add('show'); };
+    const hideBtn = () => { hide = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); };
+    hot.addEventListener('mouseenter', showBtn); hot.addEventListener('mouseleave', hideBtn);
+    this.toggle.addEventListener('mouseenter', showBtn); this.toggle.addEventListener('mouseleave', hideBtn);
+    hot.addEventListener('click', () => this.toggleEditMode());
+    this.toggle.addEventListener('click', () => this.toggleEditMode());
+    document.addEventListener('keydown', (e) => {
+      if ((e.key === 'e' || e.key === 'E') && !e.target.isContentEditable) this.toggleEditMode();
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); this.download(); }
+    });
+  }
+  toggleEditMode() {
+    this.isActive = !this.isActive;
+    document.body.classList.toggle('editing', this.isActive);
+    this.toggle.classList.toggle('active', this.isActive);
+    this.toggle.textContent = this.isActive ? '完成編輯' : '編輯文字';
+    document.querySelectorAll('[data-edit]').forEach((el) => (el.contentEditable = this.isActive));
+  }
+  download() {
+    if (this.isActive) this.toggleEditMode();
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([html], { type: 'text/html' })), download: 'index.html' });
+    a.click(); URL.revokeObjectURL(a.href);
+  }
+}
+
+new SlidePresentation();
+new InlineEditor();
+</script>
+</body>
+</html>

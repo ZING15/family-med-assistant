@@ -132,6 +132,16 @@ class AIService:
             from google.genai import types
 
             self._client = genai.Client(api_key=gemini.api_key, http_options=types.HttpOptions(timeout=170_000))
+        self._image_client = None
+        if gemini.vertex_api_key:
+            from google import genai
+            from google.genai import types
+
+            # GCP Agent Platform（express mode）：不需專案 ID，使用 global 端點
+            self._image_client = genai.Client(vertexai=True, api_key=gemini.vertex_api_key,
+                                              http_options=types.HttpOptions(timeout=170_000))
+        elif self._client is not None and gemini.image_enabled:
+            self._image_client = self._client
 
     # ---- 狀態 ----
     @property
@@ -148,7 +158,7 @@ class AIService:
 
     @property
     def image_ready(self) -> bool:
-        return self._client is not None and gemini.image_enabled
+        return self._image_client is not None
 
     def status(self) -> dict:
         return {
@@ -466,13 +476,15 @@ class AIService:
 
         width, height = (int(x) for x in size.split("x"))
         ratio = "1:1" if width == height else ("3:2" if width > height else "2:3")
-        config = types.GenerateContentConfig(response_modalities=["IMAGE"], image_config=types.ImageConfig(aspect_ratio=ratio))
+        # Agent Platform 規定這類模型的回應要同時包含文字與圖片
+        config = types.GenerateContentConfig(response_modalities=["TEXT", "IMAGE"], image_config=types.ImageConfig(aspect_ratio=ratio))
         try:
-            response = self._client.models.generate_content(model=gemini.image_model, contents=prompt, config=config)
+            response = self._image_client.models.generate_content(model=gemini.image_model, contents=prompt, config=config)
         except errors.APIError as error:
             raise ImageGenerationError(error.code or 502, str(error.message or error)[:300]) from error
         parts = [p for c in (response.candidates or []) for p in (c.content.parts if c.content else []) if p.inline_data]
-        meta = _meta("gemini", gemini.image_model) | {"size": ratio}
+        provider = "GCP Agent Platform" if gemini.vertex_api_key else "Gemini API"
+        meta = _meta("gemini", f"{gemini.image_model}（{provider}）") | {"size": ratio}
         if not parts:
             raise ImageGenerationError(400, "生圖要求被拒絕，可能觸發內容安全過濾")
         return parts[0].inline_data.data, meta

@@ -21,7 +21,6 @@ data/backup/
 
 # OS / editor
 .DS_Store
-測試資料/
 
 # impeccable-ignore-start
 # Ephemeral output, runtime state, and per-dev overrides.
@@ -49,3 +48,11 @@ data/backup/
 
 # 部署打包產物
 dist/
+
+# 課程發的文件，不是作品本身，只留本機
+PPT/個專評分標準.pdf
+
+# demo 素材中的第三方圖片（期刊、講座、OpenEvidence 截圖），有版權，只留本機
+demo素材/學習庫-圖片/期刊圖表-*.png
+demo素材/學習庫-圖片/一般圖表-*.png
+demo素材/學習庫-圖片/膽固醇藥物給付規定.jpg

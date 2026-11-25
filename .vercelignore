@@ -1,19 +1,13 @@
-# 不部署到 Vercel：本機資料、備份、原始下載檔、訪談與簡報、示範頁
+# 不部署到 Vercel：本機資料與備份、訪談與簡報、示範素材、開發工具設定
 .env
 backend/.venv/
 data/app.sqlite
 data/uploads/
 data/backup/
-data/raw/
 data/review/
-dist/
 參考資料/
 訪談資料/
-測試資料/
 PPT/
 demo素材/
-showcase/
-frontend/demo/
-.impeccable/
 .claude/
 scripts/

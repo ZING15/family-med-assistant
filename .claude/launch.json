@@ -4,15 +4,12 @@
     {
       "name": "app",
       "runtimeExecutable": "sh",
-      "runtimeArgs": ["-c", "exec backend/.venv/bin/uvicorn app.main:app --reload --app-dir backend --port ${PORT:-8000}"],
+      "runtimeArgs": [
+        "-c",
+        "exec backend/.venv/bin/uvicorn app.main:app --reload --app-dir backend --port ${PORT:-8000}"
+      ],
       "port": 8000,
       "autoPort": true
-    },
-    {
-      "name": "slides",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "PPT/open-slide", "run", "dev"],
-      "port": 5173
     }
   ]
 }

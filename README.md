@@ -1,108 +1,100 @@
-# 新手家醫看診助手（練習專案）
+# 新手家醫看診助手
 
-給新手家醫科醫師的看診輔助與學習工具。
+給剛上門診的家醫科醫師的看診輔助與學習工具：**學習庫、病歷與開藥、衛教單**。
 
-> 練習資料，非臨床建議。病例為假資料；藥品資料來自 TFDA 與健保署開放資料。
+- 線上版：https://family-med-assistant.vercel.app （不需登入）
+- 作品簡報：[PPT/deck-final/新手家醫看診助手_作品集.pdf](PPT/deck-final/新手家醫看診助手_作品集.pdf)
 
-## 文件
+> 練習資料，非臨床建議。病例為虛構的練習資料；藥品資料來自 TFDA 與健保署開放資料。系統只提出候選與草稿，寫入病歷或交給病人的內容都由醫師確認。
 
-| 文件 | 內容 |
+## 功能
+
+| 功能 | 內容 |
 |---|---|
-| [產品規格_新手家醫看診助手.md](產品規格_新手家醫看診助手.md) | 需求的唯一依據：Persona、功能 F-01～F-10 與驗收條件、流程、技術與 AI 規劃、時程（v0.2） |
-| [PRODUCT.md](PRODUCT.md) | 給設計工具 impeccable 讀的產品脈絡：使用者、使用情境、定位、產品原則 |
-| [DESIGN.md](DESIGN.md) | 視覺設計系統「臨床手札」：色彩、字體、元件與規則 |
-| [部署指南_Azure.md](部署指南_Azure.md) | 部署到 Azure App Service 給醫師試用的步驟、目前的部署設定與免費方案限制 |
-| [驗證清單_健保藥品.md](驗證清單_健保藥品.md) | 健保給付藥品清單的人工核對步驟（對照健保署官網） |
+| 學習庫 | 用圖片、文字或語音新增筆記；AI 辨識圖表、轉逐字稿、整理標題、主題與來源；以語意搜尋找回筆記 |
+| 病歷與開藥 | SOAP 病歷（問題清單＋統整評估與計畫）；以關鍵字、語意與 AI 偵測問題與症狀；依病灶與症狀推薦藥品並排除過敏；頻率、天數、劑量可自訂；回診病人自動帶入年齡、過敏與過去就診；語音看診分段到 SOAP；AI 參考計畫；英文版病歷 |
+| 衛教單 | 從病歷或主題產生圖卡式衛教單：每個重點一張插圖＋5–10 字標語，插圖人物依病人年齡與性別繪製；醫師確認後下載圖片 |
 
-## 功能進度
+## 架構
 
-| 功能 | 狀態 |
+| 部分 | 使用的服務 |
 |---|---|
-| 學習庫：圖片／文字／語音三種新增方式、標籤、搜尋、檢視、編輯、刪除 | ✅ |
-| 學習庫 AI：圖片辨識、語音轉逐字稿、自動帶入來源、語意搜尋 | ✅ |
-| 病歷（SOAP：問題清單＋統整 A／P）、問題偵測（關鍵字／語意／AI）、用藥推薦、回饋、過敏排除、藥品卡 | ✅ |
-| 病歷管理（篩選、刪除）、語音看診分段到 SOAP、AI 參考計畫（遮蔽可偷看）、完成病歷與英文版 | ✅ 2026-10-06 |
-| 衛教單：從病歷或主題產生 AI 草稿、直接編輯、醫師確認、下載圖片、存到學習庫 | ✅ |
-| AI 衛教圖（Microsoft MAI-Image-2.6） | ✅（使用流程待討論調整） |
-| 醫師試用回饋：現病史症狀補對症用藥（10 個症狀）、頻率與天數可自訂、新病歷選單（手動／語音）與下方固定動作列 | ✅ 2026-10-13 |
-| 病人歸檔：新病歷先選「新病人／回診病人」，回診帶入年齡性別與過去所有過敏、列出過去就診、一鍵帶入過去病史；代號改唯讀 | ✅ 2026-10-14 |
-| 圖卡式衛教單：每個重點一張 AI 插圖＋5–10 字標語，人物依病人年齡性別繪製，全部畫好才顯示；學習庫搜尋固定為智慧搜尋（門檻 0.4） | ✅ 2026-10-14 |
-| 雲端試用版：https://tsuchedaily.azurewebsites.net（Azure App Service F1，需共用密碼） | ✅ 2026-10-06 上線 |
+| 網站（FastAPI 後端＋原生 HTML／CSS／JS 前端） | Vercel（首爾 `icn1`），GitHub `main` 分支推送後自動部署 |
+| 資料庫 | Supabase Postgres（首爾），經 Transaction pooler 連線 |
+| 圖片與錄音 | Supabase Storage 私人 bucket；瀏覽器直接上傳，網站以一小時有效的簽名網址顯示 |
+| AI | Google Gemini API：`gemini-3.6-flash`（文字整理、看圖、語音轉錄），過載時改用 `gemini-3.5-flash-lite`、`gemini-3.8-flash`；`gemini-embedding-001`（語意搜尋） |
+| 衛教插圖 | `gemini-3.1-flash-image`（Nano Banana 2），經 GCP Agent Platform；設定 `VERTEX_API_KEY` 後開啟 |
+| 藥品參考表 | TFDA、健保署開放資料整理成唯讀 SQLite，隨程式部署 |
 
-## 啟動
+部署與金鑰設定見 [部署指南.md](部署指南.md)。
 
-需要 Python 3.13。語音筆記使用 Azure Speech 預設模型，直接接受瀏覽器錄音格式，不需要 ffmpeg。
+## 本機開發
+
+需要 Python 3.13。
 
 ```bash
 python3 -m venv backend/.venv
 backend/.venv/bin/pip install -r backend/requirements.txt
-python3 scripts/build_drug_reference.py      # 需先把 TFDA JSON 放在 data/raw/tfda/
-python3 scripts/build_nhi_drugs.py           # 需先把健保 all1_*.TXT 放在 data/raw/nhi/
-python3 scripts/verify_nhi_drugs.py          # 驗證健保藥品輸出
+cp .env.example .env      # 填入 Supabase 與 Gemini 金鑰；不填則使用本機 SQLite、AI 為示範模式
 backend/.venv/bin/uvicorn app.main:app --reload --app-dir backend
 ```
 
 開啟 http://localhost:8000 。API 文件在 http://localhost:8000/docs 。
 
-AI 功能需要把 `.env.example` 複製成 `.env` 並填入 Azure OpenAI 設定；沒有設定時以示範模式運作。
+- `.env` 有填 `DATABASE_URL`、`SUPABASE_*` 時，本機會直接讀寫雲端的資料庫與檔案。
+- 沒有填時改用本機 `data/app.sqlite` 與 `data/uploads/`，第一次啟動會建立 5 筆練習病歷。
 
 ## 目錄
 
 ```
-frontend/   原生 HTML／CSS／JS
-backend/    FastAPI（app/main.py、routers/、ai.py；app/data/ 為病灶、過敏、藥理類別對照表）
-scripts/    藥品參考表建置、部署打包與設定腳本
-data/       TFDA／健保署原始資料、藥品參考表、上傳檔、app.sqlite（皆不進版控）
+index.py            Vercel 入口（載入 backend/app/main.py 的 FastAPI app）
+vercel.json         Vercel 設定（首爾區、函式最長 300 秒）
+frontend/           原生 HTML／CSS／JS
+backend/app/        FastAPI：main.py、routers/、ai.py（Gemini）、db.py（Postgres／SQLite）、storage.py（Supabase Storage／本機）
+backend/app/data/   病灶、症狀、過敏、藥理類別、病史風險等對照表（待醫師確認）
+data/drug_reference/ 藥品參考表與健保藥品表（唯讀 SQLite）
+scripts/            藥品參考表建置、健保資料驗證、審閱表產生、資料轉移
+demo素材/           示範用的語音、病例文字與說明
+PPT/deck-final/     作品簡報（HTML 與 PDF）
 ```
 
 ## 資料
 
 本專案只使用政府資料開放平台上的 TFDA 與健保署開放資料（政府資料開放授權條款－第1版）。
 
-### 原始資料（`data/raw/tfda/`）
+### 藥品參考表的來源
 
-| 資料夾 | 資料集 | 來源 |
-|---|---|---|
-| `license_36/` | 全部藥品許可證資料集 | https://data.gov.tw/dataset/9122 |
-| `ahfs_40/` | 藥品藥理治療分類 AHFS/DI 碼 | https://data.gov.tw/dataset/9118 |
-| `atc_41/` | 藥品藥理治療分類 ATC 碼 | https://data.gov.tw/dataset/9119 |
-| `appearance_42/` | 藥品外觀（圖片不下載，只保留 TFDA 圖檔連結） | https://data.gov.tw/dataset/9120 |
+重建時把原始檔下載到 `data/raw/`，再執行 `scripts/build_drug_reference.py`、`scripts/build_nhi_drugs.py`（原始檔不進版控）。
 
-### 原始資料（`data/raw/nhi/`）
+| 資料集 | 來源 |
+|---|---|
+| 全部藥品許可證資料集 | https://data.gov.tw/dataset/9122 |
+| 藥品藥理治療分類 AHFS/DI 碼 | https://data.gov.tw/dataset/9118 |
+| 藥品藥理治療分類 ATC 碼 | https://data.gov.tw/dataset/9119 |
+| 藥品外觀（只保留 TFDA 圖檔連結） | https://data.gov.tw/dataset/9120 |
+| 健保用藥品項查詢檔 | https://data.gov.tw/dataset/23715 |
+| 中文版 ICD-10-CM（核對病灶代碼） | https://data.gov.tw/dataset/177507 |
 
-| 檔案 | 資料集 | 來源 |
-|---|---|---|
-| `all1_YYYMM_*.TXT` | 健保用藥品項查詢檔（Big5、固定寬度、含歷年價格；多檔為同一清單切段） | https://data.gov.tw/dataset/23715 |
-| `健保用藥品項查詢檔欄位格式說明(109.01.09更新，更正末欄名稱).pdf` | 上述檔案的官方欄位位置說明，解析腳本依此切欄 | 健保署，與資料檔一同下載 |
+| 產生的檔案 | 說明 |
+|---|---|
+| `data/drug_reference/drug_reference.sqlite` | 藥品參考表：許可證、成分、ATC／AHFS 分類、外觀圖連結 |
+| `data/drug_reference/nhi_drugs.sqlite` | 健保給付藥品：每個健保代碼一列、價格歷史，並以許可證字號對回 TFDA |
+| `data/review/病灶用藥對照_審閱表.xlsx` | 給醫師審閱的病灶、ATC 類別、ICD-10-CM 核對與風險提醒（`scripts/build_review_sheet.py`） |
 
-### 原始資料（`data/raw/icd/`）
-
-| 檔案 | 資料集 | 來源 |
-|---|---|---|
-| `icd10cm_2023_tw.csv` | 2023年版_中文版ICD-10-CM（正式版），健保自 2025-01-01 起使用；用來核對病灶代碼 | https://data.gov.tw/dataset/177507 |
-
-### 衛教用語（`backend/app/data/`）
+### 用語對照（`backend/app/data/`）
 
 | 檔案 | 內容 | 來源與授權 |
 |---|---|---|
-| `taiwanese_terms.json` | 台語詞條 1219 筆（身體構造、傷疾病痛、醫療保健），詞目、音讀、釋義為原文 | 教育部《臺灣台語常用詞辭典》https://sutian.moe.edu.tw ，CC BY-ND 3.0 TW；以 `scripts/build_taiwanese_terms.py` 下載 |
-| `colloquial_terms.json` | 台灣常見病名俗稱對照（例：皮蛇＝帶狀皰疹），標記容易混淆的說法 | 本專案整理，待醫師確認 |
+| `taiwanese_terms.json` | 台語詞條 1219 筆（身體構造、傷疾病痛、醫療保健） | 教育部《臺灣台語常用詞辭典》https://sutian.moe.edu.tw ，CC BY-ND 3.0 TW |
+| `colloquial_terms.json` | 台灣常見病名俗稱對照（例：皮蛇＝帶狀皰疹） | 本專案整理，待醫師確認 |
 
-2026-10-14 起衛教單不再顯示「大家常說」：這兩份對照原本是為了讓語音看診辨識更準，之後改用在語音辨識（片語清單、SOAP 整理），目前保留檔案。
+## 文件
 
-### 產生的資料
-
-| 檔案 | 說明 |
+| 文件 | 內容 |
 |---|---|
-| `data/drug_reference/drug_reference.sqlite` | 執行 `scripts/build_drug_reference.py` 產生的藥品參考表，程式唯讀使用 |
-| `data/drug_reference/nhi_drugs.sqlite` | 執行 `scripts/build_nhi_drugs.py` 產生：每個健保代碼一列（`is_covered` = 資料月份當日支付價 > 0）、價格歷史，並以健保代碼對回 TFDA 許可證字號 |
-| `data/drug_reference/nhi_covered_drugs.csv` | 目前有健保給付的藥品清單（UTF-8 BOM，可用 Excel 開啟） |
-| `data/app.sqlite` | 學習庫、病歷、推薦回饋（程式執行時自動建立，並建立 3 筆示範病歷） |
-| `data/uploads/` | 學習庫上傳的圖片與錄音 |
-| `測試資料/demo_看診對話_咳嗽發燒.mp3` | 執行 `scripts/make_demo_audio.py` 產生：Azure TTS 兩人看診對話（4 分 48 秒），語音看診示範用；劇本為同名 .txt（測試資料不進版控） |
-| `data/review/病灶用藥對照_審閱表.xlsx` | 執行 `scripts/build_review_sheet.py` 產生：給醫師審閱的病灶、ATC 類別、ICD-10-CM 核對與風險提醒（需 openpyxl） |
-
-### 不採用的資料
-
-- Kaggle「Medical Reccomandation dataSet」：授權標示為 Unknown，且重複、缺漏多，藥物欄多為「Rest」「Antibiotics」等籠統描述，2026-10-03 評估後移除。
-- v0.1 的 Faker 合成病人資料與胸部 X 光樣本：產品不做影像判讀，2026-10-03 移除。
+| [產品規格_新手家醫看診助手.md](產品規格_新手家醫看診助手.md) | Persona、功能 F-01～F-10 與驗收條件、流程、技術與 AI 規劃 |
+| [PRODUCT.md](PRODUCT.md) | 產品脈絡：使用者、使用情境、定位、產品原則 |
+| [DESIGN.md](DESIGN.md) | 視覺設計系統「臨床手札」：色彩、字體、元件與規則 |
+| [部署指南.md](部署指南.md) | Vercel、Supabase、Gemini 的設定與免費方案限制 |
+| [驗證清單_健保藥品.md](驗證清單_健保藥品.md) | 健保給付藥品清單的人工核對步驟 |
+| [demo素材/Demo素材.md](demo素材/Demo素材.md) | 示範用的筆記、語音與病例文字 |
